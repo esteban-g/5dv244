@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Quest - Mission 1</title>
+
+<style>
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f2f5f8;
+    color: #263746;
+}
+
+button {
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   GAME CONTAINER
+   ========================================================= */
+
+.game-container {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 25px 20px 50px;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.quest-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #294c6b;
+}
+
+.mission-label {
+    font-size: 14px;
+    color: #6b7785;
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.progress-container {
+    width: 100%;
+    height: 8px;
+    background: #dce3e9;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #315a7d;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+
+/* =========================================================
+   SCREENS
+   ========================================================= */
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+
+/* =========================================================
+   INTRO SCREEN
+   ========================================================= */
+
+.intro {
+    background: white;
+    border-radius: 14px;
+    padding: 60px 35px;
+    text-align: center;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+.intro-icon {
+    font-size: 70px;
+    margin-bottom: 15px;
+}
+
+.intro h1 {
+    margin: 5px 0;
+    font-size: 42px;
+    color: #294c6b;
+}
+
+.intro h2 {
+    margin: 8px 0 25px;
+    font-size: 22px;
+    font-weight: normal;
+    color: #687784;
+}
+
+.intro p {
+    max-width: 650px;
+    margin: 0 auto 30px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #52616d;
+}
+
+.start-button {
+    background: #294c6b;
+    color: white;
+    border: none;
+    padding: 15px 32px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+}
+
+.start-button:hover {
+    background: #1f3c55;
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   CONTENT CARD
+   ========================================================= */
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 32px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.07);
+    margin-bottom: 20px;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #294c6b;
+}
+
+.card p {
+    line-height: 1.7;
+    color: #52616d;
+}
+
+
+/* =========================================================
+   ENTITY CARDS
+   ========================================================= */
+
+.entities {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.entity {
+    border: 2px solid #dce3e9;
+    background: #fafcfd;
+    border-radius: 10px;
+    padding: 20px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.entity:hover {
+    transform: translateY(-3px);
+    border-color: #8fa9bc;
+}
+
+.entity.selected {
+    border-color: #315a7d;
+    background: #eaf1f6;
+}
+
+.entity-icon {
+    font-size: 42px;
+    margin-bottom: 10px;
+}
+
+.entity-name {
+    font-weight: bold;
+    color: #344b5c;
+}
+
+
+/* =========================================================
+   ACTION BUTTON
+   ========================================================= */
+
+.action-area {
+    text-align: center;
+    margin-top: 28px;
+}
+
+.action-button {
+    background: #315a7d;
+    color: white;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 7px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.action-button:disabled {
+    background: #b8c3cc;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FEEDBACK
+   ========================================================= */
+
+.feedback {
+    margin-top: 25px;
+    padding: 20px;
+    border-radius: 9px;
+    display: none;
+    line-height: 1.7;
+}
+
+.feedback.show {
+    display: block;
+}
+
+.feedback.info {
+    background: #edf4f8;
+    border-left: 4px solid #315a7d;
+}
+
+.feedback.success {
+    background: #edf6ef;
+    border-left: 4px solid #4d7c57;
+}
+
+.feedback.warning {
+    background: #fff7e5;
+    border-left: 4px solid #d49a2a;
+}
+
+
+/* =========================================================
+   FOUR PERSPECTIVES
+   ========================================================= */
+
+.perspectives {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.perspective {
+    padding: 20px;
+    border: 1px solid #dce3e9;
+    border-radius: 10px;
+    background: #fafcfd;
+}
+
+.perspective h3 {
+    margin-top: 0;
+    color: #294c6b;
+}
+
+.perspective p {
+    font-size: 14px;
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   SCENARIO
+   ========================================================= */
+
+.scenario {
+    background: #f5f8fa;
+    border-radius: 10px;
+    padding: 22px;
+    margin: 20px 0;
+    border-left: 4px solid #315a7d;
+}
+
+.scenario strong {
+    color: #294c6b;
+}
+
+
+/* =========================================================
+   ANSWER OPTIONS
+   ========================================================= */
+
+.options {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.option {
+    padding: 16px 18px;
+    border: 2px solid #dce3e9;
+    background: white;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 15px;
+    transition: all 0.15s;
+}
+
+.option:hover {
+    border-color: #8fa9bc;
+    background: #f7fafc;
+}
+
+.option.correct {
+    border-color: #4d7c57;
+    background: #edf6ef;
+}
+
+.option.incorrect {
+    border-color: #b85c5c;
+    background: #faeeee;
+}
+
+
+/* =========================================================
+   SCORE
+   ========================================================= */
+
+.score-box {
+    text-align: center;
+    margin-top: 25px;
+    font-size: 18px;
+    color: #52616d;
+}
+
+.score-number {
+    font-size: 32px;
+    font-weight: bold;
+    color: #294c6b;
+}
+
+
+/* =========================================================
+   FINAL SCREEN
+   ========================================================= */
+
+.final {
+    text-align: center;
+}
+
+.final-icon {
+    font-size: 70px;
+}
+
+.final h1 {
+    color: #294c6b;
+}
+
+.final-score {
+    font-size: 48px;
+    font-weight: bold;
+    color: #315a7d;
+    margin: 20px 0;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .entities {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .perspectives {
+        grid-template-columns: 1fr;
+    }
+
+    .intro h1 {
+        font-size: 32px;
+    }
+
+}
+
+@media (max-width: 450px) {
+
+    .entities {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 22px;
+    }
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="game-container">
+
+    <!-- =====================================================
+         TOP BAR
+         ===================================================== -->
+
+    <div class="topbar">
+
+        <div class="quest-title">
+            🧠 AI QUEST
+        </div>
+
+        <div class="mission-label">
+            Mission 1 / 5
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PROGRESS BAR
+         ===================================================== -->
+
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+
+    <!-- =====================================================
+         SCREEN 0 — INTRO
+         ===================================================== -->
+
+    <section id="screenIntro" class="screen active">
+
+        <div class="intro">
+
+            <div class="intro-icon">
+                🧠
+            </div>
+
+            <h1>AI QUEST</h1>
+
+            <h2>Mission 1: What is Intelligence?</h2>
+
+            <p>
+                Before we can build intelligent machines,
+                we need to ask a surprisingly difficult question:
+            </p>
+
+            <p>
+                <strong>
+                    What does it mean for an entity to be intelligent?
+                </strong>
+            </p>
+
+            <button
+                class="start-button"
+                onclick="startMission()">
+                START MISSION →
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 1 — CLASSIFY ENTITIES
+         ===================================================== -->
+
+    <section id="screenEntities" class="screen">
+
+        <div class="card">
+
+            <h2>🕵️ Investigation 1</h2>
+
+            <p>
+                You are investigating six entities.
+            </p>
+
+            <p>
+                <strong>
+                    Which of these would you consider intelligent?
+                </strong>
+            </p>
+
+            <p>
+                Select all the entities that you think demonstrate
+                intelligence.
+            </p>
+
+
+            <div class="entities">
+
+                <div
+                    class="entity"
+                    onclick="toggleEntity(this)">
+                    <div class="entity-icon">🐕</div>
+                    <div class="entity-name">Dog</div>
+                </div>
+
+
+                <div
+                    class="entity"
+                    onclick="toggleEntity(this)">
+                    <div class="entity-icon">🧮</div>
+                    <div class="entity-name">Calculator</div>
+                </div>
+
+
+                <div
+                    class="entity"
+                    onclick="toggleEntity(this)">
+                    <div class="entity-icon">🤖</div>
+                    <div class="entity-name">AI System</div>
+                </div>
+
+
+                <div
+                    class="entity"
+                    onclick="toggleEntity(this)">
+                    <div class="entity-icon">🚗</div>
+                    <div class="entity-name">Autonomous Car</div>
+                </div>
+
+
+                <div
+                    class="entity"
+                    onclick="toggleEntity(this)">
+                    <div class="entity-icon">♟️</div>
+                    <div class="entity-name">Chess Program</div>
+                </div>
+
+
+                <div
+                    class="entity"
+                    onclick="toggleEntity(this)">
+                    <div class="entity-icon">👶</div>
+                    <div class="entity-name">Child</div>
+                </div>
+
+            </div>
+
+
+            <div class="action-area">
+
+                <button
+                    id="entityButton"
+                    class="action-button"
+                    onclick="evaluateEntities()"
+                    disabled>
+                    INVESTIGATE →
+                </button>
+
+            </div>
+
+
+            <div
+                id="entityFeedback"
+                class="feedback info">
+
+                <strong>Interesting...</strong>
+
+                <p>
+                    There is no single answer here that settles the
+                    question of intelligence.
+                </p>
+
+                <p>
+                    What counts as "intelligent" depends partly on
+                    <strong>how we define and evaluate intelligence</strong>.
+                </p>
+
+                <p>
+                    This is one reason why Artificial Intelligence is
+                    not simply about building machines that perform
+                    complicated calculations.
+                </p>
+
+            </div>
+
+
+            <div class="action-area">
+
+                <button
+                    id="continueButton"
+                    class="action-button"
+                    onclick="showPerspectives()"
+                    style="display:none;">
+                    CONTINUE →
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 2 — FOUR PERSPECTIVES
+         ===================================================== -->
+
+    <section id="screenPerspectives" class="screen">
+
+        <div class="card">
+
+            <h2>🧭 Investigation 2: Four perspectives</h2>
+
+            <p>
+                Your investigation has uncovered an important problem:
+                there are different ways of thinking about what an
+                intelligent machine should do.
+            </p>
+
+            <p>
+                The lecture organizes four foundations of AI around
+                two questions:
+            </p>
+
+            <ul>
+                <li>
+                    Are we concerned with <strong>thought</strong>
+                    or <strong>behavior</strong>?
+                </li>
+
+                <li>
+                    Should the machine behave
+                    <strong>humanly</strong> or
+                    <strong>rationally</strong>?
+                </li>
+            </ul>
+
+
+            <div class="perspectives">
+
+                <div class="perspective">
+
+                    <h3>🧠 Thinking humanly</h3>
+
+                    <p>
+                        The cognitive modeling approach asks whether
+                        a computer is thinking in ways similar to humans.
+                    </p>
+
+                </div>
+
+
+                <div class="perspective">
+
+                    <h3>💬 Acting humanly</h3>
+
+                    <p>
+                        The Turing Test approach asks whether a computer
+                        can behave in a way that is indistinguishable
+                        from a human in the relevant interaction.
+                    </p>
+
+                </div>
+
+
+                <div class="perspective">
+
+                    <h3>📐 Thinking rationally</h3>
+
+                    <p>
+                        The "laws of thought" approach is concerned
+                        with codifying correct reasoning.
+                    </p>
+
+                </div>
+
+
+                <div class="perspective">
+
+                    <h3>🎯 Acting rationally</h3>
+
+                    <p>
+                        The rational-agent approach focuses on agents
+                        acting to achieve the best outcome, or the best
+                        expected outcome under uncertainty.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="action-area">
+
+                <button
+                    class="action-button"
+                    onclick="showScenario()">
+                    NEXT INVESTIGATION →
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 3 — SCENARIO
+         ===================================================== -->
+
+    <section id="screenScenario" class="screen">
+
+        <div class="card">
+
+            <h2>🤖 Investigation 3: Meet the AI</h2>
+
+            <div class="scenario">
+
+                <strong>Scenario</strong>
+
+                <p>
+                    Imagine a computer system that plays chess.
+                </p>
+
+                <p>
+                    It does not necessarily think in the same way
+                    a human chess player thinks.
+                </p>
+
+                <p>
+                    However, it chooses moves that are intended to
+                    achieve the best possible result in the game.
+                </p>
+
+            </div>
+
+
+            <p>
+                Which perspective from the lecture best describes
+                this way of thinking about AI?
+            </p>
+
+
+            <div class="options">
+
+                <button
+                    class="option"
+                    onclick="answerScenario(this, false)">
+                    A. Thinking humanly
+                </button>
+
+                <button
+                    class="option"
+                    onclick="answerScenario(this, false)">
+                    B. Acting humanly
+                </button>
+
+                <button
+                    class="option"
+                    onclick="answerScenario(this, false)">
+                    C. Thinking rationally
+                </button>
+
+                <button
+                    class="option"
+                    onclick="answerScenario(this, true)">
+                    D. Acting rationally
+                </button>
+
+            </div>
+
+
+            <div
+                id="scenarioFeedback"
+                class="feedback">
+
+            </div>
+
+
+            <div class="action-area">
+
+                <button
+                    id="finishButton"
+                    class="action-button"
+                    onclick="finishMission()"
+                    style="display:none;">
+                    COMPLETE MISSION →
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SCREEN 4 — FINAL
+         ===================================================== -->
+
+    <section id="screenFinal" class="screen">
+
+        <div class="card final">
+
+            <div class="final-icon">
+                🏆
+            </div>
+
+            <h1>MISSION COMPLETE!</h1>
+
+            <p>
+                You have completed Mission 1 of AI Quest.
+            </p>
+
+            <div class="final-score">
+                <span id="finalScore">0</span> XP
+            </div>
+
+            <p>
+                You have investigated one of the fundamental questions
+                behind Artificial Intelligence:
+            </p>
+
+            <p>
+                <strong>
+                    What does it mean for a machine to be intelligent?
+                </strong>
+            </p>
+
+
+            <div class="feedback info"
+                 style="display:block; text-align:left;">
+
+                <strong>Key takeaway</strong>
+
+                <p>
+                    AI can be approached from different perspectives.
+                    Some approaches focus on thinking, others on acting;
+                    some compare machines with humans, while others
+                    focus on rational behavior.
+                </p>
+
+                <p>
+                    In the next missions, you will investigate how
+                    these different perspectives connect to the
+                    approaches and technologies used in AI.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+
+let score = 0;
+let selectedEntities = [];
+let missionStarted = false;
+
+
+/* =========================================================
+   SCREEN MANAGEMENT
+   ========================================================= */
+
+function showScreen(screenId) {
+
+    const screens = document.querySelectorAll(".screen");
+
+    screens.forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(screenId).classList.add("active");
+
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+function setProgress(value) {
+
+    document.getElementById("progressBar").style.width =
+        value + "%";
+
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+function startMission() {
+
+    missionStarted = true;
+
+    score = 0;
+
+    setProgress(15);
+
+    showScreen("screenEntities");
+
+}
+
+
+/* =========================================================
+   ENTITY SELECTION
+   ========================================================= */
+
+function toggleEntity(element) {
+
+    element.classList.toggle("selected");
+
+    const selected =
+        document.querySelectorAll(".entity.selected");
+
+    document.getElementById("entityButton").disabled =
+        selected.length === 0;
+
+}
+
+
+/* =========================================================
+   ENTITY EVALUATION
+   ========================================================= */
+
+function evaluateEntities() {
+
+    const selected =
+        document.querySelectorAll(".entity.selected");
+
+    selectedEntities = [];
+
+    selected.forEach(entity => {
+
+        selectedEntities.push(
+            entity.querySelector(".entity-name").innerText
+        );
+
+    });
+
+    /*
+     * This question intentionally does not have
+     * a single correct answer.
+     */
+
+    document
+        .getElementById("entityFeedback")
+        .classList.add("show");
+
+    document
+        .getElementById("continueButton")
+        .style.display = "inline-block";
+
+    score += 100;
+
+    setProgress(35);
+
+}
+
+
+/* =========================================================
+   FOUR PERSPECTIVES
+   ========================================================= */
+
+function showPerspectives() {
+
+    setProgress(55);
+
+    showScreen("screenPerspectives");
+
+}
+
+
+/* =========================================================
+   SCENARIO
+   ========================================================= */
+
+function showScenario() {
+
+    setProgress(70);
+
+    showScreen("screenScenario");
+
+}
+
+
+/* =========================================================
+   SCENARIO ANSWER
+   ========================================================= */
+
+function answerScenario(button, correct) {
+
+    const buttons =
+        document.querySelectorAll(".option");
+
+    buttons.forEach(b => {
+        b.disabled = true;
+    });
+
+
+    const feedback =
+        document.getElementById("scenarioFeedback");
+
+
+    if (correct) {
+
+        button.classList.add("correct");
+
+        score += 300;
+
+        feedback.className =
+            "feedback success show";
+
+        feedback.innerHTML = `
+            <strong>✓ Correct!</strong>
+
+            <p>
+                The lecture describes the
+                <strong>rational-agent approach</strong>
+                as focusing on agents that act to achieve
+                the best outcome, or the best expected outcome
+                when there is uncertainty.
+            </p>
+
+            <p>
+                The important idea is that the agent does not
+                necessarily have to think like a human.
+                The focus is on <strong>what it does</strong>
+                and whether its actions achieve the objective.
+            </p>
+        `;
+
+    }
+
+    else {
+
+        button.classList.add("incorrect");
+
+        score += 50;
+
+        feedback.className =
+            "feedback warning show";
+
+        feedback.innerHTML = `
+            <strong>Not quite.</strong>
+
+            <p>
+                Look at the wording carefully:
+                the scenario emphasizes choosing actions
+                that achieve the best outcome.
+            </p>
+
+            <p>
+                That corresponds to the
+                <strong>acting rationally</strong>
+                perspective.
+            </p>
+        `;
+
+    }
+
+
+    setProgress(90);
+
+    document
+        .getElementById("finishButton")
+        .style.display = "inline-block";
+
+}
+
+
+/* =========================================================
+   FINISH
+   ========================================================= */
+
+function finishMission() {
+
+    setProgress(100);
+
+    document
+        .getElementById("finalScore")
+        .innerText = score;
+
+    showScreen("screenFinal");
+
+}
+
+</script>
+
+</body>
+</html>
