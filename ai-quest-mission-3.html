@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Quest — Mission 3</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #eef2f5;
+        color: #2c3e50;
+    }
+
+    .game-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+    /* HEADER */
+
+    .quest-header {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 18px 22px;
+        border: 1px solid #e1e5e8;
+        margin-bottom: 20px;
+    }
+
+    .quest-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .quest-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .mission-number {
+        color: #666;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .progress-container {
+        margin-top: 14px;
+        height: 8px;
+        background: #dfe6eb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 60%;
+        background: #2c5275;
+        transition: width 0.4s ease;
+    }
+
+
+    /* MAIN CARD */
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .mission-icon {
+        font-size: 55px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 38px;
+        margin: 5px 0 10px;
+        color: #2c5275;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 21px;
+        color: #687782;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        font-size: 17px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+
+    /* START SCREEN */
+
+    .mission-question {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        margin: 25px 0;
+    }
+
+    .start-button {
+        display: block;
+        margin: 25px auto 0;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 7px;
+        background: #2c5275;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .start-button:hover {
+        background: #1f405c;
+    }
+
+
+    /* GAME */
+
+    .game-screen {
+        display: none;
+    }
+
+    .scenario-number {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .scenario {
+        font-size: 23px;
+        font-weight: bold;
+        line-height: 1.4;
+        margin-bottom: 25px;
+    }
+
+    .instruction {
+        color: #666;
+        margin-bottom: 18px;
+    }
+
+
+    /* ANSWERS */
+
+    .answer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .answer {
+        background: #f8f9fa;
+        border: 2px solid #dfe4e8;
+        border-radius: 8px;
+        padding: 18px;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s ease;
+    }
+
+    .answer:hover {
+        border-color: #2c5275;
+        background: #f1f6fa;
+    }
+
+    .answer strong {
+        display: block;
+        color: #2c5275;
+        margin-bottom: 6px;
+    }
+
+    .answer span {
+        color: #555;
+        line-height: 1.5;
+    }
+
+
+    /* FEEDBACK */
+
+    .feedback {
+        display: none;
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    .feedback.correct {
+        background: #e9f6ee;
+        border-left: 4px solid #3a8f5b;
+    }
+
+    .feedback.incorrect {
+        background: #fff1ef;
+        border-left: 4px solid #c75c4c;
+    }
+
+    .feedback-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .next-button {
+        display: none;
+        margin-top: 18px;
+        padding: 11px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #2c5275;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+
+    /* SCORE */
+
+    .score-screen {
+        display: none;
+        text-align: center;
+    }
+
+    .score-icon {
+        font-size: 65px;
+        margin-bottom: 10px;
+    }
+
+    .score {
+        font-size: 48px;
+        font-weight: bold;
+        color: #2c5275;
+        margin: 15px 0;
+    }
+
+    .score-message {
+        font-size: 18px;
+        color: #555;
+        line-height: 1.6;
+        max-width: 650px;
+        margin: auto;
+    }
+
+    .retry-button {
+        margin-top: 25px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        background: #2c5275;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+
+    /* FOOTER */
+
+    .takeaway {
+        background: #eaf3fb;
+        border-left: 4px solid #2c5275;
+        border-radius: 5px;
+        padding: 18px 20px;
+        line-height: 1.6;
+        color: #444;
+    }
+
+    .takeaway strong {
+        color: #2c5275;
+    }
+
+
+    @media (max-width: 650px) {
+
+        .card {
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .answer-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quest-header-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+    }
+
+</style>
+</head>
+
+
+<body>
+
+<div class="game-container">
+
+
+    <!-- HEADER -->
+
+    <div class="quest-header">
+
+        <div class="quest-header-top">
+
+            <div class="quest-title">
+                🧠 AI QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 3 / 5
+            </div>
+
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+    </div>
+
+
+
+    <!-- MAIN CARD -->
+
+    <div class="card">
+
+
+        <!-- START SCREEN -->
+
+        <div id="startScreen">
+
+            <div class="mission-icon">
+                🤖
+            </div>
+
+            <h1>
+                AI Approaches
+            </h1>
+
+            <div class="subtitle">
+                Mission 3: Solver or Learner?
+            </div>
+
+            <p class="intro">
+                Artificial Intelligence can be approached in different ways.
+                Some systems rely on knowledge and reasoning, while others
+                learn patterns from data.
+            </p>
+
+            <div class="mission-question">
+                Can you identify which approach fits the problem?
+            </div>
+
+            <button class="start-button" onclick="startMission()">
+                START MISSION →
+            </button>
+
+        </div>
+
+
+
+        <!-- GAME SCREEN -->
+
+        <div id="gameScreen" class="game-screen">
+
+            <div class="scenario-number" id="scenarioNumber">
+                Scenario 1 of 5
+            </div>
+
+            <div class="scenario" id="scenarioText"></div>
+
+            <div class="instruction">
+                Which approach best describes the system?
+            </div>
+
+            <div class="answer-grid">
+
+                <div class="answer" onclick="answer(0)">
+                    <strong>🧠 Knowledge &amp; Reasoning</strong>
+                    <span>
+                        The system relies primarily on explicit knowledge,
+                        rules, logic, or reasoning.
+                    </span>
+                </div>
+
+                <div class="answer" onclick="answer(1)">
+                    <strong>📊 Machine Learning</strong>
+                    <span>
+                        The system learns patterns or relationships from
+                        examples or data.
+                    </span>
+                </div>
+
+            </div>
+
+
+            <div id="feedback" class="feedback">
+
+                <div id="feedbackTitle" class="feedback-title"></div>
+
+                <div id="feedbackText"></div>
+
+                <button
+                    id="nextButton"
+                    class="next-button"
+                    onclick="nextQuestion()">
+                    NEXT SCENARIO →
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- SCORE SCREEN -->
+
+        <div id="scoreScreen" class="score-screen">
+
+            <div class="score-icon">
+                🎯
+            </div>
+
+            <h1>
+                Mission Complete!
+            </h1>
+
+            <div class="score" id="finalScore">
+                0 / 5
+            </div>
+
+            <p class="score-message" id="scoreMessage"></p>
+
+            <button class="retry-button" onclick="restartMission()">
+                TRY AGAIN
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- TAKEAWAY -->
+
+    <div class="takeaway">
+
+        <strong>💡 Mission takeaway</strong>
+
+        <p style="margin-bottom: 0;">
+            AI is not a single technique. Different problems can require
+            different approaches. Some systems rely on explicitly represented
+            knowledge and reasoning, while machine-learning systems learn
+            patterns from data.
+        </p>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+const scenarios = [
+
+    {
+        text:
+        "A medical expert writes a set of rules describing how particular symptoms and test results can support a diagnosis. The system uses those rules to reason about a patient's case.",
+
+        correct: 0,
+
+        explanation:
+        "Correct. This is primarily a knowledge-oriented approach: domain knowledge is explicitly represented as rules and the system reasons with that knowledge."
+    },
+
+    {
+        text:
+        "A system is shown thousands of images of cats and dogs. It learns patterns in the images and later predicts whether a new image contains a cat or a dog.",
+
+        correct: 1,
+
+        explanation:
+        "Correct. The system learns patterns from examples rather than relying on a manually written set of rules. This is a machine-learning approach."
+    },
+
+    {
+        text:
+        "A chess program uses a formal representation of the game and searches through possible moves to determine a good action.",
+
+        correct: 0,
+
+        explanation:
+        "Correct. This example emphasizes explicit representation and computational reasoning/search over possible actions."
+    },
+
+    {
+        text:
+        "A spam detector is trained using thousands of previously labelled emails. After training, it predicts whether a new email is likely to be spam.",
+
+        correct: 1,
+
+        explanation:
+        "Correct. The system learns from previously labelled examples and uses the learned patterns to classify new emails."
+    },
+
+    {
+        text:
+        "An AI system is given a collection of logical facts and rules about a problem. It derives new conclusions by applying the rules to the available knowledge.",
+
+        correct: 0,
+
+        explanation:
+        "Correct. The system is explicitly manipulating represented knowledge and deriving conclusions through reasoning."
+    }
+
+];
+
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+
+
+function startMission() {
+
+    document.getElementById("startScreen").style.display = "none";
+
+    document.getElementById("gameScreen").style.display = "block";
+
+    currentQuestion = 0;
+    score = 0;
+
+    updateProgress();
+
+    showQuestion();
+
+}
+
+
+
+function showQuestion() {
+
+    answered = false;
+
+    const scenario = scenarios[currentQuestion];
+
+    document.getElementById("scenarioNumber").innerText =
+        "Scenario " + (currentQuestion + 1) +
+        " of " + scenarios.length;
+
+    document.getElementById("scenarioText").innerText =
+        scenario.text;
+
+    document.getElementById("feedback").style.display = "none";
+
+    document.getElementById("nextButton").style.display = "none";
+
+    const answers = document.querySelectorAll(".answer");
+
+    answers.forEach(answer => {
+
+        answer.style.pointerEvents = "auto";
+
+        answer.style.borderColor = "#dfe4e8";
+
+        answer.style.backgroundColor = "#f8f9fa";
+
+    });
+
+}
+
+
+
+function answer(selected) {
+
+    if (answered) {
+        return;
+    }
+
+    answered = true;
+
+    const scenario = scenarios[currentQuestion];
+
+    const feedback = document.getElementById("feedback");
+
+    const feedbackTitle =
+        document.getElementById("feedbackTitle");
+
+    const feedbackText =
+        document.getElementById("feedbackText");
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+    const answers =
+        document.querySelectorAll(".answer");
+
+
+    answers.forEach(answer => {
+        answer.style.pointerEvents = "none";
+    });
+
+
+    if (selected === scenario.correct) {
+
+        score++;
+
+        feedback.className = "feedback correct";
+
+        feedbackTitle.innerText = "✓ Correct!";
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedbackTitle.innerText = "Not quite.";
+
+    }
+
+
+    feedbackText.innerText =
+        scenario.explanation;
+
+    feedback.style.display = "block";
+
+
+    if (currentQuestion < scenarios.length - 1) {
+
+        nextButton.style.display = "inline-block";
+
+    } else {
+
+        nextButton.innerText = "SEE YOUR RESULT →";
+
+        nextButton.style.display = "inline-block";
+
+    }
+
+}
+
+
+
+function nextQuestion() {
+
+    if (currentQuestion < scenarios.length - 1) {
+
+        currentQuestion++;
+
+        updateProgress();
+
+        showQuestion();
+
+    } else {
+
+        showScore();
+
+    }
+
+}
+
+
+
+function updateProgress() {
+
+    const progress =
+        ((currentQuestion) / scenarios.length) * 100;
+
+    document.getElementById("progressBar").style.width =
+        Math.max(progress, 10) + "%";
+
+}
+
+
+
+function showScore() {
+
+    document.getElementById("gameScreen").style.display = "none";
+
+    document.getElementById("scoreScreen").style.display = "block";
+
+    document.getElementById("progressBar").style.width = "100%";
+
+    document.getElementById("finalScore").innerText =
+        score + " / " + scenarios.length;
+
+
+    let message = "";
+
+    if (score === 5) {
+
+        message =
+            "Excellent! You can clearly distinguish between knowledge-oriented reasoning and data-driven machine-learning approaches.";
+
+    } else if (score >= 3) {
+
+        message =
+            "Good work! You have the basic distinction. Review the feedback from the scenarios where you were uncertain.";
+
+    } else {
+
+        message =
+            "This distinction is important for understanding AI. Review the lecture material and try the mission again.";
+
+    }
+
+
+    document.getElementById("scoreMessage").innerText =
+        message;
+
+}
+
+
+
+function restartMission() {
+
+    document.getElementById("scoreScreen").style.display = "none";
+
+    document.getElementById("startScreen").style.display = "block";
+
+    document.getElementById("progressBar").style.width = "60%";
+
+}
+
+</script>
+
+</body>
+</html>
