@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Quest — Mission 5</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #eef2f5;
+        color: #2c3e50;
+    }
+
+    .game-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .quest-header {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 18px 22px;
+        border: 1px solid #e1e5e8;
+        margin-bottom: 20px;
+    }
+
+    .quest-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .quest-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .mission-number {
+        color: #666;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .progress-container {
+        margin-top: 14px;
+        height: 8px;
+        background: #dfe6eb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 100%;
+        background: #2c5275;
+        transition: width 0.4s ease;
+    }
+
+
+    /* =========================
+       MAIN CARD
+       ========================= */
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .mission-icon {
+        font-size: 58px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 38px;
+        margin: 5px 0 10px;
+        color: #2c5275;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 21px;
+        color: #687782;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        font-size: 17px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+
+    /* =========================
+       START SCREEN
+       ========================= */
+
+    .mission-question {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        margin: 25px 0;
+    }
+
+    .start-button {
+        display: block;
+        margin: 25px auto 0;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 7px;
+        background: #2c5275;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .start-button:hover {
+        background: #1f405c;
+    }
+
+
+    /* =========================
+       GAME
+       ========================= */
+
+    .game-screen {
+        display: none;
+    }
+
+    .scenario-number {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .scenario {
+        font-size: 23px;
+        font-weight: bold;
+        line-height: 1.45;
+        margin-bottom: 20px;
+    }
+
+    .context-box {
+        background: #f5f8fa;
+        border-left: 4px solid #2c5275;
+        border-radius: 5px;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+        line-height: 1.6;
+    }
+
+    .context-title {
+        font-weight: bold;
+        color: #2c5275;
+        margin-bottom: 6px;
+    }
+
+    .instruction {
+        color: #666;
+        margin-bottom: 18px;
+    }
+
+
+    /* =========================
+       ANSWERS
+       ========================= */
+
+    .answer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .answer {
+        background: #f8f9fa;
+        border: 2px solid #dfe4e8;
+        border-radius: 8px;
+        padding: 18px;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s ease;
+    }
+
+    .answer:hover {
+        border-color: #2c5275;
+        background: #f1f6fa;
+    }
+
+    .answer strong {
+        display: block;
+        color: #2c5275;
+        margin-bottom: 7px;
+    }
+
+    .answer span {
+        color: #555;
+        line-height: 1.5;
+    }
+
+
+    /* =========================
+       FEEDBACK
+       ========================= */
+
+    .feedback {
+        display: none;
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    .feedback.correct {
+        background: #e9f6ee;
+        border-left: 4px solid #3a8f5b;
+    }
+
+    .feedback.incorrect {
+        background: #fff1ef;
+        border-left: 4px solid #c75c4c;
+    }
+
+    .feedback-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .next-button {
+        display: none;
+        margin-top: 18px;
+        padding: 11px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #2c5275;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+
+    /* =========================
+       FINAL SCORE
+       ========================= */
+
+    .score-screen {
+        display: none;
+        text-align: center;
+    }
+
+    .score-icon {
+        font-size: 70px;
+        margin-bottom: 10px;
+    }
+
+    .score {
+        font-size: 48px;
+        font-weight: bold;
+        color: #2c5275;
+        margin: 15px 0;
+    }
+
+    .score-message {
+        font-size: 18px;
+        color: #555;
+        line-height: 1.6;
+        max-width: 680px;
+        margin: auto;
+    }
+
+    .completion-box {
+        background: #eaf3fb;
+        border-left: 4px solid #2c5275;
+        border-radius: 5px;
+        padding: 18px;
+        margin-top: 25px;
+        text-align: left;
+        line-height: 1.6;
+    }
+
+    .retry-button {
+        margin-top: 25px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        background: #2c5275;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+
+    /* =========================
+       TAKEAWAY
+       ========================= */
+
+    .takeaway {
+        background: #eaf3fb;
+        border-left: 4px solid #2c5275;
+        border-radius: 5px;
+        padding: 18px 20px;
+        line-height: 1.6;
+        color: #444;
+    }
+
+    .takeaway strong {
+        color: #2c5275;
+    }
+
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 650px) {
+
+        .card {
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .answer-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quest-header-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+    }
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="game-container">
+
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="quest-header">
+
+        <div class="quest-header-top">
+
+            <div class="quest-title">
+                🧠 AI QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 5 / 5
+            </div>
+
+        </div>
+
+        <div class="progress-container">
+
+            <div
+                class="progress-bar"
+                id="progressBar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CARD
+         ========================= -->
+
+    <div class="card">
+
+
+        <!-- =====================
+             START SCREEN
+             ===================== -->
+
+        <div id="startScreen">
+
+            <div class="mission-icon">
+                ⚖️
+            </div>
+
+            <h1>
+                AI in the Real World
+            </h1>
+
+            <div class="subtitle">
+                Mission 5: The AI Advisor
+            </div>
+
+            <p class="intro">
+
+                AI systems can influence decisions about education,
+                healthcare, employment, finance, justice, and many
+                other areas of society.
+
+                When an AI system is deployed in the real world,
+                technical performance is only part of the story.
+
+            </p>
+
+            <div class="mission-question">
+
+                Can you identify what responsible AI requires?
+
+            </div>
+
+            <button
+                class="start-button"
+                onclick="startMission()">
+
+                START FINAL MISSION →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =====================
+             GAME SCREEN
+             ===================== -->
+
+        <div
+            id="gameScreen"
+            class="game-screen">
+
+            <div
+                class="scenario-number"
+                id="scenarioNumber">
+
+                Case 1 of 5
+
+            </div>
+
+
+            <div
+                class="scenario"
+                id="scenarioText">
+            </div>
+
+
+            <div
+                class="context-box">
+
+                <div class="context-title">
+                    🔎 What is happening?
+                </div>
+
+                <div id="contextText"></div>
+
+            </div>
+
+
+            <div class="instruction">
+
+                As the AI advisor, what should be the
+                most important consideration?
+
+            </div>
+
+
+            <div class="answer-grid">
+
+
+                <div
+                    class="answer"
+                    onclick="answer(0)">
+
+                    <strong id="answer0Title">
+                        Option A
+                    </strong>
+
+                    <span id="answer0Text"></span>
+
+                </div>
+
+
+                <div
+                    class="answer"
+                    onclick="answer(1)">
+
+                    <strong id="answer1Title">
+                        Option B
+                    </strong>
+
+                    <span id="answer1Text"></span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            <div
+                id="feedback"
+                class="feedback">
+
+                <div
+                    id="feedbackTitle"
+                    class="feedback-title">
+                </div>
+
+                <div
+                    id="feedbackText">
+                </div>
+
+                <button
+                    id="nextButton"
+                    class="next-button"
+                    onclick="nextQuestion()">
+
+                    NEXT CASE →
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =====================
+             SCORE SCREEN
+             ===================== -->
+
+        <div
+            id="scoreScreen"
+            class="score-screen">
+
+            <div class="score-icon">
+                🏆
+            </div>
+
+            <h1>
+                AI Quest Complete!
+            </h1>
+
+            <div
+                class="score"
+                id="finalScore">
+
+                0 / 5
+
+            </div>
+
+            <p
+                class="score-message"
+                id="scoreMessage">
+            </p>
+
+
+            <div class="completion-box">
+
+                <strong>
+                    🎓 You have completed the AI Quest!
+                </strong>
+
+                <p style="margin-bottom: 0;">
+
+                    You have explored what intelligence means,
+                    travelled through the history of AI, compared
+                    different AI approaches, reasoned about
+                    intelligent agents, and considered the
+                    societal implications of AI.
+
+                </p>
+
+            </div>
+
+
+            <button
+                class="retry-button"
+                onclick="restartMission()">
+
+                PLAY AGAIN
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         TAKEAWAY
+         ========================= -->
+
+    <div class="takeaway">
+
+        <strong>
+            💡 Final mission takeaway
+        </strong>
+
+        <p style="margin-bottom: 0;">
+
+            Building AI is not only about making systems
+            technically capable. AI systems operate in
+            social contexts and can affect people's lives.
+            Responsible AI therefore requires attention to
+            issues such as fairness, accountability,
+            transparency, safety, privacy, and the
+            consequences of deployment.
+
+        </p>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ==========================================
+   CASES
+   ========================================== */
+
+const cases = [
+
+    {
+
+        scenario:
+            "A university wants to use an AI system to help "
+            + "identify students who may need additional academic support.",
+
+        context:
+            "The system has been trained using historical student data. "
+            + "The university discovers that its predictions are "
+            + "substantially less accurate for one group of students.",
+
+        answerA:
+            "Deploy the system anyway because its overall accuracy "
+            + "is high.",
+
+        answerB:
+            "Investigate the difference in performance and assess "
+            + "whether the system could unfairly disadvantage "
+            + "the affected students.",
+
+        correct: 1,
+
+        explanation:
+            "Correct. Overall accuracy does not tell the whole story. "
+            + "When an AI system affects people, differences in "
+            + "performance across groups can raise important fairness "
+            + "and accountability concerns."
+    },
+
+
+    {
+
+        scenario:
+            "A hospital is considering an AI system that predicts "
+            + "which patients may require additional medical attention.",
+
+        context:
+            "The system performs well in testing, but doctors cannot "
+            + "easily understand why it produces some of its predictions.",
+
+        answerA:
+            "Deploy it immediately because its predictive accuracy "
+            + "is the only important property.",
+
+        answerB:
+            "Consider whether the system provides sufficient "
+            + "information, oversight, and safeguards for its "
+            + "intended medical use.",
+
+        correct: 1,
+
+        explanation:
+            "Correct. High predictive performance is important, "
+            + "but high-impact applications also require appropriate "
+            + "human oversight, safety considerations, and understanding "
+            + "of the system's limitations."
+    },
+
+
+    {
+
+        scenario:
+            "A company wants to use an AI system to screen job "
+            + "applications and rank candidates.",
+
+        context:
+            "The system was trained using historical hiring decisions. "
+            + "Those historical decisions may themselves contain "
+            + "patterns of human bias.",
+
+        answerA:
+            "Assume the system is objective because the decision "
+            + "is made by a computer.",
+
+        answerB:
+            "Examine the training data and evaluate whether the "
+            + "system could reproduce or amplify problematic patterns.",
+
+        correct: 1,
+
+        explanation:
+            "Correct. AI systems can learn patterns present in "
+            + "historical data. Using an algorithm does not automatically "
+            + "make a decision fair or unbiased."
+    },
+
+
+    {
+
+        scenario:
+            "A financial institution wants to use AI to determine "
+            + "which customers should receive a loan.",
+
+        context:
+            "The AI system makes decisions automatically and "
+            + "customers may be significantly affected by the outcome.",
+
+        answerA:
+            "Allow the system to make all decisions automatically "
+            + "without monitoring because automation is the goal.",
+
+        answerB:
+            "Establish appropriate oversight, monitoring, and "
+            + "procedures for reviewing potentially problematic decisions.",
+
+        correct: 1,
+
+        explanation:
+            "Correct. When AI systems make consequential decisions, "
+            + "accountability and appropriate human oversight are "
+            + "important parts of responsible deployment."
+    },
+
+
+    {
+
+        scenario:
+            "A city wants to introduce an AI system to help "
+            + "allocate public resources more efficiently.",
+
+        context:
+            "The system could improve efficiency, but citizens "
+            + "want to understand how decisions are made and "
+            + "what information is being used.",
+
+        answerA:
+            "Focus only on improving efficiency and avoid discussing "
+            + "the system with the public.",
+
+        answerB:
+            "Consider transparency, accountability, privacy, "
+            + "fairness, and the broader consequences of deployment.",
+
+        correct: 1,
+
+        explanation:
+            "Correct. AI deployed in society can affect many "
+            + "stakeholders. Technical performance should therefore "
+            + "be considered together with broader social, ethical, "
+            + "and governance concerns."
+    }
+
+];
+
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let answered = false;
+
+
+
+/* ==========================================
+   START MISSION
+   ========================================== */
+
+function startMission() {
+
+    document.getElementById("startScreen").style.display =
+        "none";
+
+    document.getElementById("gameScreen").style.display =
+        "block";
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    updateProgress();
+
+    showQuestion();
+
+}
+
+
+
+/* ==========================================
+   SHOW CASE
+   ========================================== */
+
+function showQuestion() {
+
+    answered = false;
+
+    const currentCase =
+        cases[currentQuestion];
+
+
+    document.getElementById("scenarioNumber").innerText =
+
+        "Case " +
+        (currentQuestion + 1) +
+        " of " +
+        cases.length;
+
+
+    document.getElementById("scenarioText").innerText =
+
+        currentCase.scenario;
+
+
+    document.getElementById("contextText").innerText =
+
+        currentCase.context;
+
+
+    document.getElementById("answer0Text").innerText =
+
+        currentCase.answerA;
+
+
+    document.getElementById("answer1Text").innerText =
+
+        currentCase.answerB;
+
+
+    document.getElementById("feedback").style.display =
+        "none";
+
+
+    document.getElementById("nextButton").style.display =
+        "none";
+
+
+    document.getElementById("nextButton").innerText =
+        "NEXT CASE →";
+
+
+    const answers =
+        document.querySelectorAll(".answer");
+
+
+    answers.forEach(answer => {
+
+        answer.style.pointerEvents =
+            "auto";
+
+        answer.style.borderColor =
+            "#dfe4e8";
+
+        answer.style.backgroundColor =
+            "#f8f9fa";
+
+    });
+
+}
+
+
+
+/* ==========================================
+   ANSWER
+   ========================================== */
+
+function answer(selected) {
+
+    if (answered) {
+        return;
+    }
+
+    answered = true;
+
+
+    const currentCase =
+        cases[currentQuestion];
+
+
+    const feedback =
+        document.getElementById("feedback");
+
+
+    const feedbackTitle =
+        document.getElementById("feedbackTitle");
+
+
+    const feedbackText =
+        document.getElementById("feedbackText");
+
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+
+    const answers =
+        document.querySelectorAll(".answer");
+
+
+    answers.forEach(answer => {
+
+        answer.style.pointerEvents =
+            "none";
+
+    });
+
+
+    if (selected === currentCase.correct) {
+
+        score++;
+
+        feedback.className =
+            "feedback correct";
+
+        feedbackTitle.innerText =
+            "✓ Good decision!";
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedbackTitle.innerText =
+            "Think again.";
+
+    }
+
+
+    feedbackText.innerText =
+        currentCase.explanation;
+
+
+    feedback.style.display =
+        "block";
+
+
+    if (currentQuestion <
+        cases.length - 1) {
+
+        nextButton.style.display =
+            "inline-block";
+
+    }
+
+    else {
+
+        nextButton.innerText =
+            "COMPLETE AI QUEST →";
+
+        nextButton.style.display =
+            "inline-block";
+
+    }
+
+}
+
+
+
+/* ==========================================
+   NEXT CASE
+   ========================================== */
+
+function nextQuestion() {
+
+    if (currentQuestion <
+        cases.length - 1) {
+
+        currentQuestion++;
+
+        updateProgress();
+
+        showQuestion();
+
+    }
+
+    else {
+
+        showScore();
+
+    }
+
+}
+
+
+
+/* ==========================================
+   PROGRESS
+   ========================================== */
+
+function updateProgress() {
+
+    const progress =
+
+        ((currentQuestion + 1) /
+        cases.length) * 100;
+
+
+    document.getElementById("progressBar").style.width =
+
+        progress + "%";
+
+}
+
+
+
+/* ==========================================
+   SCORE
+   ========================================== */
+
+function showScore() {
+
+    document.getElementById("gameScreen").style.display =
+        "none";
+
+    document.getElementById("scoreScreen").style.display =
+        "block";
+
+
+    document.getElementById("progressBar").style.width =
+        "100%";
+
+
+    document.getElementById("finalScore").innerText =
+
+        score +
+        " / " +
+        cases.length;
+
+
+    let message = "";
+
+
+    if (score === 5) {
+
+        message =
+
+            "Outstanding! You successfully identified "
+            + "important considerations for responsible AI "
+            + "deployment. You are ready to think beyond "
+            + "AI's technical capabilities and consider "
+            + "its impact on people and society.";
+
+    }
+
+    else if (score >= 3) {
+
+        message =
+
+            "Well done! You have identified several important "
+            + "issues surrounding AI in society. Remember that "
+            + "responsible AI requires more than technical "
+            + "performance.";
+
+    }
+
+    else {
+
+        message =
+
+            "The key lesson is that deploying AI in the real "
+            + "world involves more than achieving good technical "
+            + "performance. Consider fairness, accountability, "
+            + "transparency, safety, privacy, and the consequences "
+            + "for people and society.";
+
+    }
+
+
+    document.getElementById("scoreMessage").innerText =
+        message;
+
+}
+
+
+
+/* ==========================================
+   RESTART
+   ========================================== */
+
+function restartMission() {
+
+    document.getElementById("scoreScreen").style.display =
+        "none";
+
+    document.getElementById("startScreen").style.display =
+        "block";
+
+    document.getElementById("progressBar").style.width =
+        "100%";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
