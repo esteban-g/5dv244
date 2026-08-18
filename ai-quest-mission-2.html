@@ -1,0 +1,1938 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>AI Quest - Mission 2</title>
+
+
+<style>
+
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f2f5f8;
+
+    color: #263746;
+}
+
+button {
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   GAME CONTAINER
+   ========================================================= */
+
+.game-container {
+
+    max-width: 950px;
+
+    margin: 0 auto;
+
+    padding:
+        25px
+        20px
+        50px;
+}
+
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+}
+
+.quest-title {
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    color: #294c6b;
+}
+
+.mission-label {
+
+    font-size: 14px;
+
+    color: #6b7785;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+   ========================================================= */
+
+.progress-container {
+
+    width: 100%;
+
+    height: 8px;
+
+    background: #dce3e9;
+
+    border-radius: 10px;
+
+    margin-bottom: 30px;
+
+    overflow: hidden;
+}
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 0%;
+
+    background: #315a7d;
+
+    border-radius: 10px;
+
+    transition:
+        width 0.5s ease;
+}
+
+
+/* =========================================================
+   SCREENS
+   ========================================================= */
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+
+/* =========================================================
+   INTRO
+   ========================================================= */
+
+.intro {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding:
+        60px
+        35px;
+
+    text-align: center;
+
+    box-shadow:
+        0 4px 18px
+        rgba(0,0,0,0.08);
+}
+
+.intro-icon {
+
+    font-size: 70px;
+
+    margin-bottom: 15px;
+}
+
+.intro h1 {
+
+    margin:
+        5px
+        0;
+
+    font-size: 42px;
+
+    color: #294c6b;
+}
+
+.intro h2 {
+
+    margin:
+        8px
+        0
+        25px;
+
+    font-size: 22px;
+
+    font-weight: normal;
+
+    color: #687784;
+}
+
+.intro p {
+
+    max-width: 680px;
+
+    margin:
+        0
+        auto
+        18px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: #52616d;
+}
+
+.start-button {
+
+    margin-top: 15px;
+
+    background: #294c6b;
+
+    color: white;
+
+    border: none;
+
+    padding:
+        15px
+        32px;
+
+    border-radius: 8px;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s,
+        background 0.15s;
+}
+
+.start-button:hover {
+
+    background: #1f3c55;
+
+    transform:
+        translateY(-2px);
+}
+
+
+/* =========================================================
+   CARD
+   ========================================================= */
+
+.card {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 32px;
+
+    box-shadow:
+        0 4px 18px
+        rgba(0,0,0,0.07);
+
+    margin-bottom: 20px;
+}
+
+.card h2 {
+
+    margin-top: 0;
+
+    color: #294c6b;
+}
+
+.card p {
+
+    line-height: 1.7;
+
+    color: #52616d;
+}
+
+
+/* =========================================================
+   TIME MACHINE
+   ========================================================= */
+
+.time-machine {
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef4f8,
+            #f9fbfc
+        );
+
+    border-radius: 12px;
+
+    padding: 22px;
+
+    margin:
+        25px
+        0;
+}
+
+.time-machine-title {
+
+    text-align: center;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #52616d;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+.timeline {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   EVENT CARD
+   ========================================================= */
+
+.event {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 15px;
+
+    background: white;
+
+    border:
+        2px solid
+        #dce3e9;
+
+    border-radius: 10px;
+
+    padding: 15px;
+
+    cursor: grab;
+
+    transition:
+        transform 0.15s,
+        box-shadow 0.15s,
+        border-color 0.15s;
+}
+
+.event:hover {
+
+    transform:
+        translateX(3px);
+
+    border-color: #8fa9bc;
+
+    box-shadow:
+        0 3px 10px
+        rgba(0,0,0,0.08);
+}
+
+.event.dragging {
+
+    opacity: 0.45;
+}
+
+.drag-handle {
+
+    font-size: 22px;
+
+    color: #8a99a5;
+
+    cursor: grab;
+}
+
+.event-content {
+
+    flex: 1;
+}
+
+.event-title {
+
+    font-weight: bold;
+
+    color: #294c6b;
+
+    margin-bottom: 4px;
+}
+
+.event-description {
+
+    font-size: 14px;
+
+    line-height: 1.4;
+
+    color: #63717c;
+}
+
+
+/* =========================================================
+   YEAR BADGE
+   ========================================================= */
+
+.year-badge {
+
+    min-width: 72px;
+
+    padding:
+        8px
+        10px;
+
+    border-radius: 7px;
+
+    background: #eaf1f6;
+
+    color: #294c6b;
+
+    font-weight: bold;
+
+    text-align: center;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   INSTRUCTIONS
+   ========================================================= */
+
+.instructions {
+
+    background: #edf4f8;
+
+    border-left:
+        4px solid
+        #315a7d;
+
+    padding:
+        15px
+        18px;
+
+    border-radius: 5px;
+
+    margin:
+        20px
+        0;
+
+    line-height: 1.6;
+
+    color: #52616d;
+}
+
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.action-area {
+
+    text-align: center;
+
+    margin-top: 28px;
+}
+
+.action-button {
+
+    background: #315a7d;
+
+    color: white;
+
+    border: none;
+
+    padding:
+        13px
+        28px;
+
+    border-radius: 7px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.15s;
+}
+
+.action-button:hover {
+
+    background: #244a68;
+}
+
+.action-button:disabled {
+
+    background: #b8c3cc;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FEEDBACK
+   ========================================================= */
+
+.feedback {
+
+    margin-top: 25px;
+
+    padding: 20px;
+
+    border-radius: 9px;
+
+    display: none;
+
+    line-height: 1.7;
+}
+
+.feedback.show {
+
+    display: block;
+}
+
+.feedback.success {
+
+    background: #edf6ef;
+
+    border-left:
+        4px solid
+        #4d7c57;
+}
+
+.feedback.warning {
+
+    background: #fff7e5;
+
+    border-left:
+        4px solid
+        #d49a2a;
+}
+
+.feedback.info {
+
+    background: #edf4f8;
+
+    border-left:
+        4px solid
+        #315a7d;
+}
+
+
+/* =========================================================
+   REVEALED TIMELINE
+   ========================================================= */
+
+.revealed-event {
+
+    display: flex;
+
+    gap: 15px;
+
+    align-items: flex-start;
+
+    padding:
+        15px
+        0;
+
+    border-bottom:
+        1px solid
+        #e1e6ea;
+}
+
+.revealed-event:last-child {
+
+    border-bottom: none;
+}
+
+.revealed-year {
+
+    min-width: 65px;
+
+    font-weight: bold;
+
+    color: #315a7d;
+}
+
+.revealed-content {
+
+    flex: 1;
+}
+
+.revealed-content strong {
+
+    color: #294c6b;
+}
+
+
+/* =========================================================
+   SCORE
+   ========================================================= */
+
+.score-box {
+
+    text-align: center;
+
+    margin-top: 25px;
+
+    font-size: 18px;
+
+    color: #52616d;
+}
+
+.score-number {
+
+    font-size: 32px;
+
+    font-weight: bold;
+
+    color: #294c6b;
+}
+
+
+/* =========================================================
+   FINAL
+   ========================================================= */
+
+.final {
+
+    text-align: center;
+}
+
+.final-icon {
+
+    font-size: 70px;
+}
+
+.final h1 {
+
+    color: #294c6b;
+}
+
+.final-score {
+
+    font-size: 48px;
+
+    font-weight: bold;
+
+    color: #315a7d;
+
+    margin:
+        20px
+        0;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .event {
+
+        align-items: flex-start;
+
+    }
+
+    .year-badge {
+
+        min-width: 60px;
+
+        font-size: 12px;
+    }
+
+    .intro h1 {
+
+        font-size: 32px;
+    }
+
+}
+
+@media (max-width: 450px) {
+
+    .game-container {
+
+        padding:
+            15px
+            10px
+            40px;
+    }
+
+    .card {
+
+        padding: 22px;
+    }
+
+    .event {
+
+        flex-direction: column;
+
+        gap: 8px;
+    }
+
+}
+
+
+/* =========================================================
+   CELEBRATION
+   ========================================================= */
+
+.celebration {
+
+    font-size: 45px;
+
+    margin:
+        15px
+        0;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game-container">
+
+
+<!-- =======================================================
+     TOP BAR
+     ======================================================= -->
+
+<div class="topbar">
+
+    <div class="quest-title">
+        🧠 AI QUEST
+    </div>
+
+    <div class="mission-label">
+        Mission 2 / 5
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     PROGRESS
+     ======================================================= -->
+
+<div class="progress-container">
+
+    <div
+        id="progressBar"
+        class="progress-bar">
+    </div>
+
+</div>
+
+
+<!-- =======================================================
+     INTRO
+     ======================================================= -->
+
+<section
+    id="screenIntro"
+    class="screen active">
+
+
+    <div class="intro">
+
+
+        <div class="intro-icon">
+            🕰️
+        </div>
+
+
+        <h1>
+            AI QUEST
+        </h1>
+
+
+        <h2>
+            Mission 2: The AI Time Machine
+        </h2>
+
+
+        <p>
+            Artificial Intelligence did not appear overnight.
+        </p>
+
+
+        <p>
+            Ideas about computation, reasoning,
+            intelligent machines and human-like behaviour
+            developed over many decades.
+        </p>
+
+
+        <p>
+
+            Your mission is to reconstruct part of
+            the history of AI.
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Can you put the milestones in the correct order?
+            </strong>
+
+        </p>
+
+
+        <button
+            class="start-button"
+            onclick="startMission()">
+
+            ENTER THE TIME MACHINE →
+
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     SCREEN 1 — TIMELINE PUZZLE
+     ======================================================= -->
+
+<section
+    id="screenTimeline"
+    class="screen">
+
+
+    <div class="card">
+
+
+        <h2>
+            🕰️ Mission 2: Repair the Timeline
+        </h2>
+
+
+        <p>
+
+            The AI Time Machine has malfunctioned!
+
+            The historical events are out of order.
+
+        </p>
+
+
+        <div class="instructions">
+
+            <strong>Your mission:</strong>
+
+            Drag the events into chronological order,
+            from the <strong>earliest</strong> to the
+            <strong>most recent</strong>.
+
+            <br><br>
+
+            Don't worry if you don't remember every date.
+            Use your knowledge from the lecture and reason
+            about which developments must have happened first.
+
+        </div>
+
+
+        <div class="time-machine">
+
+
+            <div class="time-machine-title">
+
+                ⏳ DRAG THE EVENTS INTO CHRONOLOGICAL ORDER
+
+            </div>
+
+
+            <div
+                id="timeline"
+                class="timeline">
+
+
+                <!-- EVENT 1 -->
+
+                <div
+                    class="event"
+                    draggable="true"
+                    data-year="1950">
+
+                    <div class="drag-handle">
+                        ☷
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-title">
+
+                            The Turing Test
+
+                        </div>
+
+                        <div class="event-description">
+
+                            Alan Turing proposes a test based
+                            on whether a machine can communicate
+                            in a way that makes it difficult to
+                            distinguish it from a human.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EVENT 2 -->
+
+                <div
+                    class="event"
+                    draggable="true"
+                    data-year="1956">
+
+                    <div class="drag-handle">
+                        ☷
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-title">
+
+                            The Dartmouth Conference
+
+                        </div>
+
+                        <div class="event-description">
+
+                            A landmark meeting associated with
+                            the emergence of Artificial Intelligence
+                            as a research field.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EVENT 3 -->
+
+                <div
+                    class="event"
+                    draggable="true"
+                    data-year="1957">
+
+                    <div class="drag-handle">
+                        ☷
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-title">
+
+                            The Perceptron
+
+                        </div>
+
+                        <div class="event-description">
+
+                            An early neural-network model is
+                            introduced, representing an important
+                            milestone in machine learning and
+                            neural computation.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EVENT 4 -->
+
+                <div
+                    class="event"
+                    draggable="true"
+                    data-year="1966">
+
+                    <div class="drag-handle">
+                        ☷
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-title">
+
+                            ELIZA
+
+                        </div>
+
+                        <div class="event-description">
+
+                            An early natural-language conversation
+                            program demonstrates how computers can
+                            interact with people using language.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EVENT 5 -->
+
+                <div
+                    class="event"
+                    draggable="true"
+                    data-year="1970">
+
+                    <div class="drag-handle">
+                        ☷
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-title">
+
+                            Expert Systems
+
+                        </div>
+
+                        <div class="event-description">
+
+                            Knowledge-based AI systems become an
+                            important approach to solving problems
+                            using encoded expert knowledge.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EVENT 6 -->
+
+                <div
+                    class="event"
+                    draggable="true"
+                    data-year="1997">
+
+                    <div class="drag-handle">
+                        ☷
+                    </div>
+
+                    <div class="event-content">
+
+                        <div class="event-title">
+
+                            Deep Blue defeats Kasparov
+
+                        </div>
+
+                        <div class="event-description">
+
+                            IBM's chess-playing computer defeats
+                            world chess champion Garry Kasparov,
+                            becoming a famous milestone in AI.
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="action-area">
+
+            <button
+                id="checkButton"
+                class="action-button"
+                onclick="checkTimeline()">
+
+                CHECK MY TIMELINE →
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="timelineFeedback"
+            class="feedback">
+
+        </div>
+
+
+        <div
+            id="revealedTimeline"
+            style="display:none;">
+
+        </div>
+
+
+        <div class="action-area">
+
+            <button
+                id="continueButton"
+                class="action-button"
+                onclick="showReflection()"
+                style="display:none;">
+
+                CONTINUE →
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     SCREEN 2 — REFLECTION
+     ======================================================= -->
+
+<section
+    id="screenReflection"
+    class="screen">
+
+
+    <div class="card">
+
+
+        <h2>
+            🔎 Investigation: What changed?
+        </h2>
+
+
+        <p>
+
+            Look at the timeline you just reconstructed.
+
+        </p>
+
+
+        <p>
+
+            Notice that AI history is not simply a story
+            of one technology becoming increasingly powerful.
+
+            Different ideas and approaches have appeared,
+            disappeared, and re-emerged.
+
+        </p>
+
+
+        <div class="feedback info"
+             style="display:block;">
+
+            <strong>
+                One important lesson
+            </strong>
+
+            <p>
+
+                The history of AI includes different approaches
+                to creating intelligent systems.
+
+            </p>
+
+            <p>
+
+                Some approaches focus on representing knowledge
+                and reasoning, while others focus on learning
+                from data.
+
+            </p>
+
+            <p>
+
+                Your lecture later summarizes these as
+                <strong>knowledge-oriented mechanisms
+                ("solvers")</strong> and
+                <strong>machine-learning mechanisms
+                ("learners")</strong>. :contentReference[oaicite:2]{index=2}
+
+            </p>
+
+        </div>
+
+
+        <div class="scenario"
+             style="
+             background:#f5f8fa;
+             border-left:4px solid #315a7d;
+             padding:20px;
+             margin-top:25px;
+             border-radius:8px;
+             ">
+
+            <strong>
+                🧠 Think about this:
+            </strong>
+
+            <p>
+
+                If an AI system can perform a task very well,
+                does that necessarily mean that it thinks
+                like a human?
+
+            </p>
+
+            <p>
+
+                Or could it be using a completely different
+                mechanism to achieve the same result?
+
+            </p>
+
+        </div>
+
+
+        <div class="action-area">
+
+            <button
+                class="action-button"
+                onclick="finishMission()">
+
+                COMPLETE MISSION →
+
+            </button>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =======================================================
+     SCREEN 3 — FINAL
+     ======================================================= -->
+
+<section
+    id="screenFinal"
+    class="screen">
+
+
+    <div class="card final">
+
+
+        <div class="celebration">
+            ⏳✨🧠
+        </div>
+
+
+        <h1>
+            MISSION COMPLETE!
+        </h1>
+
+
+        <p>
+
+            You repaired the AI Time Machine.
+
+        </p>
+
+
+        <div class="final-score">
+
+            <span id="finalScore">
+                0
+            </span>
+
+            XP
+
+        </div>
+
+
+        <div
+            class="feedback info"
+            style="
+            display:block;
+            text-align:left;
+            ">
+
+
+            <strong>
+                🧠 Key takeaway
+            </strong>
+
+
+            <p>
+
+                AI has a long and diverse history.
+
+                The field has developed through different
+                ideas about computation, reasoning, learning,
+                language and intelligent behaviour.
+
+            </p>
+
+
+            <p>
+
+                The timeline in the lecture is deliberately
+                simplified and biased. It does not represent
+                the complete history of AI.
+
+            </p>
+
+
+            <p>
+
+                In particular, your lecture points out that
+                important figures such as
+                <strong>Charles Babbage</strong> and
+                <strong>Ada Lovelace</strong> are missing,
+                and that the timeline does not adequately
+                represent the more recent development of
+                <strong>Human-Computer Interaction</strong>
+                and <strong>Human-AI Interaction</strong>.
+                :contentReference[oaicite:3]{index=3}
+
+            </p>
+
+
+            <p>
+
+                So don't think of the timeline as
+                <em>the</em> history of AI.
+
+                Think of it as one useful way of organizing
+                some important milestones.
+
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+
+let score = 0;
+
+
+/* =========================================================
+   SCREEN MANAGEMENT
+   ========================================================= */
+
+function showScreen(screenId) {
+
+    const screens =
+        document.querySelectorAll(".screen");
+
+    screens.forEach(screen => {
+
+        screen.classList.remove("active");
+
+    });
+
+    document
+        .getElementById(screenId)
+        .classList.add("active");
+
+}
+
+
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+function setProgress(value) {
+
+    document
+        .getElementById("progressBar")
+        .style.width = value + "%";
+
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+function startMission() {
+
+    score = 0;
+
+    setProgress(15);
+
+    showScreen("screenTimeline");
+
+}
+
+
+/* =========================================================
+   DRAG AND DROP
+   ========================================================= */
+
+let draggedElement = null;
+
+
+function setupDragAndDrop() {
+
+    const events =
+        document.querySelectorAll(".event");
+
+
+    events.forEach(event => {
+
+
+        event.addEventListener(
+            "dragstart",
+            function() {
+
+                draggedElement = this;
+
+                this.classList.add("dragging");
+
+            }
+        );
+
+
+        event.addEventListener(
+            "dragend",
+            function() {
+
+                this.classList.remove("dragging");
+
+                draggedElement = null;
+
+            }
+        );
+
+
+        event.addEventListener(
+            "dragover",
+            function(e) {
+
+                e.preventDefault();
+
+            }
+        );
+
+
+        event.addEventListener(
+            "drop",
+            function(e) {
+
+                e.preventDefault();
+
+
+                if (
+                    draggedElement &&
+                    draggedElement !== this
+                ) {
+
+                    const timeline =
+                        document.getElementById(
+                            "timeline"
+                        );
+
+
+                    const allEvents =
+                        [...timeline.children];
+
+
+                    const draggedIndex =
+                        allEvents.indexOf(
+                            draggedElement
+                        );
+
+                    const targetIndex =
+                        allEvents.indexOf(this);
+
+
+                    if (
+                        draggedIndex <
+                        targetIndex
+                    ) {
+
+                        timeline.insertBefore(
+                            draggedElement,
+                            this.nextSibling
+                        );
+
+                    } else {
+
+                        timeline.insertBefore(
+                            draggedElement,
+                            this
+                        );
+
+                    }
+
+                }
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   CHECK TIMELINE
+   ========================================================= */
+
+function checkTimeline() {
+
+    const events =
+        document.querySelectorAll(
+            "#timeline .event"
+        );
+
+
+    const years =
+        [...events].map(
+            event =>
+                parseInt(
+                    event.dataset.year
+                )
+        );
+
+
+    const sortedYears =
+        [...years].sort(
+            (a,b) => a - b
+        );
+
+
+    let correctPositions = 0;
+
+
+    years.forEach(
+        (year, index) => {
+
+            if (
+                year ===
+                sortedYears[index]
+            ) {
+
+                correctPositions++;
+
+            }
+
+        }
+    );
+
+
+    const feedback =
+        document.getElementById(
+            "timelineFeedback"
+        );
+
+
+    if (correctPositions === years.length) {
+
+        score = 500;
+
+
+        feedback.className =
+            "feedback success show";
+
+
+        feedback.innerHTML = `
+
+            <strong>
+                🎉 Perfect timeline!
+            </strong>
+
+            <p>
+                You reconstructed all six milestones
+                in the correct chronological order.
+            </p>
+
+            <p>
+                <strong>+500 XP</strong>
+            </p>
+
+        `;
+
+    }
+
+    else if (correctPositions >= 4) {
+
+        score = 350;
+
+
+        feedback.className =
+            "feedback success show";
+
+
+        feedback.innerHTML = `
+
+            <strong>
+                👍 Very close!
+            </strong>
+
+            <p>
+                You placed
+                <strong>
+                    ${correctPositions}
+                </strong>
+                of the six milestones
+                in the correct position.
+            </p>
+
+            <p>
+                Check the historical sequence again.
+                Then compare your ordering with the
+                revealed timeline below.
+            </p>
+
+            <p>
+                <strong>+350 XP</strong>
+            </p>
+
+        `;
+
+    }
+
+    else {
+
+        score = 200;
+
+
+        feedback.className =
+            "feedback warning show";
+
+
+        feedback.innerHTML = `
+
+            <strong>
+                🕰️ The Time Machine is still unstable!
+            </strong>
+
+            <p>
+                You have
+                <strong>
+                    ${correctPositions}
+                </strong>
+                milestones in the correct position.
+            </p>
+
+            <p>
+                Don't worry — the purpose of this mission
+                is to reason about the development of AI,
+                not to memorize a list of dates.
+            </p>
+
+            <p>
+                The correct timeline is revealed below.
+            </p>
+
+            <p>
+                <strong>+200 XP</strong>
+            </p>
+
+        `;
+
+    }
+
+
+    revealTimeline();
+
+
+    document
+        .getElementById("checkButton")
+        .style.display = "none";
+
+
+    document
+        .getElementById("continueButton")
+        .style.display =
+            "inline-block";
+
+
+    setProgress(65);
+
+}
+
+
+/* =========================================================
+   REVEAL CORRECT TIMELINE
+   ========================================================= */
+
+function revealTimeline() {
+
+    const container =
+        document.getElementById(
+            "revealedTimeline"
+        );
+
+
+    container.style.display = "block";
+
+
+    container.innerHTML = `
+
+        <div
+            class="feedback info"
+            style="display:block;">
+
+            <strong>
+                🕰️ The AI Timeline
+            </strong>
+
+
+            <div class="revealed-event">
+
+                <div class="revealed-year">
+                    1950
+                </div>
+
+                <div class="revealed-content">
+
+                    <strong>
+                        The Turing Test
+                    </strong>
+
+                    <br>
+
+                    Alan Turing proposes an approach
+                    based on whether a machine's responses
+                    can be distinguished from those of a human.
+
+                </div>
+
+            </div>
+
+
+            <div class="revealed-event">
+
+                <div class="revealed-year">
+                    1956
+                </div>
+
+                <div class="revealed-content">
+
+                    <strong>
+                        Dartmouth Conference
+                    </strong>
+
+                    <br>
+
+                    A landmark event associated with
+                    Artificial Intelligence becoming an
+                    identifiable research field.
+
+                </div>
+
+            </div>
+
+
+            <div class="revealed-event">
+
+                <div class="revealed-year">
+                    1957
+                </div>
+
+                <div class="revealed-content">
+
+                    <strong>
+                        Perceptron
+                    </strong>
+
+                    <br>
+
+                    An early neural-network model becomes
+                    an important milestone in neural
+                    computation and machine learning.
+
+                </div>
+
+            </div>
+
+
+            <div class="revealed-event">
+
+                <div class="revealed-year">
+                    1966
+                </div>
+
+                <div class="revealed-content">
+
+                    <strong>
+                        ELIZA
+                    </strong>
+
+                    <br>
+
+                    An early natural-language conversation
+                    program demonstrates computer-human
+                    interaction through language.
+
+                </div>
+
+            </div>
+
+
+            <div class="revealed-event">
+
+                <div class="revealed-year">
+                    1970s
+                </div>
+
+                <div class="revealed-content">
+
+                    <strong>
+                        Expert Systems
+                    </strong>
+
+                    <br>
+
+                    Knowledge-based systems become a major
+                    AI approach, using encoded expert knowledge
+                    to solve problems.
+
+                </div>
+
+            </div>
+
+
+            <div class="revealed-event">
+
+                <div class="revealed-year">
+                    1997
+                </div>
+
+                <div class="revealed-content">
+
+                    <strong>
+                        Deep Blue
+                    </strong>
+
+                    <br>
+
+                    IBM's Deep Blue defeats world chess champion
+                    Garry Kasparov, becoming a famous milestone
+                    in the history of AI.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =========================================================
+   REFLECTION
+   ========================================================= */
+
+function showReflection() {
+
+    setProgress(85);
+
+    showScreen("screenReflection");
+
+}
+
+
+/* =========================================================
+   FINISH
+   ========================================================= */
+
+function finishMission() {
+
+    setProgress(100);
+
+
+    document
+        .getElementById("finalScore")
+        .innerText = score;
+
+
+    showScreen("screenFinal");
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+   ========================================================= */
+
+setupDragAndDrop();
+
+</script>
+
+
+</body>
+
+</html>
