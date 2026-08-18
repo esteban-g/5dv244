@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Quest — Mission 4</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #eef2f5;
+        color: #2c3e50;
+    }
+
+    .game-container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px;
+    }
+
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .quest-header {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 18px 22px;
+        border: 1px solid #e1e5e8;
+        margin-bottom: 20px;
+    }
+
+    .quest-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .quest-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .mission-number {
+        color: #666;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .progress-container {
+        margin-top: 14px;
+        height: 8px;
+        background: #dfe6eb;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 80%;
+        background: #2c5275;
+        transition: width 0.4s ease;
+    }
+
+
+    /* =========================
+       MAIN CARD
+       ========================= */
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 40px;
+        box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .mission-icon {
+        font-size: 55px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 38px;
+        margin: 5px 0 10px;
+        color: #2c5275;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 21px;
+        color: #687782;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        font-size: 17px;
+        line-height: 1.6;
+        color: #555;
+    }
+
+
+    /* =========================
+       START SCREEN
+       ========================= */
+
+    .mission-question {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        margin: 25px 0;
+    }
+
+    .start-button {
+        display: block;
+        margin: 25px auto 0;
+        padding: 14px 28px;
+        border: none;
+        border-radius: 7px;
+        background: #2c5275;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .start-button:hover {
+        background: #1f405c;
+    }
+
+
+    /* =========================
+       GAME SCREEN
+       ========================= */
+
+    .game-screen {
+        display: none;
+    }
+
+    .scenario-number {
+        color: #777;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .scenario {
+        font-size: 23px;
+        font-weight: bold;
+        line-height: 1.45;
+        margin-bottom: 20px;
+    }
+
+    .instruction {
+        color: #666;
+        margin-bottom: 18px;
+    }
+
+
+    /* =========================
+       ENVIRONMENT BOX
+       ========================= */
+
+    .environment {
+        background: #f5f8fa;
+        border-left: 4px solid #2c5275;
+        border-radius: 5px;
+        padding: 16px 18px;
+        margin-bottom: 22px;
+        line-height: 1.6;
+    }
+
+    .environment-title {
+        font-weight: bold;
+        color: #2c5275;
+        margin-bottom: 5px;
+    }
+
+
+    /* =========================
+       ANSWERS
+       ========================= */
+
+    .answer-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .answer {
+        background: #f8f9fa;
+        border: 2px solid #dfe4e8;
+        border-radius: 8px;
+        padding: 18px;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s ease;
+    }
+
+    .answer:hover {
+        border-color: #2c5275;
+        background: #f1f6fa;
+    }
+
+    .answer strong {
+        display: block;
+        color: #2c5275;
+        margin-bottom: 7px;
+    }
+
+    .answer span {
+        color: #555;
+        line-height: 1.5;
+    }
+
+
+    /* =========================
+       FEEDBACK
+       ========================= */
+
+    .feedback {
+        display: none;
+        margin-top: 25px;
+        padding: 18px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    .feedback.correct {
+        background: #e9f6ee;
+        border-left: 4px solid #3a8f5b;
+    }
+
+    .feedback.incorrect {
+        background: #fff1ef;
+        border-left: 4px solid #c75c4c;
+    }
+
+    .feedback-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .next-button {
+        display: none;
+        margin-top: 18px;
+        padding: 11px 20px;
+        border: none;
+        border-radius: 6px;
+        background: #2c5275;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+
+    /* =========================
+       SCORE SCREEN
+       ========================= */
+
+    .score-screen {
+        display: none;
+        text-align: center;
+    }
+
+    .score-icon {
+        font-size: 65px;
+        margin-bottom: 10px;
+    }
+
+    .score {
+        font-size: 48px;
+        font-weight: bold;
+        color: #2c5275;
+        margin: 15px 0;
+    }
+
+    .score-message {
+        font-size: 18px;
+        color: #555;
+        line-height: 1.6;
+        max-width: 650px;
+        margin: auto;
+    }
+
+    .retry-button {
+        margin-top: 25px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        background: #2c5275;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+
+    /* =========================
+       TAKEAWAY
+       ========================= */
+
+    .takeaway {
+        background: #eaf3fb;
+        border-left: 4px solid #2c5275;
+        border-radius: 5px;
+        padding: 18px 20px;
+        line-height: 1.6;
+        color: #444;
+    }
+
+    .takeaway strong {
+        color: #2c5275;
+    }
+
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 650px) {
+
+        .card {
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+
+        .answer-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .quest-header-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+    }
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="game-container">
+
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="quest-header">
+
+        <div class="quest-header-top">
+
+            <div class="quest-title">
+                🧠 AI QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 4 / 5
+            </div>
+
+        </div>
+
+        <div class="progress-container">
+
+            <div
+                class="progress-bar"
+                id="progressBar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         MAIN CARD
+         ========================= -->
+
+    <div class="card">
+
+
+        <!-- START SCREEN -->
+
+        <div id="startScreen">
+
+            <div class="mission-icon">
+                🎯
+            </div>
+
+            <h1>
+                The Rational Agent
+            </h1>
+
+            <div class="subtitle">
+                Mission 4: How Should an AI Agent Act?
+            </div>
+
+            <p class="intro">
+
+                An intelligent agent must decide what to do
+                in an environment.
+
+                But what makes one action better than another?
+
+                The answer depends on the agent's goal,
+                what it knows, what it can observe,
+                and the consequences of its actions.
+
+            </p>
+
+            <div class="mission-question">
+
+                Can you choose the most rational action?
+
+            </div>
+
+            <button
+                class="start-button"
+                onclick="startMission()">
+
+                START MISSION →
+
+            </button>
+
+        </div>
+
+
+
+        <!-- =========================
+             GAME SCREEN
+             ========================= -->
+
+        <div
+            id="gameScreen"
+            class="game-screen">
+
+            <div
+                class="scenario-number"
+                id="scenarioNumber">
+
+                Scenario 1 of 5
+
+            </div>
+
+
+            <div
+                class="scenario"
+                id="scenarioText">
+            </div>
+
+
+            <div
+                class="environment"
+                id="environmentBox">
+
+                <div class="environment-title">
+                    🌍 Agent's environment
+                </div>
+
+                <div id="environmentText"></div>
+
+            </div>
+
+
+            <div class="instruction">
+
+                Which action would be the most rational
+                for the agent?
+
+            </div>
+
+
+            <div class="answer-grid">
+
+
+                <div
+                    class="answer"
+                    onclick="answer(0)">
+
+                    <strong id="answer0Title">
+                        Action A
+                    </strong>
+
+                    <span id="answer0Text"></span>
+
+                </div>
+
+
+                <div
+                    class="answer"
+                    onclick="answer(1)">
+
+                    <strong id="answer1Title">
+                        Action B
+                    </strong>
+
+                    <span id="answer1Text"></span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- FEEDBACK -->
+
+            <div
+                id="feedback"
+                class="feedback">
+
+                <div
+                    id="feedbackTitle"
+                    class="feedback-title">
+                </div>
+
+                <div
+                    id="feedbackText">
+                </div>
+
+                <button
+                    id="nextButton"
+                    class="next-button"
+                    onclick="nextQuestion()">
+
+                    NEXT SCENARIO →
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             SCORE SCREEN
+             ========================= -->
+
+        <div
+            id="scoreScreen"
+            class="score-screen">
+
+            <div class="score-icon">
+                🏆
+            </div>
+
+            <h1>
+                Mission Complete!
+            </h1>
+
+            <div
+                class="score"
+                id="finalScore">
+
+                0 / 5
+
+            </div>
+
+            <p
+                class="score-message"
+                id="scoreMessage">
+            </p>
+
+            <button
+                class="retry-button"
+                onclick="restartMission()">
+
+                TRY AGAIN
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         TAKEAWAY
+         ========================= -->
+
+    <div class="takeaway">
+
+        <strong>
+            💡 Mission takeaway
+        </strong>
+
+        <p style="margin-bottom: 0;">
+
+            A rational agent chooses actions that are expected
+            to achieve its goals, given what it knows about
+            the environment and the information available to it.
+
+            Rational action does not necessarily mean
+            choosing a perfect action: agents often have
+            incomplete information and limited resources.
+
+        </p>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* ==========================================
+   SCENARIOS
+   ========================================== */
+
+const scenarios = [
+
+    {
+
+        scenario:
+
+            "You are designing an AI agent for a delivery robot. " +
+            "The robot must deliver a package to a building " +
+            "as efficiently as possible.",
+
+        environment:
+
+            "The robot knows two possible routes. " +
+            "Route A is shorter but currently has a high " +
+            "probability of being blocked by construction. " +
+            "Route B is slightly longer but is known to be clear.",
+
+        answerA:
+
+            "Take Route A because it is the shortest route.",
+
+        answerB:
+
+            "Take Route B because it has a higher probability " +
+            "of successfully reaching the destination.",
+
+        correct: 1,
+
+        explanation:
+
+            "The rational choice depends on more than distance. " +
+            "If the goal is to successfully deliver the package, " +
+            "the agent should consider the available information " +
+            "and the probability of success. A slightly longer " +
+            "route may be the better action."
+    },
+
+
+    {
+
+        scenario:
+
+            "An autonomous car approaches an intersection. " +
+            "The traffic light is difficult to see because " +
+            "of heavy rain.",
+
+        environment:
+
+            "The car's sensors provide incomplete information. " +
+            "Continuing through the intersection quickly could " +
+            "save time, but the car cannot reliably determine " +
+            "whether the light is green.",
+
+        answerA:
+
+            "Continue at the same speed because that is normally " +
+            "the fastest option.",
+
+        answerB:
+
+            "Reduce speed and gather more information before " +
+            "committing to the intersection.",
+
+        correct: 1,
+
+        explanation:
+
+            "A rational agent must take the available information " +
+            "into account. When uncertainty is high and the " +
+            "consequences of an incorrect action are serious, " +
+            "gathering additional information can be a rational choice."
+    },
+
+
+    {
+
+        scenario:
+
+            "A recommendation agent has to suggest a restaurant " +
+            "to a user who has asked for a quick lunch nearby.",
+
+        environment:
+
+            "The agent knows the user's favourite restaurant, " +
+            "but it is 45 minutes away. Another restaurant is " +
+            "10 minutes away and matches the user's stated " +
+            "preferences reasonably well.",
+
+        answerA:
+
+            "Recommend the favourite restaurant because the user " +
+            "has liked it before.",
+
+        answerB:
+
+            "Recommend the nearby restaurant because the user's " +
+            "current goal is a quick lunch nearby.",
+
+        correct: 1,
+
+        explanation:
+
+            "The agent should consider the current goal, not only " +
+            "past preferences. A rational action depends on the " +
+            "objective and the current environment."
+    },
+
+
+    {
+
+        scenario:
+
+            "A household robot is asked to clean a room before " +
+            "a guest arrives in ten minutes.",
+
+        environment:
+
+            "The room contains many objects. The robot cannot " +
+            "completely clean everything in the available time.",
+
+        answerA:
+
+            "Spend all available time trying to clean every " +
+            "object equally.",
+
+        answerB:
+
+            "Prioritize the most visible and important areas " +
+            "that contribute most to the cleaning goal.",
+
+        correct: 1,
+
+        explanation:
+
+            "A rational agent operates under constraints. If the " +
+            "robot cannot complete everything, prioritizing actions " +
+            "that contribute most to the goal can be more rational " +
+            "than attempting to perform every possible action."
+    },
+
+
+    {
+
+        scenario:
+
+            "An AI agent monitors a factory machine and must " +
+            "decide whether to stop the machine after detecting " +
+            "an unusual sensor reading.",
+
+        environment:
+
+            "The reading could indicate a serious failure, but " +
+            "it could also be a temporary sensor error. Stopping " +
+            "the machine has a significant cost.",
+
+        answerA:
+
+            "Immediately stop the machine every time an unusual " +
+            "reading occurs.",
+
+        answerB:
+
+            "Consider the evidence, the probability of failure, " +
+            "and the consequences before deciding whether to stop it.",
+
+        correct: 1,
+
+        explanation:
+
+            "Rational decision-making requires considering the " +
+            "available evidence and the consequences of different " +
+            "actions. A rational agent does not necessarily choose " +
+            "the most cautious or the fastest action; it chooses " +
+            "an action appropriate to its goals and information."
+    }
+
+];
+
+
+let currentQuestion = 0;
+
+let score = 0;
+
+let answered = false;
+
+
+
+/* ==========================================
+   START MISSION
+   ========================================== */
+
+function startMission() {
+
+    document.getElementById("startScreen").style.display =
+        "none";
+
+    document.getElementById("gameScreen").style.display =
+        "block";
+
+    currentQuestion = 0;
+
+    score = 0;
+
+    updateProgress();
+
+    showQuestion();
+
+}
+
+
+
+/* ==========================================
+   SHOW QUESTION
+   ========================================== */
+
+function showQuestion() {
+
+    answered = false;
+
+    const scenario =
+        scenarios[currentQuestion];
+
+
+    document.getElementById("scenarioNumber").innerText =
+
+        "Scenario " +
+        (currentQuestion + 1) +
+        " of " +
+        scenarios.length;
+
+
+    document.getElementById("scenarioText").innerText =
+
+        scenario.scenario;
+
+
+    document.getElementById("environmentText").innerText =
+
+        scenario.environment;
+
+
+    document.getElementById("answer0Text").innerText =
+
+        scenario.answerA;
+
+
+    document.getElementById("answer1Text").innerText =
+
+        scenario.answerB;
+
+
+    document.getElementById("feedback").style.display =
+        "none";
+
+
+    document.getElementById("nextButton").style.display =
+        "none";
+
+
+    document.getElementById("nextButton").innerText =
+        "NEXT SCENARIO →";
+
+
+    const answers =
+        document.querySelectorAll(".answer");
+
+
+    answers.forEach(answer => {
+
+        answer.style.pointerEvents =
+            "auto";
+
+        answer.style.borderColor =
+            "#dfe4e8";
+
+        answer.style.backgroundColor =
+            "#f8f9fa";
+
+    });
+
+}
+
+
+
+/* ==========================================
+   ANSWER
+   ========================================== */
+
+function answer(selected) {
+
+    if (answered) {
+        return;
+    }
+
+    answered = true;
+
+
+    const scenario =
+        scenarios[currentQuestion];
+
+
+    const feedback =
+        document.getElementById("feedback");
+
+
+    const feedbackTitle =
+        document.getElementById("feedbackTitle");
+
+
+    const feedbackText =
+        document.getElementById("feedbackText");
+
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+
+    const answers =
+        document.querySelectorAll(".answer");
+
+
+    answers.forEach(answer => {
+
+        answer.style.pointerEvents =
+            "none";
+
+    });
+
+
+    if (selected === scenario.correct) {
+
+        score++;
+
+        feedback.className =
+            "feedback correct";
+
+        feedbackTitle.innerText =
+            "✓ Correct!";
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedbackTitle.innerText =
+            "Not quite.";
+
+    }
+
+
+    feedbackText.innerText =
+        scenario.explanation;
+
+
+    feedback.style.display =
+        "block";
+
+
+    if (currentQuestion <
+        scenarios.length - 1) {
+
+        nextButton.style.display =
+            "inline-block";
+
+    }
+
+    else {
+
+        nextButton.innerText =
+            "SEE YOUR RESULT →";
+
+        nextButton.style.display =
+            "inline-block";
+
+    }
+
+}
+
+
+
+/* ==========================================
+   NEXT QUESTION
+   ========================================== */
+
+function nextQuestion() {
+
+    if (currentQuestion <
+        scenarios.length - 1) {
+
+        currentQuestion++;
+
+        updateProgress();
+
+        showQuestion();
+
+    }
+
+    else {
+
+        showScore();
+
+    }
+
+}
+
+
+
+/* ==========================================
+   PROGRESS BAR
+   ========================================== */
+
+function updateProgress() {
+
+    const progress =
+
+        (currentQuestion /
+        scenarios.length) * 100;
+
+
+    document.getElementById("progressBar").style.width =
+
+        Math.max(progress, 10) + "%";
+
+}
+
+
+
+/* ==========================================
+   SCORE
+   ========================================== */
+
+function showScore() {
+
+    document.getElementById("gameScreen").style.display =
+        "none";
+
+    document.getElementById("scoreScreen").style.display =
+        "block";
+
+
+    document.getElementById("progressBar").style.width =
+        "100%";
+
+
+    document.getElementById("finalScore").innerText =
+
+        score +
+        " / " +
+        scenarios.length;
+
+
+    let message = "";
+
+
+    if (score === 5) {
+
+        message =
+
+            "Excellent! You are thinking like a rational agent. " +
+            "You considered goals, information, uncertainty, " +
+            "and consequences when choosing actions.";
+
+    }
+
+    else if (score >= 3) {
+
+        message =
+
+            "Good work! You understand the basic idea of " +
+            "rational action. Remember that an agent must " +
+            "consider its goals and the information available " +
+            "to it when choosing what to do.";
+
+    }
+
+    else {
+
+        message =
+
+            "The key idea is that rational action depends on " +
+            "the agent's goals, available information, the " +
+            "environment, and the consequences of possible actions. " +
+            "Review the lecture material and try again.";
+
+    }
+
+
+    document.getElementById("scoreMessage").innerText =
+        message;
+
+}
+
+
+
+/* ==========================================
+   RESTART
+   ========================================== */
+
+function restartMission() {
+
+    document.getElementById("scoreScreen").style.display =
+        "none";
+
+    document.getElementById("startScreen").style.display =
+        "block";
+
+    document.getElementById("progressBar").style.width =
+        "80%";
+
+}
+
+</script>
+
+
+</body>
+</html>
