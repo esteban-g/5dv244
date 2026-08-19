@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Knowledge Quest – Mission 4</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f3f6f9;
+        color: #294866;
+    }
+
+    .container {
+        max-width: 950px;
+        margin: 0 auto;
+        padding: 25px;
+    }
+
+    /* HEADER */
+
+    .quest-header {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 22px 28px;
+        margin-bottom: 20px;
+        border: 1px solid #d9e2ea;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.05);
+    }
+
+    .quest-header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .quest-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .mission-number {
+        font-size: 14px;
+        color: #777;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dfe7ed;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 80%;
+        background: #2c567a;
+    }
+
+    /* MAIN CARD */
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 35px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+    }
+
+    h1 {
+        font-size: 34px;
+        margin-top: 0;
+        text-align: center;
+        color: #244f73;
+    }
+
+    h2 {
+        color: #244f73;
+        margin-top: 0;
+    }
+
+    h3 {
+        color: #244f73;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: #60788d;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        text-align: center;
+        line-height: 1.7;
+        font-size: 16px;
+        margin-bottom: 25px;
+    }
+
+    /* KNOWLEDGE GRAPH */
+
+    .graph {
+        background: #f6f9fb;
+        border: 1px solid #d7e1e8;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 25px 0;
+    }
+
+    .graph-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+    }
+
+    .node {
+        background: #e8f2fb;
+        border: 1px solid #a9c5db;
+        padding: 8px 13px;
+        border-radius: 8px;
+        font-family: monospace;
+    }
+
+    .relation {
+        color: #666;
+        font-family: monospace;
+        font-weight: bold;
+    }
+
+    /* TASKS */
+
+    .task {
+        border-left: 4px solid #2c567a;
+        background: #f7f9fb;
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .task-number {
+        font-weight: bold;
+        color: #2c567a;
+        margin-bottom: 8px;
+    }
+
+    .hint {
+        background: #fff7d6;
+        border-left: 4px solid #e5b700;
+        padding: 12px;
+        margin-top: 15px;
+        font-size: 14px;
+        display: none;
+    }
+
+    /* CODE */
+
+    textarea {
+        width: 100%;
+        min-height: 130px;
+        padding: 14px;
+        border-radius: 8px;
+        border: 1px solid #cbd7e0;
+        font-family: monospace;
+        font-size: 14px;
+        resize: vertical;
+        background: #fbfcfd;
+    }
+
+    .code-output {
+        background: #17232f;
+        color: #dce8f1;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 12px;
+        font-family: monospace;
+        white-space: pre-wrap;
+        min-height: 45px;
+    }
+
+    /* BUTTONS */
+
+    button {
+        background: #2c567a;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 11px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    button:hover {
+        background: #1f425f;
+    }
+
+    .secondary {
+        background: #71869a;
+    }
+
+    .secondary:hover {
+        background: #596d80;
+    }
+
+    /* FEEDBACK */
+
+    .success {
+        background: #e8f6ed;
+        border-left: 4px solid #4b9b67;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .error {
+        background: #fdeaea;
+        border-left: 4px solid #c94b4b;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    /* SCORE */
+
+    .score-box {
+        text-align: center;
+        background: #eef4f8;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 25px;
+    }
+
+    .score {
+        font-size: 30px;
+        font-weight: bold;
+        color: #2c567a;
+    }
+
+    /* FINAL */
+
+    .complete {
+        display: none;
+        text-align: center;
+        background: #eaf4fb;
+        border: 1px solid #b8d1e2;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 25px;
+    }
+
+    @media(max-width: 650px) {
+
+        .container {
+            padding: 12px;
+        }
+
+        .card {
+            padding: 22px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+
+    <div class="quest-header">
+
+        <div class="quest-header-top">
+
+            <div class="quest-title">
+                🧠 KNOWLEDGE QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 4 / 5
+            </div>
+
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
+
+
+    <!-- INTRODUCTION -->
+
+    <div class="card">
+
+        <h1>💻 The Knowledge Graph Code Lab</h1>
+
+        <div class="subtitle">
+            Mission 4: Query the knowledge
+        </div>
+
+        <p class="intro">
+
+            You have learned how ontologies organize concepts,
+            individuals and relationships.
+
+            Now it is time to interact with a knowledge base yourself.
+
+            In this mission you will use a small knowledge graph
+            directly in your browser and write JavaScript to query it.
+
+        </p>
+
+        <div class="graph">
+
+            <h3>🔎 Your miniature knowledge graph</h3>
+
+            <div class="graph-row">
+                <span class="node">Esteban</span>
+                <span class="relation">is a</span>
+                <span class="node">Person</span>
+            </div>
+
+            <div class="graph-row">
+                <span class="node">Maria</span>
+                <span class="relation">is a</span>
+                <span class="node">Person</span>
+            </div>
+
+            <div class="graph-row">
+                <span class="node">Esteban</span>
+                <span class="relation">drives</span>
+                <span class="node">Van1</span>
+            </div>
+
+            <div class="graph-row">
+                <span class="node">Van1</span>
+                <span class="relation">is a</span>
+                <span class="node">Van</span>
+            </div>
+
+            <div class="graph-row">
+                <span class="node">Maria</span>
+                <span class="relation">has_pet</span>
+                <span class="node">Luna</span>
+            </div>
+
+            <div class="graph-row">
+                <span class="node">Luna</span>
+                <span class="relation">is a</span>
+                <span class="node">Cat</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK 1 -->
+
+    <div class="card">
+
+        <div class="task">
+
+            <div class="task-number">
+                TASK 1 — Find all people
+            </div>
+
+            <p>
+                Write JavaScript that retrieves all individuals
+                belonging to the <strong>Person</strong> class.
+            </p>
+
+            <p>
+                The knowledge graph is represented by the following
+                JavaScript object:
+            </p>
+
+<pre style="background:#17232f;color:#dce8f1;padding:15px;border-radius:8px;overflow:auto;">const knowledgeBase = {
+    Person: ["Esteban", "Maria"],
+    Van: ["Van1"],
+    Cat: ["Luna"]
+};</pre>
+
+            <p>
+                Your code should print the people in the output box.
+            </p>
+
+            <textarea id="code1">// Write your code here
+
+console.log(knowledgeBase.Person);</textarea>
+
+            <button onclick="runTask1()">
+                ▶ RUN CODE
+            </button>
+
+            <button class="secondary" onclick="showHint(1)">
+                💡 Hint
+            </button>
+
+            <div id="hint1" class="hint">
+                Try accessing the Person property of the
+                knowledgeBase object.
+            </div>
+
+            <div id="output1" class="code-output">
+                Output will appear here...
+            </div>
+
+            <div id="success1" class="success">
+                ✓ Correct! You successfully queried the class.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK 2 -->
+
+    <div class="card">
+
+        <div class="task">
+
+            <div class="task-number">
+                TASK 2 — Query a relationship
+            </div>
+
+            <p>
+                Classes are not enough to represent knowledge.
+                Relationships connect entities and give meaning
+                to the structure. This is emphasized in the lecture.
+                :contentReference[oaicite:4]{index=4}
+            </p>
+
+            <p>
+                Here is the relationship data:
+            </p>
+
+<pre style="background:#17232f;color:#dce8f1;padding:15px;border-radius:8px;overflow:auto;">const relations = [
+    ["Esteban", "drives", "Van1"],
+    ["Maria", "has_pet", "Luna"]
+];</pre>
+
+            <p>
+                Write code that finds what <strong>Esteban</strong>
+                drives.
+            </p>
+
+            <textarea id="code2">// Write your code here
+
+const result = relations
+    .filter(r => r[0] === "Esteban");
+
+console.log(result);</textarea>
+
+            <button onclick="runTask2">
+                ▶ RUN CODE
+            </button>
+
+            <button class="secondary" onclick="showHint(2)">
+                💡 Hint
+            </button>
+
+            <div id="hint2" class="hint">
+                Each relation has three elements:
+                subject, predicate and object.
+                Filter the relations whose subject is "Esteban".
+            </div>
+
+            <div id="output2" class="code-output">
+                Output will appear here...
+            </div>
+
+            <div id="success2" class="success">
+                ✓ Excellent! You queried a relationship in the graph.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK 3 -->
+
+    <div class="card">
+
+        <div class="task">
+
+            <div class="task-number">
+                TASK 3 — Build a simple query function
+            </div>
+
+            <p>
+                Now build a reusable function.
+            </p>
+
+            <p>
+                Complete the function below so that it returns
+                all objects connected to a given subject through
+                a specified relationship.
+            </p>
+
+<pre style="background:#17232f;color:#dce8f1;padding:15px;border-radius:8px;overflow:auto;">function query(subject, predicate) {
+
+    // Complete this function
+
+}</pre>
+
+            <p>
+                For example:
+            </p>
+
+<pre style="background:#17232f;color:#dce8f1;padding:15px;border-radius:8px;overflow:auto;">query("Maria", "has_pet");</pre>
+
+            <p>
+                should return:
+            </p>
+
+<pre style="background:#17232f;color:#dce8f1;padding:15px;border-radius:8px;">["Luna"]</pre>
+
+            <textarea id="code3">// Complete the function
+
+function query(subject, predicate) {
+
+    return relations
+        .filter(r => r[0] === subject && r[1] === predicate)
+        .map(r => r[2]);
+
+}
+
+console.log(query("Maria", "has_pet"));</textarea>
+
+            <button onclick="runTask3()">
+                ▶ RUN CODE
+            </button>
+
+            <button class="secondary" onclick="showHint(3)">
+                💡 Hint
+            </button>
+
+            <div id="hint3" class="hint">
+                First filter the relations by subject AND predicate.
+                Then use map() to retrieve the object.
+            </div>
+
+            <div id="output3" class="code-output">
+                Output will appear here...
+            </div>
+
+            <div id="success3" class="success">
+                ✓ Perfect! You have built a basic knowledge-graph query.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TASK 4 -->
+
+    <div class="card">
+
+        <div class="task">
+
+            <div class="task-number">
+                TASK 4 — Think like a reasoner
+            </div>
+
+            <p>
+                A reasoner can derive information that is not
+                explicitly stored as a direct fact.
+            </p>
+
+            <p>
+                Consider:
+            </p>
+
+<pre style="background:#17232f;color:#dce8f1;padding:15px;border-radius:8px;">Van1 → is a → Van
+
+Van → is a → Vehicle
+
+Esteban → drives → Van1</pre>
+
+            <p>
+                If <strong>Van</strong> is a subclass of
+                <strong>Vehicle</strong>, what can we infer about
+                Van1?
+            </p>
+
+            <select id="task4select"
+                    style="padding:12px;width:100%;border-radius:7px;border:1px solid #ccd7df;font-size:15px;">
+
+                <option value="">
+                    Select your answer...
+                </option>
+
+                <option value="1">
+                    Van1 is a Person
+                </option>
+
+                <option value="2">
+                    Van1 is a Vehicle
+                </option>
+
+                <option value="3">
+                    Van1 has a pet
+                </option>
+
+                <option value="4">
+                    Esteban is a Van
+                </option>
+
+            </select>
+
+            <button onclick="runTask4()">
+                CHECK ANSWER
+            </button>
+
+            <div id="output4" class="code-output">
+                Waiting for your answer...
+            </div>
+
+            <div id="success4" class="success">
+                ✓ Correct. You have used the class/subclass structure
+                to derive new knowledge.
+            </div>
+
+            <div id="error4" class="error">
+                ✗ Not quite. Think about what happens when an individual
+                belongs to a subclass.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FINAL SCORE -->
+
+    <div class="card">
+
+        <div class="score-box">
+
+            <h2>🏆 Code Lab Score</h2>
+
+            <div class="score">
+                <span id="score">0</span> / 4
+            </div>
+
+            <p>
+                Complete the four challenges to finish the mission.
+            </p>
+
+        </div>
+
+        <div id="complete" class="complete">
+
+            <h2>🎓 Mission Complete!</h2>
+
+            <p>
+                You have successfully used a small knowledge graph,
+                queried relationships, written a reusable query
+                function, and performed a simple inference.
+            </p>
+
+            <p>
+                You are ready for the final Knowledge Quest.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+const knowledgeBase = {
+
+    Person: ["Esteban", "Maria"],
+
+    Van: ["Van1"],
+
+    Cat: ["Luna"]
+
+};
+
+
+const relations = [
+
+    ["Esteban", "drives", "Van1"],
+
+    ["Maria", "has_pet", "Luna"]
+
+];
+
+
+let score = 0;
+
+let completed = {
+
+    task1: false,
+
+    task2: false,
+
+    task3: false,
+
+    task4: false
+
+};
+
+
+/* --------------------------------------------------
+   SCORE
+-------------------------------------------------- */
+
+function updateScore() {
+
+    document.getElementById("score").textContent = score;
+
+    if (score === 4) {
+
+        document.getElementById("complete").style.display = "block";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   TASK 1
+-------------------------------------------------- */
+
+function runTask1() {
+
+    const output =
+        document.getElementById("output1");
+
+    const code =
+        document.getElementById("code1").value;
+
+    try {
+
+        /*
+         * We do not execute arbitrary student code
+         * against the page.
+         *
+         * Instead we check whether the expected
+         * concept is present.
+         */
+
+        if (
+            code.includes("knowledgeBase.Person") ||
+            code.includes("knowledgeBase['Person']")
+        ) {
+
+            output.textContent =
+                JSON.stringify(
+                    knowledgeBase.Person
+                );
+
+            if (!completed.task1) {
+
+                score++;
+
+                completed.task1 = true;
+
+                document.getElementById(
+                    "success1"
+                ).style.display = "block";
+
+                updateScore();
+
+            }
+
+        } else {
+
+            output.textContent =
+                "Try querying the Person class.";
+
+        }
+
+    } catch (error) {
+
+        output.textContent =
+            "There is a problem with your code.";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   TASK 2
+-------------------------------------------------- */
+
+function runTask2() {
+
+    const output =
+        document.getElementById("output2");
+
+    const code =
+        document.getElementById("code2").value;
+
+    if (
+        code.includes(".filter") &&
+        code.includes("Esteban")
+    ) {
+
+        output.textContent =
+            JSON.stringify(
+                relations.filter(
+                    r => r[0] === "Esteban"
+                )
+            );
+
+        if (!completed.task2) {
+
+            score++;
+
+            completed.task2 = true;
+
+            document.getElementById(
+                "success2"
+            ).style.display = "block";
+
+            updateScore();
+
+        }
+
+    } else {
+
+        output.textContent =
+            "Try filtering the relations using Esteban as the subject.";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   TASK 3
+-------------------------------------------------- */
+
+function runTask3() {
+
+    const output =
+        document.getElementById("output3");
+
+    const code =
+        document.getElementById("code3").value;
+
+    if (
+        code.includes("function query") &&
+        code.includes(".filter") &&
+        code.includes(".map")
+    ) {
+
+        output.textContent =
+            JSON.stringify(
+                ["Luna"]
+            );
+
+        if (!completed.task3) {
+
+            score++;
+
+            completed.task3 = true;
+
+            document.getElementById(
+                "success3"
+            ).style.display = "block";
+
+            updateScore();
+
+        }
+
+    } else {
+
+        output.textContent =
+            "Your function should filter the relations and then retrieve the objects.";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   TASK 4
+-------------------------------------------------- */
+
+function runTask4() {
+
+    const answer =
+        document.getElementById(
+            "task4select"
+        ).value;
+
+    const output =
+        document.getElementById(
+            "output4"
+        );
+
+    const success =
+        document.getElementById(
+            "success4"
+        );
+
+    const error =
+        document.getElementById(
+            "error4"
+        );
+
+    success.style.display = "none";
+    error.style.display = "none";
+
+    if (answer === "2") {
+
+        output.textContent =
+            "Inference: Van1 → Vehicle";
+
+        success.style.display = "block";
+
+        if (!completed.task4) {
+
+            score++;
+
+            completed.task4 = true;
+
+            updateScore();
+
+        }
+
+    } else {
+
+        output.textContent =
+            "No inference was established.";
+
+        error.style.display = "block";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   HINTS
+-------------------------------------------------- */
+
+function showHint(number) {
+
+    const hint =
+        document.getElementById(
+            "hint" + number
+        );
+
+    if (hint.style.display === "block") {
+
+        hint.style.display = "none";
+
+    } else {
+
+        hint.style.display = "block";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
