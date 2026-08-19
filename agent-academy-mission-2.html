@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Agent Academy — Mission 2</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #eef3f7;
+        color: #2c3e50;
+    }
+
+    .academy {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 0 20px 40px 20px;
+    }
+
+    /* HEADER */
+
+    .header {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 22px 28px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .academy-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #244f73;
+    }
+
+    .mission-number {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .progress-container {
+        margin-top: 15px;
+        height: 8px;
+        background: #dce5eb;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        width: 40%;
+        background: #2c597d;
+        border-radius: 20px;
+        transition: width 0.5s ease;
+    }
+
+    /* MAIN CARD */
+
+    .mission-card {
+        background: white;
+        border-radius: 15px;
+        padding: 40px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .icon {
+        font-size: 65px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 34px;
+        color: #244f73;
+        margin: 10px 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #244f73;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #667788;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        font-size: 17px;
+        line-height: 1.7;
+        max-width: 700px;
+        margin: auto;
+    }
+
+    /* BUTTONS */
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 14px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #2c597d;
+        color: white;
+        margin: 10px 5px;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #1f425d;
+        transform: translateY(-1px);
+    }
+
+    button:disabled {
+        background: #b7c2ca;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* QUESTIONS */
+
+    .question {
+        display: none;
+        text-align: left;
+    }
+
+    .question.active {
+        display: block;
+    }
+
+    .question-number {
+        color: #718096;
+        font-size: 14px;
+        margin-bottom: 8px;
+    }
+
+    .scenario {
+        background: #f3f7fa;
+        border-left: 5px solid #2c597d;
+        padding: 18px;
+        border-radius: 5px;
+        margin: 20px 0;
+        line-height: 1.6;
+    }
+
+    .options {
+        display: grid;
+        gap: 12px;
+    }
+
+    .option {
+        background: #f8fafc;
+        border: 2px solid #dce5eb;
+        color: #2c3e50;
+        text-align: left;
+        width: 100%;
+        margin: 0;
+    }
+
+    .option:hover {
+        background: #eef4f8;
+        border-color: #2c597d;
+    }
+
+    .option.correct {
+        background: #e8f5e9;
+        border-color: #4caf50;
+    }
+
+    .option.incorrect {
+        background: #fdecec;
+        border-color: #e57373;
+    }
+
+    .feedback {
+        display: none;
+        margin-top: 18px;
+        padding: 15px;
+        border-radius: 8px;
+        line-height: 1.5;
+    }
+
+    .feedback.show {
+        display: block;
+    }
+
+    .feedback.good {
+        background: #e8f5e9;
+        color: #245c2a;
+    }
+
+    .feedback.bad {
+        background: #fdecec;
+        color: #7a2727;
+    }
+
+    /* PEAS */
+
+    .peas-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .peas-item {
+        background: #f8fafc;
+        border: 1px solid #dce5eb;
+        border-radius: 10px;
+        padding: 18px;
+        text-align: left;
+    }
+
+    .peas-item strong {
+        color: #244f73;
+        display: block;
+        margin-bottom: 8px;
+    }
+
+    select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5dc;
+        border-radius: 7px;
+        background: white;
+        font-size: 15px;
+    }
+
+    /* SCORE */
+
+    .score {
+        font-size: 24px;
+        font-weight: bold;
+        color: #244f73;
+        margin: 20px 0;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 10px 18px;
+        background: #eaf0f5;
+        color: #244f73;
+        border-radius: 20px;
+        font-weight: bold;
+        margin: 10px;
+    }
+
+    .completion {
+        display: none;
+    }
+
+    .completion.show {
+        display: block;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media (max-width: 650px) {
+        .mission-card {
+            padding: 25px;
+        }
+
+        .peas-grid {
+            grid-template-columns: 1fr;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="academy">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="header-top">
+
+            <div class="academy-title">
+                🤖 AGENT ACADEMY
+            </div>
+
+            <div class="mission-number">
+                Mission 2 / 5
+            </div>
+
+        </div>
+
+        <div class="progress-container">
+            <div class="progress" id="progress"></div>
+        </div>
+
+    </div>
+
+
+    <!-- MAIN -->
+
+    <div class="mission-card">
+
+        <!-- INTRO -->
+
+        <div id="intro">
+
+            <div class="icon">🎯</div>
+
+            <h1>Mission 2: Design Your Agent</h1>
+
+            <div class="subtitle">
+                Every agent needs a mission.
+            </div>
+
+            <p class="intro">
+                An intelligent agent does not simply "do something".
+                It perceives an environment, acts upon it, and is evaluated
+                according to how well it performs.
+            </p>
+
+            <p class="intro">
+                Your task is to become an <strong>Agent Architect</strong>
+                and design the task environment of an intelligent agent.
+            </p>
+
+            <button onclick="startMission()">
+                START MISSION →
+            </button>
+
+        </div>
+
+
+        <!-- QUESTION 1 -->
+
+        <div class="question" id="q1">
+
+            <div class="question-number">
+                CHALLENGE 1 OF 3
+            </div>
+
+            <h2>What makes an agent's action "good"?</h2>
+
+            <div class="scenario">
+
+                Imagine a robot vacuum cleaner operating in a house.
+
+                <br><br>
+
+                The robot can choose different actions, such as moving,
+                cleaning, or returning to its charging station.
+
+                <br><br>
+
+                How should we determine whether its behaviour is successful?
+
+            </div>
+
+            <div class="options">
+
+                <button class="option"
+                    onclick="answerQ1(this, false)">
+                    Whether the robot performs exactly the same actions
+                    every time.
+                </button>
+
+                <button class="option"
+                    onclick="answerQ1(this, true)">
+                    By using a performance measure that evaluates
+                    how well the agent achieves its objectives.
+                </button>
+
+                <button class="option"
+                    onclick="answerQ1(this, false)">
+                    Whether the robot looks intelligent to a human observer.
+                </button>
+
+                <button class="option"
+                    onclick="answerQ1(this, false)">
+                    Whether the robot uses a complex algorithm.
+                </button>
+
+            </div>
+
+            <div id="feedback1" class="feedback"></div>
+
+            <button id="next1"
+                    class="hidden"
+                    onclick="showQuestion(2)">
+                CONTINUE →
+            </button>
+
+        </div>
+
+
+        <!-- QUESTION 2 -->
+
+        <div class="question" id="q2">
+
+            <div class="question-number">
+                CHALLENGE 2 OF 3
+            </div>
+
+            <h2>Build the PEAS specification</h2>
+
+            <p>
+                You are designing an <strong>autonomous delivery robot</strong>.
+            </p>
+
+            <p>
+                Match each component of the PEAS framework with the
+                appropriate element of the robot's task environment.
+            </p>
+
+            <div class="peas-grid">
+
+                <div class="peas-item">
+
+                    <strong>P — Performance</strong>
+
+                    <select id="peasP">
+                        <option value="">Choose...</option>
+                        <option value="wrong">
+                            GPS and cameras
+                        </option>
+                        <option value="correct">
+                            Deliver packages safely and efficiently
+                        </option>
+                        <option value="wrong">
+                            Wheels and motors
+                        </option>
+                        <option value="wrong">
+                            Streets, pedestrians and buildings
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="peas-item">
+
+                    <strong>E — Environment</strong>
+
+                    <select id="peasE">
+                        <option value="">Choose...</option>
+                        <option value="wrong">
+                            GPS and cameras
+                        </option>
+                        <option value="wrong">
+                            Deliver packages safely and efficiently
+                        </option>
+                        <option value="wrong">
+                            Wheels and motors
+                        </option>
+                        <option value="correct">
+                            Streets, pedestrians and buildings
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <div class="peas-item">
+
+                    <strong>A — Actuators</strong>
+
+                    <select id="peasA">
+                        <option value="">Choose...</option>
+                        <option value="wrong">
+                            GPS and cameras
+                        </option>
+                        <option value="wrong">
+                            Deliver packages safely and efficiently
+                        </option>
+                        <option value="correct">
+                            Wheels and motors
+                        </option>
+                        <option value="wrong">
+                            Streets, pedestrians and buildings
+                        </select>
+
+                </div>
+
+
+                <div class="peas-item">
+
+                    <strong>S — Sensors</strong>
+
+                    <select id="peasS">
+                        <option value="">Choose...</option>
+                        <option value="correct">
+                            GPS and cameras
+                        </option>
+                        <option value="wrong">
+                            Deliver packages safely and efficiently
+                        </option>
+                        <option value="wrong">
+                            Wheels and motors
+                        </option>
+                        <option value="wrong">
+                            Streets, pedestrians and buildings
+                        </select>
+
+                </div>
+
+            </div>
+
+            <button onclick="checkPEAS()">
+                CHECK MY DESIGN
+            </button>
+
+            <div id="feedback2" class="feedback"></div>
+
+            <button id="next2"
+                    class="hidden"
+                    onclick="showQuestion(3)">
+                CONTINUE →
+            </button>
+
+        </div>
+
+
+        <!-- QUESTION 3 -->
+
+        <div class="question" id="q3">
+
+            <div class="question-number">
+                FINAL CHALLENGE
+            </div>
+
+            <h2>Choose the right specification</h2>
+
+            <div class="scenario">
+
+                A medical diagnostic agent receives information from
+                medical tests and patient records.
+
+                It must recommend a diagnosis while considering the
+                consequences of its decisions.
+
+                Which combination best represents the agent's task
+                specification?
+
+            </div>
+
+            <div class="options">
+
+                <button class="option"
+                    onclick="answerQ3(this, false)">
+                    Performance: speed only<br>
+                    Environment: the computer<br>
+                    Sensors: keyboard<br>
+                    Actuators: screen
+                </button>
+
+                <button class="option"
+                    onclick="answerQ3(this, true)">
+                    Performance: accuracy and appropriate decisions<br>
+                    Environment: patients, medical information and
+                    healthcare context<br>
+                    Sensors: patient data and medical tests<br>
+                    Actuators: diagnostic recommendations
+                </button>
+
+                <button class="option"
+                    onclick="answerQ3(this, false)">
+                    Performance: number of calculations<br>
+                    Environment: the Internet<br>
+                    Sensors: processor<br>
+                    Actuators: database
+                </button>
+
+                <button class="option"
+                    onclick="answerQ3(this, false)">
+                    Performance: maximum complexity<br>
+                    Environment: the AI model<br>
+                    Sensors: algorithms<br>
+                    Actuators: training data
+                </button>
+
+            </div>
+
+            <div id="feedback3" class="feedback"></div>
+
+            <button id="finish"
+                    class="hidden"
+                    onclick="finishMission()">
+                COMPLETE MISSION →
+            </button>
+
+        </div>
+
+
+        <!-- COMPLETION -->
+
+        <div id="completion" class="completion">
+
+            <div class="icon">🏆</div>
+
+            <h1>Mission Complete!</h1>
+
+            <div class="score" id="finalScore"></div>
+
+            <div class="badge">
+                🎯 Agent Architect
+            </div>
+
+            <p class="intro">
+
+                You have completed the second Agent Academy mission.
+
+                <br><br>
+
+                You now know that designing an intelligent agent
+                requires more than choosing an algorithm.
+
+                <br><br>
+
+                You must first understand its
+                <strong>performance measure, environment,
+                actuators and sensors</strong>.
+
+            </p>
+
+            <p class="intro">
+
+                <strong>Next mission:</strong><br>
+                What happens when the environment becomes difficult
+                to observe and the agent must reason about what it
+                cannot directly see?
+
+            </p>
+
+            <button onclick="location.reload()">
+                PLAY AGAIN ↻
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let score = 0;
+
+
+/* START */
+
+function startMission() {
+
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("q1").classList.add("active");
+
+}
+
+
+/* PROGRESS */
+
+function updateProgress(percent) {
+
+    document.getElementById("progress").style.width =
+        percent + "%";
+
+}
+
+
+/* QUESTION 1 */
+
+function answerQ1(button, correct) {
+
+    const buttons =
+        document.querySelectorAll("#q1 .option");
+
+    buttons.forEach(b => {
+        b.disabled = true;
+    });
+
+    const feedback =
+        document.getElementById("feedback1");
+
+    feedback.classList.add("show");
+
+    if (correct) {
+
+        score++;
+
+        button.classList.add("correct");
+
+        feedback.classList.add("good");
+
+        feedback.innerHTML =
+            "✓ Correct! A rational agent is evaluated using a performance measure that captures how desirable its behaviour is.";
+
+    } else {
+
+        button.classList.add("incorrect");
+
+        feedback.classList.add("bad");
+
+        feedback.innerHTML =
+            "Not quite. The key idea is the performance measure: it evaluates how well the agent performs in its environment.";
+
+    }
+
+    document.getElementById("next1")
+        .classList.remove("hidden");
+
+    updateProgress(45);
+}
+
+
+/* QUESTION 2 */
+
+function checkPEAS() {
+
+    const P =
+        document.getElementById("peasP").value;
+
+    const E =
+        document.getElementById("peasE").value;
+
+    const A =
+        document.getElementById("peasA").value;
+
+    const S =
+        document.getElementById("peasS").value;
+
+    const feedback =
+        document.getElementById("feedback2");
+
+    if (!P || !E || !A || !S) {
+
+        feedback.className =
+            "feedback show bad";
+
+        feedback.innerHTML =
+            "Please complete all four parts of the PEAS specification.";
+
+        return;
+    }
+
+    if (
+        P === "correct" &&
+        E === "correct" &&
+        A === "correct" &&
+        S === "correct"
+    ) {
+
+        score++;
+
+        feedback.className =
+            "feedback show good";
+
+        feedback.innerHTML =
+            "✓ Excellent! You correctly identified Performance, Environment, Actuators and Sensors.";
+
+    } else {
+
+        feedback.className =
+            "feedback show bad";
+
+        feedback.innerHTML =
+            "Some elements are misplaced. Remember: Performance = how success is evaluated; Environment = what the agent operates in; Actuators = how it acts; Sensors = how it perceives.";
+
+    }
+
+    document.getElementById("next2")
+        .classList.remove("hidden");
+
+    updateProgress(70);
+}
+
+
+/* QUESTION 3 */
+
+function answerQ3(button, correct) {
+
+    const buttons =
+        document.querySelectorAll("#q3 .option");
+
+    buttons.forEach(b => {
+        b.disabled = true;
+    });
+
+    const feedback =
+        document.getElementById("feedback3");
+
+    feedback.classList.add("show");
+
+    if (correct) {
+
+        score++;
+
+        button.classList.add("correct");
+
+        feedback.classList.add("good");
+
+        feedback.innerHTML =
+            "✓ Correct! The agent must be evaluated according to appropriate performance criteria, while its sensors and actuators connect it to its environment.";
+
+    } else {
+
+        button.classList.add("incorrect");
+
+        feedback.classList.add("bad");
+
+        feedback.innerHTML =
+            "Not quite. Think about what the agent perceives from the environment, how it acts, and how its success should be evaluated.";
+
+    }
+
+    document.getElementById("finish")
+        .classList.remove("hidden");
+
+    updateProgress(90);
+}
+
+
+/* SHOW QUESTION */
+
+function showQuestion(number) {
+
+    document.querySelectorAll(".question")
+        .forEach(q => q.classList.remove("active"));
+
+    document.getElementById("q" + number)
+        .classList.add("active");
+
+}
+
+
+/* FINISH */
+
+function finishMission() {
+
+    document.getElementById("q3")
+        .classList.remove("active");
+
+    document.getElementById("completion")
+        .classList.add("show");
+
+    document.getElementById("finalScore")
+        .innerHTML =
+        "Mission score: " + score + " / 3";
+
+    updateProgress(100);
+
+}
+
+</script>
+
+</body>
+</html>
