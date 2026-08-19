@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Knowledge Quest – Mission 3</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7f9;
+    color: #2d4f70;
+}
+
+.game {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 0 20px 50px 20px;
+}
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 20px;
+    background: #ffffff;
+    border-bottom: 1px solid #d7dde3;
+}
+
+.game-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #234f76;
+}
+
+.mission-number {
+    font-size: 14px;
+    color: #667788;
+}
+
+.progress-container {
+    background: #dfe6eb;
+    height: 8px;
+    border-radius: 5px;
+    margin: 0 20px 25px 20px;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    width: 60%;
+    background: #2d587e;
+    border-radius: 5px;
+}
+
+/* ==========================================
+   MAIN CARD
+   ========================================== */
+
+.mission-card {
+    background: white;
+    border-radius: 14px;
+    padding: 35px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+}
+
+.icon {
+    text-align: center;
+    font-size: 48px;
+    margin-bottom: 8px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 34px;
+    margin: 5px 0 10px 0;
+    color: #234f76;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 20px;
+    color: #667788;
+    margin-bottom: 25px;
+}
+
+.intro {
+    max-width: 760px;
+    margin: auto;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+/* ==========================================
+   SECTIONS
+   ========================================== */
+
+.mission-section {
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid #e0e5e9;
+}
+
+.mission-section h2 {
+    color: #234f76;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+.mission-section p {
+    line-height: 1.6;
+}
+
+/* ==========================================
+   TRIPLE BUILDER
+   ========================================== */
+
+.triple-builder {
+    margin-top: 25px;
+    padding: 25px;
+    background: #f7f9fb;
+    border: 1px solid #d7e0e7;
+    border-radius: 12px;
+}
+
+.triple {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+.triple-part {
+    padding: 18px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    min-height: 80px;
+}
+
+.subject {
+    background: #e5f0f8;
+    border: 2px solid #a9c2d5;
+}
+
+.predicate {
+    background: #eee8f7;
+    border: 2px solid #c4b2d7;
+}
+
+.object {
+    background: #fff3d8;
+    border: 2px solid #e3c77b;
+}
+
+.triple-label {
+    display: block;
+    font-size: 12px;
+    color: #667788;
+    margin-bottom: 7px;
+    text-transform: uppercase;
+}
+
+.arrow {
+    text-align: center;
+    font-size: 25px;
+    color: #667788;
+}
+
+/* ==========================================
+   CARDS
+   ========================================== */
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.knowledge-card {
+    padding: 12px 17px;
+    border-radius: 8px;
+    background: white;
+    border: 1px solid #b9c7d1;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    color: #234f76;
+    transition: all 0.15s ease;
+}
+
+.knowledge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.10);
+}
+
+.knowledge-card.selected {
+    background: #dcebf5;
+    border: 2px solid #2d587e;
+}
+
+.knowledge-card.correct {
+    background: #e5f4e9;
+    border-color: #65a878;
+}
+
+.knowledge-card.incorrect {
+    background: #fae8e8;
+    border-color: #d77a7a;
+}
+
+/* ==========================================
+   QUERY LAB
+   ========================================== */
+
+.query-lab {
+    margin-top: 25px;
+    padding: 25px;
+    background: #f7f9fb;
+    border: 1px solid #d7e0e7;
+    border-radius: 12px;
+}
+
+.query-box {
+    margin-top: 20px;
+    padding: 18px;
+    background: #202d3a;
+    color: #f3f7fa;
+    border-radius: 8px;
+    font-family: "Courier New", monospace;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.query-input {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: 1px solid #b9c7d1;
+    border-radius: 7px;
+    font-size: 15px;
+    font-family: "Courier New", monospace;
+}
+
+/* ==========================================
+   KNOWLEDGE GRAPH
+   ========================================== */
+
+.graph {
+    position: relative;
+    margin-top: 25px;
+    min-height: 300px;
+    background: #f7f9fb;
+    border: 1px solid #d7e0e7;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.node {
+    position: absolute;
+    width: 120px;
+    padding: 15px 8px;
+    text-align: center;
+    background: white;
+    border: 2px solid #2d587e;
+    border-radius: 50%;
+    font-weight: bold;
+    transform: translate(-50%, -50%);
+}
+
+.node.alice {
+    left: 20%;
+    top: 50%;
+}
+
+.node.student {
+    left: 50%;
+    top: 25%;
+}
+
+.node.ai {
+    left: 80%;
+    top: 50%;
+}
+
+.node.teacher {
+    left: 50%;
+    top: 75%;
+}
+
+.graph-line {
+    position: absolute;
+    height: 2px;
+    background: #9eabb5;
+    transform-origin: left center;
+}
+
+.line1 {
+    width: 270px;
+    left: 23%;
+    top: 42%;
+    transform: rotate(-18deg);
+}
+
+.line2 {
+    width: 270px;
+    left: 23%;
+    top: 56%;
+    transform: rotate(18deg);
+}
+
+.line3 {
+    width: 180px;
+    left: 51%;
+    top: 70%;
+    transform: rotate(-65deg);
+}
+
+.edge-label {
+    position: absolute;
+    background: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #667788;
+    border-radius: 5px;
+}
+
+.edge1 {
+    left: 36%;
+    top: 30%;
+}
+
+.edge2 {
+    left: 36%;
+    top: 63%;
+}
+
+.edge3 {
+    left: 59%;
+    top: 50%;
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.button-container {
+    text-align: center;
+    margin-top: 25px;
+}
+
+button {
+    background: #2d587e;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #234965;
+}
+
+button:disabled {
+    background: #aeb9c3;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   FEEDBACK
+   ========================================== */
+
+.feedback {
+    display: none;
+    margin-top: 18px;
+    padding: 15px 18px;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.feedback.success {
+    display: block;
+    background: #e7f4ea;
+    border-left: 4px solid #5d9d6b;
+}
+
+.feedback.error {
+    display: block;
+    background: #faeeee;
+    border-left: 4px solid #c86d6d;
+}
+
+/* ==========================================
+   RESULT
+   ========================================== */
+
+.result-box {
+    display: none;
+    margin-top: 30px;
+    padding: 22px;
+    background: #eef5f9;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+}
+
+.complete {
+    display: none;
+    margin-top: 20px;
+    padding: 22px;
+    background: #e7f4ea;
+    border-radius: 10px;
+    line-height: 1.6;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 700px) {
+
+    .mission-card {
+        padding: 25px 18px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .triple {
+        grid-template-columns: 1fr;
+    }
+
+    .arrow {
+        display: none;
+    }
+
+    .graph {
+        min-height: 400px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="game">
+
+
+<!-- ==========================================
+     HEADER
+     ========================================== -->
+
+<div class="game-header">
+
+    <div class="game-title">
+        🧠 KNOWLEDGE QUEST
+    </div>
+
+    <div class="mission-number">
+        Mission 3 / 5
+    </div>
+
+</div>
+
+<div class="progress-container">
+
+    <div class="progress"></div>
+
+</div>
+
+
+<!-- ==========================================
+     MAIN CARD
+     ========================================== -->
+
+<div class="mission-card">
+
+    <div class="icon">
+        🔗
+    </div>
+
+    <h1>
+        The Triple Forge
+    </h1>
+
+    <div class="subtitle">
+        Turn knowledge into a graph
+    </div>
+
+
+    <div class="intro">
+
+        <p>
+            Welcome back, knowledge engineer.
+        </p>
+
+        <p>
+            Your ontology now has a structure.
+            But a knowledge base becomes useful when
+            we can represent concrete knowledge and
+            <strong>ask questions about it</strong>.
+        </p>
+
+        <p>
+            In this mission you will work with
+            <strong>subjects, predicates, and objects</strong>,
+            construct knowledge triples, and use a simple
+            query interface to investigate a knowledge graph.
+        </p>
+
+    </div>
+
+
+<!-- ==========================================
+     CHALLENGE 1
+     ========================================== -->
+
+<div class="mission-section">
+
+    <h2>
+        🔺 Challenge 1 — Identify the triple
+    </h2>
+
+    <p>
+        Knowledge can be represented as a statement connecting
+        entities through a relationship.
+    </p>
+
+    <p>
+        Consider the statement:
+    </p>
+
+    <p>
+        <strong>
+            "Alice studies Artificial Intelligence."
+        </strong>
+    </p>
+
+    <p>
+        Which part is the <strong>predicate</strong>?
+    </p>
+
+
+    <div class="cards-container">
+
+        <div class="knowledge-card"
+             onclick="predicateAnswer(this, false)">
+            Alice
+        </div>
+
+        <div class="knowledge-card"
+             onclick="predicateAnswer(this, true)">
+            studies
+        </div>
+
+        <div class="knowledge-card"
+             onclick="predicateAnswer(this, false)">
+            Artificial Intelligence
+        </div>
+
+        <div class="knowledge-card"
+             onclick="predicateAnswer(this, false)">
+            Alice studies AI
+        </div>
+
+    </div>
+
+
+    <div id="feedbackPredicate"
+         class="feedback">
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     CHALLENGE 2
+     ========================================== -->
+
+<div class="mission-section">
+
+    <h2>
+        🧩 Challenge 2 — Forge a triple
+    </h2>
+
+    <p>
+        Construct the knowledge statement:
+    </p>
+
+    <p>
+        <strong>
+            "Alice studies Artificial Intelligence."
+        </strong>
+    </p>
+
+    <p>
+        Select the correct subject, predicate, and object.
+    </p>
+
+
+    <div class="triple-builder">
+
+        <div class="triple">
+
+            <div>
+
+                <span class="triple-label">
+                    Subject
+                </span>
+
+                <select id="tripleSubject"
+                        class="query-input">
+
+                    <option value="">
+                        Select...
+                    </option>
+
+                    <option value="Alice">
+                        Alice
+                    </option>
+
+                    <option value="AI">
+                        Artificial Intelligence
+                    </option>
+
+                    <option value="studies">
+                        studies
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <span class="triple-label">
+                    Predicate
+                </span>
+
+                <select id="triplePredicate"
+                        class="query-input">
+
+                    <option value="">
+                        Select...
+                    </option>
+
+                    <option value="Alice">
+                        Alice
+                    </option>
+
+                    <option value="studies">
+                        studies
+                    </option>
+
+                    <option value="AI">
+                        Artificial Intelligence
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div>
+
+                <span class="triple-label">
+                    Object
+                </span>
+
+                <select id="tripleObject"
+                        class="query-input">
+
+                    <option value="">
+                        Select...
+                    </option>
+
+                    <option value="Alice">
+                        Alice
+                    </option>
+
+                    <option value="studies">
+                        studies
+                    </option>
+
+                    <option value="AI">
+                        Artificial Intelligence
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="button-container">
+
+            <button onclick="checkTriple()">
+                FORGE TRIPLE →
+            </button>
+
+        </div>
+
+
+        <div id="feedbackTriple"
+             class="feedback">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     CHALLENGE 3
+     ========================================== -->
+
+<div class="mission-section">
+
+    <h2>
+        🕸️ Challenge 3 — Read the graph
+    </h2>
+
+    <p>
+        The knowledge graph below contains several entities
+        and relationships.
+    </p>
+
+    <p>
+        Follow the connections and answer the question:
+    </p>
+
+    <p>
+        <strong>
+            What does Alice study?
+        </strong>
+    </p>
+
+
+    <div class="graph">
+
+        <div class="graph-line line1"></div>
+
+        <div class="graph-line line2"></div>
+
+        <div class="graph-line line3"></div>
+
+
+        <div class="edge-label edge1">
+            type
+        </div>
+
+        <div class="edge-label edge2">
+            studies
+        </div>
+
+        <div class="edge-label edge3">
+            teaches
+        </div>
+
+
+        <div class="node alice">
+            Alice
+        </div>
+
+        <div class="node student">
+            Student
+        </div>
+
+        <div class="node ai">
+            AI
+        </div>
+
+        <div class="node teacher">
+            Teacher
+        </div>
+
+    </div>
+
+
+    <div class="cards-container">
+
+        <div class="knowledge-card"
+             onclick="graphAnswer(this, true)">
+            Artificial Intelligence
+        </div>
+
+        <div class="knowledge-card"
+             onclick="graphAnswer(this, false)">
+            Teacher
+        </div>
+
+        <div class="knowledge-card"
+             onclick="graphAnswer(this, false)">
+            Student
+        </div>
+
+        <div class="knowledge-card"
+             onclick="graphAnswer(this, false)">
+            Alice
+        </div>
+
+    </div>
+
+
+    <div id="feedbackGraph"
+         class="feedback">
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     CHALLENGE 4
+     ========================================== -->
+
+<div class="mission-section">
+
+    <h2>
+        🔎 Challenge 4 — Query the knowledge base
+    </h2>
+
+    <p>
+        Knowledge representation is useful because we can
+        <strong>Ask</strong> the knowledge base questions.
+    </p>
+
+    <p>
+        The lecture demonstrates this using
+        <strong>Description Logic queries in Protégé</strong>.
+        For example, the People ontology can be queried
+        using class expressions such as:
+    </p>
+
+
+    <div class="query-box">
+
+        adult and has_pet min 1
+
+    </div>
+
+
+    <p>
+        What kind of question does this query represent?
+    </p>
+
+
+    <div class="cards-container">
+
+        <div class="knowledge-card"
+             onclick="queryAnswer(this, false)">
+            Find all adults.
+        </div>
+
+        <div class="knowledge-card"
+             onclick="queryAnswer(this, true)">
+            Find adults that have at least one pet.
+        </div>
+
+        <div class="knowledge-card"
+             onclick="queryAnswer(this, false)">
+            Find all pets that are adults.
+        </div>
+
+        <div class="knowledge-card"
+             onclick="queryAnswer(this, false)">
+            Find people that have no pets.
+        </div>
+
+    </div>
+
+
+    <div id="feedbackQuery"
+         class="feedback">
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     CHALLENGE 5
+     ========================================== -->
+
+<div class="mission-section">
+
+    <h2>
+        🧠 Challenge 5 — Reason over the knowledge
+    </h2>
+
+    <p>
+        The final challenge is about the difference between
+        simply storing a fact and <strong>inferring information</strong>.
+    </p>
+
+    <p>
+        Suppose the knowledge base contains:
+    </p>
+
+    <div class="query-box">
+
+        Student ⊂ Person<br><br>
+
+        Alice ∈ Student
+
+    </div>
+
+    <p>
+        What can a reasoner infer?
+    </p>
+
+
+    <div class="cards-container">
+
+        <div class="knowledge-card"
+             onclick="reasonAnswer(this, true)">
+            Alice ∈ Person
+        </div>
+
+        <div class="knowledge-card"
+             onclick="reasonAnswer(this, false)">
+            Person ⊂ Student
+        </div>
+
+        <div class="knowledge-card"
+             onclick="reasonAnswer(this, false)">
+            Alice ∈ Teacher
+        </div>
+
+        <div class="knowledge-card"
+             onclick="reasonAnswer(this, false)">
+            Every Person is a Student
+        </div>
+
+    </div>
+
+
+    <div id="feedbackReason"
+         class="feedback">
+    </div>
+
+</div>
+
+
+<!-- ==========================================
+     COMPLETE
+     ========================================== -->
+
+<div class="button-container">
+
+    <button id="finishButton"
+            onclick="finishMission()"
+            disabled>
+
+        COMPLETE MISSION →
+
+    </button>
+
+</div>
+
+
+<div id="result"
+     class="result-box">
+</div>
+
+
+<div id="complete"
+     class="complete">
+
+    🏆 <strong>Mission complete!</strong>
+
+    <p>
+        You have successfully moved from an ontology's
+        structure to knowledge representation and querying.
+    </p>
+
+    <p>
+        You can now identify a knowledge triple, construct
+        statements from subject–predicate–object components,
+        navigate a knowledge graph, interpret a Description
+        Logic query, and understand how a reasoner can infer
+        information from existing knowledge.
+    </p>
+
+    <p>
+        <strong>Next mission:</strong>
+        you will investigate how a knowledge base can support
+        more powerful reasoning and explanations.
+    </p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   STATE
+   ========================================== */
+
+let completed = {
+    predicate: false,
+    triple: false,
+    graph: false,
+    query: false,
+    reason: false
+};
+
+let score = 0;
+
+
+/* ==========================================
+   CHALLENGE 1
+   ========================================== */
+
+function predicateAnswer(element, correct) {
+
+    if (completed.predicate) {
+        return;
+    }
+
+    const cards =
+        element.parentElement.querySelectorAll(".knowledge-card");
+
+    cards.forEach(card => {
+        card.style.pointerEvents = "none";
+    });
+
+    const feedback =
+        document.getElementById("feedbackPredicate");
+
+    if (correct) {
+
+        element.classList.add("correct");
+
+        feedback.className =
+            "feedback success";
+
+        feedback.innerHTML =
+            "✓ Correct! <strong>studies</strong> is the predicate: " +
+            "it describes the relationship between Alice and " +
+            "Artificial Intelligence.";
+
+        completed.predicate = true;
+
+        score++;
+
+    } else {
+
+        element.classList.add("incorrect");
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML =
+            "✗ Not quite. The predicate describes the relationship " +
+            "between the subject and object. In this statement, " +
+            "that relationship is <strong>studies</strong>.";
+
+        cards.forEach(card => {
+
+            if (card.textContent.trim() === "studies") {
+                card.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    checkCompletion();
+
+}
+
+
+/* ==========================================
+   CHALLENGE 2
+   ========================================== */
+
+function checkTriple() {
+
+    const subject =
+        document.getElementById("tripleSubject").value;
+
+    const predicate =
+        document.getElementById("triplePredicate").value;
+
+    const object =
+        document.getElementById("tripleObject").value;
+
+    const feedback =
+        document.getElementById("feedbackTriple");
+
+
+    if (
+        subject === "Alice" &&
+        predicate === "studies" &&
+        object === "AI"
+    ) {
+
+        feedback.className =
+            "feedback success";
+
+        feedback.innerHTML =
+            "✓ Triple forged! " +
+            "<strong>Alice → studies → Artificial Intelligence</strong>.";
+
+        completed.triple = true;
+
+        score++;
+
+    } else {
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML =
+            "✗ Not quite. Read the statement from left to right: " +
+            "who is doing something, what is the relationship, " +
+            "and what is the object of that relationship?";
+
+    }
+
+    checkCompletion();
+
+}
+
+
+/* ==========================================
+   CHALLENGE 3
+   ========================================== */
+
+function graphAnswer(element, correct) {
+
+    if (completed.graph) {
+        return;
+    }
+
+    const cards =
+        element.parentElement.querySelectorAll(".knowledge-card");
+
+    cards.forEach(card => {
+        card.style.pointerEvents = "none";
+    });
+
+    const feedback =
+        document.getElementById("feedbackGraph");
+
+
+    if (correct) {
+
+        element.classList.add("correct");
+
+        feedback.className =
+            "feedback success";
+
+        feedback.innerHTML =
+            "✓ Correct! Follow the <strong>studies</strong> " +
+            "relationship from Alice to AI.";
+
+        completed.graph = true;
+
+        score++;
+
+    } else {
+
+        element.classList.add("incorrect");
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML =
+            "✗ Look carefully at the direction of the relationship. " +
+            "The edge leaving Alice labelled " +
+            "<strong>studies</strong> leads to AI.";
+
+        cards.forEach(card => {
+
+            if (
+                card.textContent.trim() ===
+                "Artificial Intelligence"
+            ) {
+                card.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    checkCompletion();
+
+}
+
+
+/* ==========================================
+   CHALLENGE 4
+   ========================================== */
+
+function queryAnswer(element, correct) {
+
+    if (completed.query) {
+        return;
+    }
+
+    const cards =
+        element.parentElement.querySelectorAll(".knowledge-card");
+
+    cards.forEach(card => {
+        card.style.pointerEvents = "none";
+    });
+
+    const feedback =
+        document.getElementById("feedbackQuery");
+
+
+    if (correct) {
+
+        element.classList.add("correct");
+
+        feedback.className =
+            "feedback success";
+
+        feedback.innerHTML =
+            "✓ Exactly. The expression asks for individuals " +
+            "that are adults and have at least one pet. " +
+            "In Protégé, the query can be executed against " +
+            "the knowledge base using the reasoner.";
+
+        completed.query = true;
+
+        score++;
+
+    } else {
+
+        element.classList.add("incorrect");
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML =
+            "✗ Look at the expression carefully: " +
+            "<strong>adult</strong> restricts the class, while " +
+            "<strong>has_pet min 1</strong> requires at least " +
+            "one pet.";
+
+        cards.forEach(card => {
+
+            if (
+                card.textContent.includes(
+                    "at least one pet"
+                )
+            ) {
+                card.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    checkCompletion();
+
+}
+
+
+/* ==========================================
+   CHALLENGE 5
+   ========================================== */
+
+function reasonAnswer(element, correct) {
+
+    if (completed.reason) {
+        return;
+    }
+
+    const cards =
+        element.parentElement.querySelectorAll(".knowledge-card");
+
+    cards.forEach(card => {
+        card.style.pointerEvents = "none";
+    });
+
+    const feedback =
+        document.getElementById("feedbackReason");
+
+
+    if (correct) {
+
+        element.classList.add("correct");
+
+        feedback.className =
+            "feedback success";
+
+        feedback.innerHTML =
+            "✓ Correct! If every Student is a Person and " +
+            "Alice is a Student, then a reasoner can infer " +
+            "that Alice is a Person.";
+
+        completed.reason = true;
+
+        score++;
+
+    } else {
+
+        element.classList.add("incorrect");
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML =
+            "✗ Think about the subclass relationship. " +
+            "If Student is a subclass of Person, membership " +
+            "in Student also implies membership in Person.";
+
+        cards.forEach(card => {
+
+            if (
+                card.textContent.trim() ===
+                "Alice ∈ Person"
+            ) {
+                card.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    checkCompletion();
+
+}
+
+
+/* ==========================================
+   CHECK COMPLETION
+   ========================================== */
+
+function checkCompletion() {
+
+    if (
+        completed.predicate &&
+        completed.triple &&
+        completed.graph &&
+        completed.query &&
+        completed.reason
+    ) {
+
+        document.getElementById("finishButton")
+            .disabled = false;
+
+    }
+
+}
+
+
+/* ==========================================
+   FINISH
+   ========================================== */
+
+function finishMission() {
+
+    const result =
+        document.getElementById("result");
+
+    const complete =
+        document.getElementById("complete");
+
+
+    result.style.display =
+        "block";
+
+    result.innerHTML =
+        "🏆 Your score: " +
+        score +
+        " / 5";
+
+
+    complete.style.display =
+        "block";
+
+
+    document.getElementById("finishButton")
+        .style.display = "none";
+
+
+    window.scrollTo({
+
+        top: document.body.scrollHeight,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+</script>
+
+</body>
+
+</html>
