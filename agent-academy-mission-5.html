@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Agent Academy — Mission 5</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f1f5f8;
+    color: #2c3e50;
+}
+
+.academy {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    background: white;
+    border-radius: 14px;
+    padding: 22px 28px;
+    border: 1px solid #dce3e8;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 22px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.academy-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #244f73;
+}
+
+.mission-number {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.progress-container {
+    margin-top: 18px;
+    height: 8px;
+    background: #e1e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 80%;
+    background: #2c597d;
+    transition: width 0.5s ease;
+}
+
+
+/* =========================
+   MAIN CARD
+========================= */
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    border: 1px solid #e0e5e9;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+.icon {
+    font-size: 62px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #244f73;
+    font-size: 38px;
+    margin: 8px 0;
+}
+
+h2 {
+    color: #244f73;
+    font-size: 25px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 19px;
+    margin-bottom: 25px;
+}
+
+.intro {
+    text-align: center;
+    max-width: 760px;
+    margin: auto;
+    line-height: 1.7;
+    color: #475569;
+}
+
+
+/* =========================
+   SCREENS
+========================= */
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+
+/* =========================
+   AGENT TEAM
+========================= */
+
+.agent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 28px 0;
+}
+
+.agent-card {
+    background: #fafcfd;
+    border: 1px solid #dce4e9;
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+}
+
+.agent-icon {
+    font-size: 42px;
+}
+
+.agent-name {
+    font-weight: bold;
+    color: #244f73;
+    margin-top: 8px;
+}
+
+.agent-role {
+    font-size: 14px;
+    color: #64748b;
+    margin-top: 5px;
+}
+
+.agent-goal {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 12px;
+}
+
+
+/* =========================
+   SCENARIO
+========================= */
+
+.scenario {
+    background: #f5f8fa;
+    border-left: 5px solid #2c597d;
+    border-radius: 7px;
+    padding: 20px;
+    margin: 25px 0;
+    line-height: 1.7;
+}
+
+
+/* =========================
+   OPTIONS
+========================= */
+
+.options {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.option {
+    border: 2px solid #dbe3e8;
+    border-radius: 10px;
+    padding: 17px;
+    background: #fafcfd;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.option:hover {
+    border-color: #7fa5c3;
+    background: #f2f7fb;
+    transform: translateY(-1px);
+}
+
+.option.correct {
+    background: #edf8f0;
+    border-color: #4f9d69;
+}
+
+.option.incorrect {
+    background: #fff0f0;
+    border-color: #c85c5c;
+}
+
+.option.disabled {
+    cursor: default;
+}
+
+
+/* =========================
+   FEEDBACK
+========================= */
+
+.feedback {
+    display: none;
+    margin-top: 20px;
+    padding: 17px;
+    border-radius: 9px;
+    line-height: 1.6;
+}
+
+.feedback.correct {
+    display: block;
+    background: #edf8f0;
+    border-left: 5px solid #4f9d69;
+    color: #285c39;
+}
+
+.feedback.incorrect {
+    display: block;
+    background: #fff0f0;
+    border-left: 5px solid #c85c5c;
+    color: #713535;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.button-container {
+    text-align: center;
+    margin-top: 28px;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #2c597d;
+    color: white;
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background: #214762;
+}
+
+button:disabled {
+    background: #aab6bf;
+    cursor: default;
+}
+
+
+/* =========================
+   SCORE
+========================= */
+
+.score {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    padding: 12px 15px;
+    background: #f5f8fa;
+    border-radius: 8px;
+    color: #536574;
+}
+
+
+/* =========================
+   RESULT
+========================= */
+
+#resultScreen {
+    display: none;
+    text-align: center;
+}
+
+.final-score {
+    font-size: 44px;
+    font-weight: bold;
+    color: #2c597d;
+    margin: 15px 0;
+}
+
+.rank {
+    font-size: 20px;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.lesson {
+    background: #eef5fa;
+    border-left: 5px solid #2c597d;
+    padding: 20px;
+    text-align: left;
+    border-radius: 7px;
+    line-height: 1.7;
+    margin-top: 25px;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+    .academy {
+        padding: 10px;
+        margin: 10px auto;
+    }
+
+    .card {
+        padding: 25px 20px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .agent-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="academy">
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<div class="header">
+
+    <div class="header-top">
+
+        <div class="academy-title">
+            🧠 AGENT ACADEMY
+        </div>
+
+        <div class="mission-number">
+            Mission 5 / 5
+        </div>
+
+    </div>
+
+    <div class="progress-container">
+
+        <div
+            class="progress-bar"
+            id="progressBar">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     MAIN CARD
+========================= -->
+
+<div class="card">
+
+
+<!-- =========================
+     START SCREEN
+========================= -->
+
+<div
+    id="startScreen"
+    class="screen active">
+
+    <div class="icon">
+        🤝
+    </div>
+
+    <h1>
+        The Multi-Agent Challenge
+    </h1>
+
+    <div class="subtitle">
+        Mission 5: Command the Agent Team
+    </div>
+
+    <p class="intro">
+
+        You have learned how individual intelligent agents
+        perceive their environment, reason about it,
+        select actions, and pursue goals.
+
+        <br><br>
+
+        But what happens when <strong>multiple agents</strong>
+        share the same environment?
+
+        <br><br>
+
+        They may need to cooperate.
+
+        They may have competing objectives.
+
+        They may need to communicate.
+
+        And sometimes they must negotiate.
+
+        <br><br>
+
+        Welcome to the final mission of Agent Academy.
+
+    </p>
+
+
+    <div class="agent-grid">
+
+        <div class="agent-card">
+
+            <div class="agent-icon">
+                🚑
+            </div>
+
+            <div class="agent-name">
+                RescueBot
+            </div>
+
+            <div class="agent-role">
+                Emergency agent
+            </div>
+
+            <div class="agent-goal">
+                Reach the injured person
+                as quickly as possible.
+            </div>
+
+        </div>
+
+
+        <div class="agent-card">
+
+            <div class="agent-icon">
+                🚚
+            </div>
+
+            <div class="agent-name">
+                DeliveryBot
+            </div>
+
+            <div class="agent-role">
+                Logistics agent
+            </div>
+
+            <div class="agent-goal">
+                Deliver an important package
+                to the hospital.
+            </div>
+
+        </div>
+
+
+        <div class="agent-card">
+
+            <div class="agent-icon">
+                🚧
+            </div>
+
+            <div class="agent-name">
+                TrafficBot
+            </div>
+
+            <div class="agent-role">
+                Infrastructure agent
+            </div>
+
+            <div class="agent-goal">
+                Keep the roads safe
+                and avoid congestion.
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="button-container">
+
+        <button onclick="startMission()">
+            START MULTI-AGENT MISSION →
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     CHALLENGE 1
+========================= -->
+
+<div
+    id="challenge1"
+    class="screen">
+
+    <div class="challenge-label">
+        MULTI-AGENT CHALLENGE 1 / 4
+    </div>
+
+    <h2>
+        Three agents, one environment
+    </h2>
+
+
+    <div class="scenario">
+
+        RescueBot, DeliveryBot, and TrafficBot are all
+        operating in the same city.
+
+        <br><br>
+
+        RescueBot needs to reach an emergency location.
+
+        DeliveryBot needs to reach the hospital.
+
+        TrafficBot needs to keep traffic flowing safely.
+
+        <br><br>
+
+        Their decisions can affect one another.
+
+        <br><br>
+
+        What kind of system are we dealing with?
+
+    </div>
+
+
+    <div class="options">
+
+        <div
+            class="option"
+            onclick="answer(1, true)">
+
+            🤝 A multi-agent system in which multiple
+            agents interact within a shared environment
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(1, false)">
+
+            🧹 A simple reflex agent
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(1, false)">
+
+            🧠 A single BDI agent
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(1, false)">
+
+            📊 A database management system
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="feedback1"
+        class="feedback">
+    </div>
+
+
+    <div class="button-container">
+
+        <button
+            id="next1"
+            onclick="nextChallenge(2)"
+            disabled>
+
+            NEXT →
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     CHALLENGE 2
+========================= -->
+
+<div
+    id="challenge2"
+    class="screen">
+
+    <div class="challenge-label">
+        MULTI-AGENT CHALLENGE 2 / 4
+    </div>
+
+    <h2>
+        Cooperation
+    </h2>
+
+
+    <div class="scenario">
+
+        An accident has blocked the main road.
+
+        <br><br>
+
+        RescueBot cannot reach the injured person.
+
+        TrafficBot knows that another road is available.
+
+        DeliveryBot can temporarily move its vehicle
+        and clear part of the blocked route.
+
+        <br><br>
+
+        The agents exchange information and coordinate
+        their actions so that RescueBot can reach the victim.
+
+        <br><br>
+
+        What is the key multi-agent concept illustrated here?
+
+    </div>
+
+
+    <div class="options">
+
+        <div
+            class="option"
+            onclick="answer(2, true)">
+
+            🤝 Cooperation — agents coordinate their
+            actions to achieve a beneficial outcome
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(2, false)">
+
+            ⚔️ Competition — agents try to prevent
+            each other from succeeding
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(2, false)">
+
+            🎲 Random behaviour
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(2, false)">
+
+            👁️ Perception without interaction
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="feedback2"
+        class="feedback">
+    </div>
+
+
+    <div class="button-container">
+
+        <button
+            id="next2"
+            onclick="nextChallenge(3)"
+            disabled>
+
+            NEXT →
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     CHALLENGE 3
+========================= -->
+
+<div
+    id="challenge3"
+    class="screen">
+
+    <div class="challenge-label">
+        MULTI-AGENT CHALLENGE 3 / 4
+    </div>
+
+    <h2>
+        Competition
+    </h2>
+
+
+    <div class="scenario">
+
+        Imagine a different situation.
+
+        <br><br>
+
+        Two delivery agents are both trying to use
+        the same charging station.
+
+        <br><br>
+
+        There is only enough capacity for one agent.
+
+        Both agents prefer to obtain the resource.
+
+        <br><br>
+
+        Their objectives conflict.
+
+        <br><br>
+
+        Which concept best describes this situation?
+
+    </div>
+
+
+    <div class="options">
+
+        <div
+            class="option"
+            onclick="answer(3, false)">
+
+            🤝 Cooperation
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(3, true)">
+
+            ⚔️ Competition — the agents have conflicting
+            objectives regarding a shared resource
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(3, false)">
+
+            🧠 Belief formation
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(3, false)">
+
+            📡 Perception
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="feedback3"
+        class="feedback">
+    </div>
+
+
+    <div class="button-container">
+
+        <button
+            id="next3"
+            onclick="nextChallenge(4)"
+            disabled>
+
+            NEXT →
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     CHALLENGE 4
+========================= -->
+
+<div
+    id="challenge4"
+    class="screen">
+
+    <div class="challenge-label">
+        FINAL MULTI-AGENT CHALLENGE
+    </div>
+
+    <h2>
+        Negotiation
+    </h2>
+
+
+    <div class="scenario">
+
+        Two delivery agents need the same charging station.
+
+        <br><br>
+
+        Instead of fighting for the resource, they exchange
+        information.
+
+        <br><br>
+
+        Agent A says:
+
+        <strong>
+        "I need the station now because my battery is very low."
+        </strong>
+
+        <br><br>
+
+        Agent B responds:
+
+        <strong>
+        "I can wait ten minutes if you allow me to use it next."
+        </strong>
+
+        <br><br>
+
+        They agree on a sequence that benefits both agents.
+
+        <br><br>
+
+        What concept is being illustrated?
+
+    </div>
+
+
+    <div class="options">
+
+        <div
+            class="option"
+            onclick="answer(4, false)">
+
+            👁️ Perception
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(4, false)">
+
+            🧠 Belief revision
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(4, true)">
+
+            🤝 Negotiation — agents communicate
+            and attempt to reach an agreement
+
+        </div>
+
+        <div
+            class="option"
+            onclick="answer(4, false)">
+
+            🎯 Goal deletion
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="feedback4"
+        class="feedback">
+    </div>
+
+
+    <div class="button-container">
+
+        <button
+            id="finishButton"
+            onclick="finishMission()"
+            disabled>
+
+            COMPLETE AGENT ACADEMY →
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================
+     FINAL SCREEN
+========================= -->
+
+<div
+    id="resultScreen"
+    class="screen">
+
+    <div class="icon">
+        🏆
+    </div>
+
+    <h1>
+        Agent Academy Complete!
+    </h1>
+
+
+    <div
+        class="final-score"
+        id="finalScore">
+
+        0 / 4
+
+    </div>
+
+
+    <div
+        class="rank"
+        id="rank">
+
+    </div>
+
+
+    <div class="lesson">
+
+        <strong>
+            🎓 Final Agent Academy Briefing
+        </strong>
+
+        <br><br>
+
+        You have now moved from individual intelligent
+        agents to systems containing multiple agents.
+
+        <br><br>
+
+        In a <strong>multi-agent system</strong>, agents
+        operate within a shared environment and may interact
+        with one another.
+
+        <br><br>
+
+        Their relationships may involve:
+
+        <br><br>
+
+        <strong>🤝 Cooperation</strong><br>
+        Agents coordinate their actions to achieve
+        compatible or shared objectives.
+
+        <br><br>
+
+        <strong>⚔️ Competition</strong><br>
+        Agents may have conflicting objectives or compete
+        for limited resources.
+
+        <br><br>
+
+        <strong>📡 Communication</strong><br>
+        Agents can exchange information that influences
+        their decisions.
+
+        <br><br>
+
+        <strong>🤝 Negotiation</strong><br>
+        Agents may attempt to reach agreements when
+        their interests are not identical.
+
+        <br><br>
+
+        The key idea is that once several intelligent
+        agents inhabit the same environment, understanding
+        the behavior of one agent is no longer sufficient.
+        We must also consider the interactions among agents.
+
+    </div>
+
+
+    <div class="button-container">
+
+        <button onclick="restartMission()">
+            PLAY AGAIN ↻
+        </button>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+
+<script>
+
+/* ==========================================
+   AGENT ACADEMY
+   MISSION 5 — MULTI-AGENT CHALLENGE
+========================================== */
+
+let score = 0;
+
+
+/* ==========================================
+   START
+========================================== */
+
+function startMission() {
+
+    score = 0;
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("challenge1")
+        .classList.add("active");
+
+
+    updateProgress(84);
+
+}
+
+
+/* ==========================================
+   ANSWER
+========================================== */
+
+function answer(challenge, correct) {
+
+    const screen =
+        document.getElementById("challenge" + challenge);
+
+
+    const options =
+        screen.querySelectorAll(".option");
+
+
+    options.forEach(option => {
+
+        option.classList.add("disabled");
+
+    });
+
+
+    const feedback =
+        document.getElementById("feedback" + challenge);
+
+
+    if (correct) {
+
+        score++;
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "<strong>✓ Correct!</strong><br>" +
+            getExplanation(challenge);
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "<strong>Not quite.</strong><br>" +
+            getExplanation(challenge);
+
+    }
+
+
+    const buttonId =
+        challenge === 4
+        ? "finishButton"
+        : "next" + challenge;
+
+
+    document
+        .getElementById(buttonId)
+        .disabled = false;
+
+}
+
+
+/* ==========================================
+   EXPLANATIONS
+========================================== */
+
+function getExplanation(challenge) {
+
+    if (challenge === 1) {
+
+        return "Correct. A multi-agent system involves multiple agents operating within a shared environment and potentially interacting with one another.";
+
+    }
+
+
+    if (challenge === 2) {
+
+        return "Correct. Cooperation occurs when agents coordinate their behavior in order to achieve compatible or shared objectives.";
+
+    }
+
+
+    if (challenge === 3) {
+
+        return "Correct. Competition can arise when agents have conflicting objectives or need access to the same limited resource.";
+
+    }
+
+
+    if (challenge === 4) {
+
+        return "Correct. Negotiation involves communication between agents with the aim of reaching an agreement or mutually acceptable outcome.";
+
+    }
+
+}
+
+
+/* ==========================================
+   NEXT
+========================================== */
+
+function nextChallenge(number) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("challenge" + number)
+        .classList.add("active");
+
+
+    updateProgress(
+        84 + ((number - 1) * 5)
+    );
+
+}
+
+
+/* ==========================================
+   PROGRESS
+========================================== */
+
+function updateProgress(percent) {
+
+    document
+        .getElementById("progressBar")
+        .style.width =
+        percent + "%";
+
+}
+
+
+/* ==========================================
+   FINISH
+========================================== */
+
+function finishMission() {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("resultScreen")
+        .classList.add("active");
+
+
+    document
+        .getElementById("finalScore")
+        .textContent =
+        score + " / 4";
+
+
+    let rank;
+
+
+    if (score === 4) {
+
+        rank =
+            "🏆 Master Agent Commander";
+
+    }
+
+    else if (score === 3) {
+
+        rank =
+            "🥇 Senior Agent Commander";
+
+    }
+
+    else if (score === 2) {
+
+        rank =
+            "🥈 Agent Commander";
+
+    }
+
+    else {
+
+        rank =
+            "🎓 Multi-Agent Trainee";
+
+    }
+
+
+    document
+        .getElementById("rank")
+        .textContent =
+        rank;
+
+
+    updateProgress(100);
+
+}
+
+
+/* ==========================================
+   RESTART
+========================================== */
+
+function restartMission() {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("startScreen")
+        .classList.add("active");
+
+
+    document
+        .getElementById("progressBar")
+        .style.width =
+        "80%";
+
+
+    score = 0;
+
+}
+
+</script>
+
+
+</body>
+</html>
