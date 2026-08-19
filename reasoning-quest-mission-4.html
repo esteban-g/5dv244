@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reasoning Quest — Mission 4</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f3f6f8;
+        color: #284b63;
+    }
+
+    .game {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .header {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 25px 30px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #d7e0e6;
+        padding-bottom: 15px;
+    }
+
+    .brand-title {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .mission-number {
+        font-size: 14px;
+        color: #657786;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dce5ea;
+        border-radius: 8px;
+        margin-top: 15px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 80%;
+        background: #2b5876;
+        border-radius: 8px;
+    }
+
+    .hero {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .hero-icon {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin: 10px 0;
+        color: #244f70;
+    }
+
+    h2 {
+        color: #244f70;
+        margin-top: 0;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #657786;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        max-width: 750px;
+        margin: auto;
+        line-height: 1.6;
+        font-size: 17px;
+    }
+
+    .panel {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 30px;
+        margin-top: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .code-box {
+        background: #202b33;
+        color: #f4f7f9;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: Consolas, Monaco, monospace;
+        font-size: 15px;
+        text-align: left;
+        line-height: 1.6;
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+
+    .comment {
+        color: #8fb3c9;
+    }
+
+    .keyword {
+        color: #ffcf66;
+    }
+
+    .question {
+        background: #f7f9fa;
+        border: 1px solid #d9e2e7;
+        border-radius: 12px;
+        padding: 22px;
+        margin-top: 20px;
+    }
+
+    .question-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    button {
+        background: #2b5876;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 15px;
+        cursor: pointer;
+        margin: 6px 4px;
+    }
+
+    button:hover {
+        background: #214861;
+    }
+
+    .option {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #ffffff;
+        color: #284b63;
+        border: 1px solid #cbd8df;
+        margin: 8px 0;
+    }
+
+    .option:hover {
+        background: #eef4f7;
+    }
+
+    .feedback {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        line-height: 1.5;
+    }
+
+    .correct {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+    }
+
+    .incorrect {
+        background: #fff3e0;
+        border-left: 4px solid #ff9800;
+    }
+
+    .map {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        max-width: 550px;
+        margin: 25px auto;
+    }
+
+    .cell {
+        aspect-ratio: 1;
+        border: 1px solid #ccd8df;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 26px;
+        background: #f7f9fa;
+    }
+
+    .robot {
+        background: #e4f0f8;
+    }
+
+    .goal {
+        background: #e8f5e9;
+    }
+
+    .obstacle {
+        background: #e8ecef;
+    }
+
+    .terminal {
+        background: #111820;
+        color: #d6f5d6;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: Consolas, Monaco, monospace;
+        text-align: left;
+        line-height: 1.6;
+        margin-top: 20px;
+        overflow-x: auto;
+    }
+
+    .terminal-title {
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .plan-builder {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    .action-button {
+        background: #ffffff;
+        color: #284b63;
+        border: 2px solid #2b5876;
+    }
+
+    .action-button:hover {
+        background: #eef4f7;
+    }
+
+    .plan {
+        min-height: 65px;
+        border: 2px dashed #b7c7d1;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+        background: #fafcfd;
+        font-family: Consolas, Monaco, monospace;
+    }
+
+    .plan-step {
+        display: inline-block;
+        background: #2b5876;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin: 4px;
+    }
+
+    .success {
+        display: none;
+        background: #e8f5e9;
+        border-left: 5px solid #4caf50;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        line-height: 1.6;
+    }
+
+    .reflection {
+        background: #eef5fa;
+        border-left: 5px solid #2b5876;
+        padding: 20px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    .xp {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #2b5876;
+        margin-top: 25px;
+    }
+
+    @media (max-width: 700px) {
+
+        .hero,
+        .panel {
+            padding: 22px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .map {
+            max-width: 350px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <div class="brand">
+
+            <div class="brand-title">
+                🧠 REASONING QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 4 / 5
+            </div>
+
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
+
+
+    <!-- HERO -->
+
+    <div class="hero">
+
+        <div class="hero-icon">
+            🤖
+        </div>
+
+        <h1>Plan the Robot</h1>
+
+        <div class="subtitle">
+            From reasoning about the world to changing it.
+        </div>
+
+        <div class="intro">
+
+            <p>
+                So far, you have used ASP to determine
+                <strong>what is true</strong>.
+            </p>
+
+            <p>
+                But an intelligent agent needs to do more than
+                reason about the current situation.
+            </p>
+
+            <p>
+                It needs to decide:
+            </p>
+
+            <p>
+                <strong>
+                    "What should I do next?"
+                </strong>
+            </p>
+
+            <p>
+                In this mission you will use ASP-style reasoning
+                to construct a <strong>plan</strong> that allows
+                a robot to reach a goal.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 1 -->
+
+    <div class="panel">
+
+        <h2>🗺️ The Robot's World</h2>
+
+        <p>
+            Our robot starts at position <strong>A</strong>
+            and must reach position <strong>D</strong>.
+        </p>
+
+        <div class="map">
+
+            <div class="cell robot">🤖</div>
+            <div class="cell">➡️</div>
+            <div class="cell">⬜</div>
+            <div class="cell goal">🎯</div>
+            <div class="cell">⬜</div>
+
+            <div class="cell">⬜</div>
+            <div class="cell obstacle">🧱</div>
+            <div class="cell obstacle">🧱</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+            <div class="cell">⬜</div>
+
+        </div>
+
+        <p>
+            The important idea is that the robot does not simply
+            "know" the goal.
+        </p>
+
+        <p>
+            It needs a sequence of <strong>actions</strong>
+            that transforms the initial state into a state
+            satisfying the goal.
+        </p>
+
+    </div>
+
+
+    <!-- MISSION 2 -->
+
+    <div class="panel">
+
+        <h2>⚙️ Representing Actions in ASP</h2>
+
+        <p>
+            An action can be represented as an ASP atom:
+        </p>
+
+        <div class="code-box">
+
+move(robot, A, B).<br>
+move(robot, B, C).<br>
+move(robot, C, D).
+
+        </div>
+
+        <p>
+            We can also represent the state of the world:
+        </p>
+
+        <div class="code-box">
+
+at(robot, A).<br>
+goal(D).
+
+        </div>
+
+        <p>
+            A planning problem therefore contains at least three
+            important ingredients:
+        </p>
+
+        <ul>
+
+            <li>
+                an <strong>initial state</strong>
+            </li>
+
+            <li>
+                possible <strong>actions</strong>
+            </li>
+
+            <li>
+                a <strong>goal state</strong>
+            </li>
+
+        </ul>
+
+        <div class="question">
+
+            <div class="question-title">
+                What is the purpose of a plan?
+            </div>
+
+            <button class="option"
+                onclick="checkAnswer1(1)">
+                A. Describe everything that is true in the world.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer1(2)">
+                B. Find a sequence of actions that transforms
+                the initial state into a goal state.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer1(3)">
+                C. Randomly choose actions until the robot reaches
+                the goal.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer1(4)">
+                D. Replace all facts with actions.
+            </button>
+
+            <div id="feedback1" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 3 -->
+
+    <div class="panel">
+
+        <h2>🧠 From State to State</h2>
+
+        <p>
+            Planning becomes interesting because actions
+            <strong>change the state of the world</strong>.
+        </p>
+
+        <p>
+            Suppose:
+        </p>
+
+        <div class="code-box">
+
+at(robot,A).<br>
+<br>
+move(A,B).
+
+        </div>
+
+        <p>
+            After executing the action, what should hold?
+        </p>
+
+        <div class="question">
+
+            <button class="option"
+                onclick="checkAnswer2(1)">
+                A. at(robot,A) and at(robot,B)
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer2(2)">
+                B. at(robot,B)
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer2(3)">
+                C. move(robot,B)
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer2(4)">
+                D. Nothing changes.
+            </button>
+
+            <div id="feedback2" class="feedback"></div>
+
+        </div>
+
+        <p style="margin-top:20px;">
+            The conceptual point is important:
+            <strong>actions produce transitions between states.</strong>
+        </p>
+
+    </div>
+
+
+    <!-- MISSION 4 -->
+
+    <div class="panel">
+
+        <h2>🧩 Build an ASP-Style Plan</h2>
+
+        <p>
+            Your robot starts at <strong>A</strong>.
+        </p>
+
+        <p>
+            The goal is <strong>D</strong>.
+        </p>
+
+        <p>
+            The available transitions are:
+        </p>
+
+        <div class="code-box">
+
+move(A,B).<br>
+move(B,C).<br>
+move(C,D).<br>
+move(A,C).<br>
+move(B,D).
+
+        </div>
+
+        <p>
+            There are several possible plans.
+            Your task is to construct one.
+        </p>
+
+        <div class="plan-builder">
+
+            <button class="action-button"
+                onclick="addAction('move(A,B)')">
+                move(A,B)
+            </button>
+
+            <button class="action-button"
+                onclick="addAction('move(B,C)')">
+                move(B,C)
+            </button>
+
+            <button class="action-button"
+                onclick="addAction('move(C,D)')">
+                move(C,D)
+            </button>
+
+            <button class="action-button"
+                onclick="addAction('move(A,C)')">
+                move(A,C)
+            </button>
+
+            <button class="action-button"
+                onclick="addAction('move(B,D)')">
+                move(B,D)
+            </button>
+
+        </div>
+
+        <div>
+
+            <strong>Your plan:</strong>
+
+            <div id="plan" class="plan">
+                Choose actions above...
+            </div>
+
+        </div>
+
+        <button onclick="checkPlan()">
+            CHECK PLAN →
+        </button>
+
+        <button onclick="resetPlan()">
+            RESET
+        </button>
+
+        <div id="planFeedback" class="feedback"></div>
+
+    </div>
+
+
+    <!-- MISSION 5 -->
+
+    <div class="panel">
+
+        <h2>⚔️ The Planning Challenge</h2>
+
+        <p>
+            Now think like an ASP planner.
+        </p>
+
+        <p>
+            We want to express a constraint:
+        </p>
+
+        <div class="code-box">
+
+:- not at(robot,D).
+
+        </div>
+
+        <p>
+            What does this constraint mean?
+        </p>
+
+        <div class="question">
+
+            <button class="option"
+                onclick="checkAnswer3(1)">
+                A. The robot must never be at D.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer3(2)">
+                B. A solution is rejected if the robot is
+                not at D.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer3(3)">
+                C. The robot must immediately move to D.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer3(4)">
+                D. D is removed from the environment.
+            </button>
+
+            <div id="feedback3" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ASP PLANNING MODEL -->
+
+    <div class="panel">
+
+        <h2>⚙️ The ASP Planner</h2>
+
+        <p>
+            A simplified planning formulation might look like this:
+        </p>
+
+        <div class="code-box">
+
+<span class="comment">% Initial state</span><br>
+at(robot,A).<br>
+<br>
+<span class="comment">% Possible actions</span><br>
+1 { action(move(A,B),T) : step(T) } 1.<br>
+<br>
+<span class="comment">% State transition</span><br>
+at(robot,B,T+1) :-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;action(move(A,B),T).<br>
+<br>
+<span class="comment">% Goal constraint</span><br>
+:- not at(robot,D,last).
+
+        </div>
+
+        <p>
+            The exact encoding of a planning problem can become
+            considerably more sophisticated, but the conceptual
+            structure is the same:
+        </p>
+
+        <ol>
+
+            <li>
+                describe the initial state;
+            </li>
+
+            <li>
+                describe possible actions;
+            </li>
+
+            <li>
+                describe how actions change states;
+            </li>
+
+            <li>
+                constrain the solutions;
+            </li>
+
+            <li>
+                require the goal to be satisfied.
+            </li>
+
+        </ol>
+
+        <div class="terminal">
+
+            <div class="terminal-title">
+                $ clingo robot_planning.lp
+            </div>
+
+            <div>
+                Solving...
+            </div>
+
+            <br>
+
+            <div>
+                Answer: 1
+            </div>
+
+            <div>
+                action(move(A,C),1)
+            </div>
+
+            <div>
+                action(move(C,D),2)
+            </div>
+
+            <div>
+                at(robot,D,3)
+            </div>
+
+            <br>
+
+            <div>
+                SATISFIABLE
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REFLECTION -->
+
+    <div class="panel">
+
+        <h2>🎓 Mission Reflection</h2>
+
+        <div class="reflection">
+
+            <p>
+                You have now crossed an important boundary in
+                symbolic AI.
+            </p>
+
+            <p>
+                In the previous mission, the question was:
+            </p>
+
+            <p>
+                <strong>
+                    "What follows from what I know?"
+                </strong>
+            </p>
+
+            <p>
+                In this mission, the question became:
+            </p>
+
+            <p>
+                <strong>
+                    "What should I do to achieve my goal?"
+                </strong>
+            </p>
+
+            <p>
+                This distinction is central to
+                <strong>automated planning</strong>.
+            </p>
+
+            <p>
+                An ASP planner can represent possible actions,
+                their effects, constraints, and desired goals,
+                and use answer-set solving to search for
+                solutions.
+            </p>
+
+            <p>
+                In other words:
+            </p>
+
+            <p style="font-size:20px; text-align:center;">
+                <strong>
+                    Knowledge → Actions → States → Goal
+                </strong>
+            </p>
+
+            <p>
+                In the final mission, we will bring the ideas
+                together and ask a broader question:
+                <strong>how can reasoning and planning become
+                part of an intelligent agent?</strong>
+            </p>
+
+        </div>
+
+        <div class="xp">
+            ⭐ +100 XP — PLANNING CERTIFIED
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* --------------------------------------------------
+   QUESTION 1
+-------------------------------------------------- */
+
+function checkAnswer1(answer) {
+
+    const feedback = document.getElementById("feedback1");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! A plan is a sequence of actions designed to transform an initial state into a state satisfying the goal.";
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Not quite. Planning is not simply describing the current world. It concerns finding actions that can achieve a desired goal.";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   QUESTION 2
+-------------------------------------------------- */
+
+function checkAnswer2(answer) {
+
+    const feedback = document.getElementById("feedback2");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! If the robot moves from A to B, its new state places it at B. The important idea is that actions cause state transitions.";
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Think about what an action does. A movement changes the state of the world.";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   QUESTION 3
+-------------------------------------------------- */
+
+function checkAnswer3(answer) {
+
+    const feedback = document.getElementById("feedback3");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! This is a constraint. Any candidate solution in which at(robot,D) cannot be established is rejected.";
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Look carefully at the ASP syntax. The constraint does not itself perform an action. It eliminates answer sets that fail to satisfy the goal.";
+
+    }
+
+}
+
+
+/* --------------------------------------------------
+   PLAN BUILDER
+-------------------------------------------------- */
+
+let plan = [];
+
+
+function addAction(action) {
+
+    plan.push(action);
+
+    renderPlan();
+
+}
+
+
+function renderPlan() {
+
+    const planBox = document.getElementById("plan");
+
+    if (plan.length === 0) {
+
+        planBox.innerHTML =
+            "Choose actions above...";
+
+        return;
+
+    }
+
+    planBox.innerHTML = "";
+
+    plan.forEach(function(action, index) {
+
+        const step = document.createElement("span");
+
+        step.className = "plan-step";
+
+        step.textContent =
+            (index + 1) + ". " + action;
+
+        planBox.appendChild(step);
+
+    });
+
+}
+
+
+function resetPlan() {
+
+    plan = [];
+
+    renderPlan();
+
+    const feedback =
+        document.getElementById("planFeedback");
+
+    feedback.style.display = "none";
+
+}
+
+
+function checkPlan() {
+
+    const feedback =
+        document.getElementById("planFeedback");
+
+    feedback.style.display = "block";
+
+
+    /*
+     * We intentionally validate the plan as a small
+     * deterministic state-transition problem.
+     *
+     * This is NOT a replacement for Clingo.
+     * It is a browser-based preparation for the
+     * actual ASP Code Lab.
+     */
+
+    let position = "A";
+
+    let valid = true;
+
+
+    for (let i = 0; i < plan.length; i++) {
+
+        const action = plan[i];
+
+        if (action === "move(A,B)" && position === "A") {
+
+            position = "B";
+
+        }
+
+        else if (action === "move(A,C)" && position === "A") {
+
+            position = "C";
+
+        }
+
+        else if (action === "move(B,C)" && position === "B") {
+
+            position = "C";
+
+        }
+
+        else if (action === "move(B,D)" && position === "B") {
+
+            position = "D";
+
+        }
+
+        else if (action === "move(C,D)" && position === "C") {
+
+            position = "D";
+
+        }
+
+        else {
+
+            valid = false;
+            break;
+
+        }
+
+    }
+
+
+    if (valid && position === "D") {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "🎉 Excellent! Your sequence is a valid plan. The robot starts at A, follows the actions you selected, and reaches the goal D.";
+
+    }
+
+    else if (valid) {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "🟡 Your actions are valid so far, but the robot has not reached the goal D yet. A plan is successful only when the goal is satisfied.";
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Invalid plan. At least one action cannot be executed from the robot's current state. Remember: actions have preconditions.";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
