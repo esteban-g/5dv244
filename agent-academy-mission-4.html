@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Agent Academy — Mission 4</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f1f5f8;
+    color: #2c3e50;
+}
+
+.academy {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    background: white;
+    border-radius: 14px;
+    padding: 22px 28px;
+    border: 1px solid #dce3e8;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 22px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.academy-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #244f73;
+}
+
+.mission-number {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.progress-container {
+    margin-top: 18px;
+    height: 8px;
+    background: #e1e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 75%;
+    background: #2c597d;
+    transition: width 0.5s ease;
+}
+
+/* =========================
+   MAIN CARD
+========================= */
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    border: 1px solid #e0e5e9;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+}
+
+.icon {
+    font-size: 62px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #244f73;
+    font-size: 38px;
+    margin: 8px 0;
+}
+
+h2 {
+    color: #244f73;
+    font-size: 25px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 19px;
+    margin-bottom: 25px;
+}
+
+.intro {
+    text-align: center;
+    max-width: 760px;
+    margin: auto;
+    line-height: 1.7;
+    color: #475569;
+}
+
+/* =========================
+   SCREENS
+========================= */
+
+.screen {
+    display: none;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* =========================
+   BDI DIAGRAM
+========================= */
+
+.bdi-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 30px 0;
+}
+
+.bdi-step {
+    background: #eef5fa;
+    border: 2px solid #c9dbe8;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-weight: bold;
+    color: #244f73;
+}
+
+.arrow {
+    font-size: 22px;
+    color: #718096;
+}
+
+/* =========================
+   SCENARIO
+========================= */
+
+.scenario {
+    background: #f5f8fa;
+    border-left: 5px solid #2c597d;
+    border-radius: 7px;
+    padding: 20px;
+    margin: 25px 0;
+    line-height: 1.7;
+}
+
+.scenario strong {
+    color: #244f73;
+}
+
+/* =========================
+   OPTIONS
+========================= */
+
+.options {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.option {
+    border: 2px solid #dbe3e8;
+    border-radius: 10px;
+    padding: 17px;
+    background: #fafcfd;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    transition: all 0.2s ease;
+}
+
+.option:hover {
+    border-color: #7fa5c3;
+    background: #f2f7fb;
+    transform: translateY(-1px);
+}
+
+.option.correct {
+    background: #edf8f0;
+    border-color: #4f9d69;
+}
+
+.option.incorrect {
+    background: #fff0f0;
+    border-color: #c85c5c;
+}
+
+.option.disabled {
+    cursor: default;
+}
+
+/* =========================
+   FEEDBACK
+========================= */
+
+.feedback {
+    display: none;
+    margin-top: 20px;
+    padding: 17px;
+    border-radius: 9px;
+    line-height: 1.6;
+}
+
+.feedback.correct {
+    display: block;
+    background: #edf8f0;
+    border-left: 5px solid #4f9d69;
+    color: #285c39;
+}
+
+.feedback.incorrect {
+    display: block;
+    background: #fff0f0;
+    border-left: 5px solid #c85c5c;
+    color: #713535;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.button-container {
+    text-align: center;
+    margin-top: 28px;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: #2c597d;
+    color: white;
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background: #214762;
+}
+
+button:disabled {
+    background: #aab6bf;
+    cursor: default;
+}
+
+/* =========================
+   BDI CARDS
+========================= */
+
+.bdi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.bdi-card {
+    background: #fafcfd;
+    border: 1px solid #dce4e9;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.bdi-card h3 {
+    margin-top: 0;
+    color: #244f73;
+}
+
+.bdi-card p {
+    line-height: 1.5;
+    margin-bottom: 0;
+}
+
+/* =========================
+   SCORE
+========================= */
+
+.score {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    padding: 12px 15px;
+    background: #f5f8fa;
+    border-radius: 8px;
+    color: #536574;
+}
+
+/* =========================
+   RESULT
+========================= */
+
+#resultScreen {
+    display: none;
+    text-align: center;
+}
+
+.final-score {
+    font-size: 44px;
+    font-weight: bold;
+    color: #2c597d;
+    margin: 15px 0;
+}
+
+.rank {
+    font-size: 20px;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.lesson {
+    background: #eef5fa;
+    border-left: 5px solid #2c597d;
+    padding: 20px;
+    text-align: left;
+    border-radius: 7px;
+    line-height: 1.7;
+    margin-top: 25px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 700px) {
+
+    .academy {
+        padding: 10px;
+        margin: 10px auto;
+    }
+
+    .card {
+        padding: 25px 20px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .bdi-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bdi-diagram {
+        flex-direction: column;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="academy">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+
+    <div class="header">
+
+        <div class="header-top">
+
+            <div class="academy-title">
+                🧠 AGENT ACADEMY
+            </div>
+
+            <div class="mission-number">
+                Mission 4 / 5
+            </div>
+
+        </div>
+
+        <div class="progress-container">
+
+            <div
+                class="progress-bar"
+                id="progressBar">
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         MAIN CARD
+    ========================== -->
+
+    <div class="card">
+
+
+        <!-- =====================
+             START SCREEN
+        ====================== -->
+
+        <div
+            id="startScreen"
+            class="screen active">
+
+            <div class="icon">
+                🧠
+            </div>
+
+            <h1>
+                The BDI Decision Lab
+            </h1>
+
+            <div class="subtitle">
+                Mission 4: Think Like a Cognitive Agent
+            </div>
+
+            <p class="intro">
+
+                Your agent is no longer simply reacting to
+                the environment.
+
+                <br><br>
+
+                It must understand what is happening,
+                consider what it wants, decide what it intends
+                to do, and finally act.
+
+                <br><br>
+
+                Your mission is to reconstruct the reasoning
+                process of a <strong>BDI agent</strong>.
+
+            </p>
+
+
+            <div class="bdi-diagram">
+
+                <div class="bdi-step">
+                    👁️ Perceive
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="bdi-step">
+                    🧠 Beliefs
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="bdi-step">
+                    🎯 Desires
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="bdi-step">
+                    📌 Intentions
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="bdi-step">
+                    🗺️ Plan
+                </div>
+
+                <div class="arrow">→</div>
+
+                <div class="bdi-step">
+                    ⚡ Execute
+                </div>
+
+            </div>
+
+
+            <div class="button-container">
+
+                <button onclick="startMission()">
+                    ENTER THE BDI LAB →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             CHALLENGE 1
+        ====================== -->
+
+        <div
+            id="challenge1"
+            class="screen">
+
+            <div class="challenge-label">
+                BDI CHALLENGE 1 / 4
+            </div>
+
+            <h2>
+                Step 1 — What does the agent perceive?
+            </h2>
+
+            <div class="scenario">
+
+                Imagine an intelligent restaurant-selection agent.
+
+                <br><br>
+
+                The agent receives the following information:
+
+                <br><br>
+
+                <strong>
+                "Restaurant A has excellent food but is very busy.
+                Restaurant B has availability but is farther away."
+                </strong>
+
+                <br><br>
+
+                Which part of the BDI process does this information
+                represent?
+
+            </div>
+
+
+            <div class="options">
+
+                <div
+                    class="option"
+                    onclick="answer(1, false)">
+
+                    🎯 Desires — what the agent wants to achieve
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(1, true)">
+
+                    👁️ Perception — information received from
+                    the environment
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(1, false)">
+
+                    📌 Intentions — the selected commitment
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(1, false)">
+
+                    ⚡ Execution — carrying out the selected action
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="feedback1"
+                class="feedback">
+            </div>
+
+
+            <div class="button-container">
+
+                <button
+                    id="next1"
+                    onclick="nextChallenge(2)"
+                    disabled>
+
+                    NEXT →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             CHALLENGE 2
+        ====================== -->
+
+        <div
+            id="challenge2"
+            class="screen">
+
+            <div class="challenge-label">
+                BDI CHALLENGE 2 / 4
+            </div>
+
+            <h2>
+                Step 2 — What does the agent believe?
+            </h2>
+
+            <div class="scenario">
+
+                The restaurant agent has now processed the
+                information it received.
+
+                <br><br>
+
+                It concludes:
+
+                <br><br>
+
+                <strong>
+                "Restaurant A is likely to involve a long waiting time,
+                while Restaurant B is probably available."
+                </strong>
+
+                <br><br>
+
+                What does this represent?
+
+            </div>
+
+
+            <div class="options">
+
+                <div
+                    class="option"
+                    onclick="answer(2, true)">
+
+                    🧠 Beliefs — the agent's internal representation
+                    of the current situation
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(2, false)">
+
+                    🎯 Desires — possible objectives
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(2, false)">
+
+                    📌 Intentions — the selected course of action
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(2, false)">
+
+                    🗺️ Plan — the sequence of actions
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="feedback2"
+                class="feedback">
+            </div>
+
+
+            <div class="button-container">
+
+                <button
+                    id="next2"
+                    onclick="nextChallenge(3)"
+                    disabled>
+
+                    NEXT →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             CHALLENGE 3
+        ====================== -->
+
+        <div
+            id="challenge3"
+            class="screen">
+
+            <div class="challenge-label">
+                BDI CHALLENGE 3 / 4
+            </div>
+
+            <h2>
+                Step 3 — What does the agent want?
+            </h2>
+
+            <div class="scenario">
+
+                The agent considers several possible outcomes.
+
+                <br><br>
+
+                It establishes the following objectives:
+
+                <br><br>
+
+                <strong>
+                "Find a restaurant with good food,
+                reasonable waiting time, and acceptable distance."
+                </strong>
+
+                <br><br>
+
+                Which BDI component does this describe?
+
+            </div>
+
+
+            <div class="options">
+
+                <div
+                    class="option"
+                    onclick="answer(3, false)">
+
+                    🧠 Beliefs
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(3, true)">
+
+                    🎯 Desires — objectives the agent would like
+                    to achieve
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(3, false)">
+
+                    📌 Intentions
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(3, false)">
+
+                    ⚡ Execution
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="feedback3"
+                class="feedback">
+            </div>
+
+
+            <div class="button-container">
+
+                <button
+                    id="next3"
+                    onclick="nextChallenge(4)"
+                    disabled>
+
+                    NEXT →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             CHALLENGE 4
+        ====================== -->
+
+        <div
+            id="challenge4"
+            class="screen">
+
+            <div class="challenge-label">
+                FINAL BDI CHALLENGE
+            </div>
+
+            <h2>
+                Step 4 — From desire to intention
+            </h2>
+
+            <div class="scenario">
+
+                The agent has several possible desires:
+
+                <br><br>
+
+                • Eat good food<br>
+                • Avoid waiting<br>
+                • Stay close<br><br>
+
+                After considering the situation, the agent commits
+                to one course of action:
+
+                <br><br>
+
+                <strong>
+                "Go to Restaurant B."
+                </strong>
+
+                <br><br>
+
+                What BDI component represents this commitment?
+
+            </div>
+
+
+            <div class="options">
+
+                <div
+                    class="option"
+                    onclick="answer(4, false)">
+
+                    👁️ Perception
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(4, false)">
+
+                    🧠 Beliefs
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(4, false)">
+
+                    🎯 Desires
+
+                </div>
+
+                <div
+                    class="option"
+                    onclick="answer(4, true)">
+
+                    📌 Intentions — the goals or actions
+                    the agent has committed to pursue
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="feedback4"
+                class="feedback">
+            </div>
+
+
+            <div class="button-container">
+
+                <button
+                    id="finishButton"
+                    onclick="finishMission()"
+                    disabled>
+
+                    COMPLETE MISSION →
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================
+             RESULT
+        ====================== -->
+
+        <div
+            id="resultScreen"
+            class="screen">
+
+            <div class="icon">
+                🏆
+            </div>
+
+            <h1>
+                BDI Mission Complete!
+            </h1>
+
+            <div
+                class="final-score"
+                id="finalScore">
+
+                0 / 4
+
+            </div>
+
+            <div
+                class="rank"
+                id="rank">
+
+            </div>
+
+
+            <div class="lesson">
+
+                <strong>
+                    🧠 Agent Academy Briefing
+                </strong>
+
+                <br><br>
+
+                A BDI-style cognitive agent can be understood
+                through a sequence of related components:
+
+                <br><br>
+
+                <strong>Beliefs</strong> represent the agent's
+                information about the world.
+
+                <br><br>
+
+                <strong>Desires</strong> represent objectives or
+                possible goals that the agent would like to achieve.
+
+                <br><br>
+
+                <strong>Intentions</strong> represent what the agent
+                commits to pursuing.
+
+                <br><br>
+
+                The agent can then construct a
+                <strong>plan</strong> and execute the selected actions.
+
+                <br><br>
+
+                The important idea is that the agent is not merely
+                reacting to an immediate percept. It maintains
+                internal cognitive representations that influence
+                its decisions.
+
+            </div>
+
+
+            <div class="button-container">
+
+                <button onclick="restartMission()">
+                    PLAY AGAIN ↻
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ==========================================
+   AGENT ACADEMY — MISSION 4
+   BDI DECISION LAB
+========================================== */
+
+let score = 0;
+let currentChallenge = 1;
+
+
+/* ==========================================
+   START
+========================================== */
+
+function startMission() {
+
+    score = 0;
+    currentChallenge = 1;
+
+    document
+        .getElementById("startScreen")
+        .classList.remove("active");
+
+    document
+        .getElementById("challenge1")
+        .classList.add("active");
+
+    updateProgress(75);
+
+}
+
+
+/* ==========================================
+   ANSWER
+========================================== */
+
+function answer(challenge, correct) {
+
+    const screen =
+        document.getElementById("challenge" + challenge);
+
+    const options =
+        screen.querySelectorAll(".option");
+
+    options.forEach(option => {
+
+        option.classList.add("disabled");
+
+    });
+
+
+    const feedback =
+        document.getElementById("feedback" + challenge);
+
+
+    if (correct) {
+
+        score++;
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "<strong>✓ Correct!</strong><br>" +
+            getExplanation(challenge);
+
+    } else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "<strong>Not quite.</strong><br>" +
+            getExplanation(challenge);
+
+    }
+
+
+    const buttonId =
+        challenge === 4
+        ? "finishButton"
+        : "next" + challenge;
+
+
+    document.getElementById(buttonId).disabled = false;
+
+}
+
+
+/* ==========================================
+   EXPLANATIONS
+========================================== */
+
+function getExplanation(challenge) {
+
+    if (challenge === 1) {
+
+        return "The agent first receives information from its environment. This corresponds to perception. In the BDI process, this information contributes to the agent's subsequent beliefs.";
+
+    }
+
+    if (challenge === 2) {
+
+        return "Beliefs represent the agent's internal representation of the situation. They are based on the information available to the agent.";
+
+    }
+
+    if (challenge === 3) {
+
+        return "Desires represent objectives or possible goals that the agent would like to achieve. An agent can have several desires at the same time.";
+
+    }
+
+    if (challenge === 4) {
+
+        return "Intentions represent what the agent commits to pursuing. The agent moves from possible desires toward a selected course of action.";
+
+    }
+
+}
+
+
+/* ==========================================
+   NEXT CHALLENGE
+========================================== */
+
+function nextChallenge(number) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("challenge" + number)
+        .classList.add("active");
+
+
+    currentChallenge = number;
+
+    updateProgress(
+        75 + ((number - 1) * 6)
+    );
+
+}
+
+
+/* ==========================================
+   PROGRESS
+========================================== */
+
+function updateProgress(percent) {
+
+    document
+        .getElementById("progressBar")
+        .style.width = percent + "%";
+
+}
+
+
+/* ==========================================
+   FINISH
+========================================== */
+
+function finishMission() {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("resultScreen")
+        .classList.add("active");
+
+
+    document
+        .getElementById("finalScore")
+        .textContent =
+        score + " / 4";
+
+
+    let rank;
+
+
+    if (score === 4) {
+
+        rank =
+            "🏆 BDI Master Strategist";
+
+    }
+
+    else if (score === 3) {
+
+        rank =
+            "🥇 Senior Agent Strategist";
+
+    }
+
+    else if (score === 2) {
+
+        rank =
+            "🥈 Agent Strategist";
+
+    }
+
+    else {
+
+        rank =
+            "🎓 BDI Trainee";
+
+    }
+
+
+    document
+        .getElementById("rank")
+        .textContent = rank;
+
+
+    updateProgress(100);
+
+}
+
+
+/* ==========================================
+   RESTART
+========================================== */
+
+function restartMission() {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(screen => {
+
+            screen.classList.remove("active");
+
+        });
+
+
+    document
+        .getElementById("startScreen")
+        .classList.add("active");
+
+
+    document
+        .getElementById("progressBar")
+        .style.width = "75%";
+
+
+    score = 0;
+
+}
+
+</script>
+
+</body>
+</html>
