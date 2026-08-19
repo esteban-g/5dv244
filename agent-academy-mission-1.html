@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Agent Academy - Mission 1</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 20px;
+        background: #f1f5f8;
+        font-family: Arial, sans-serif;
+        color: #2c3e50;
+    }
+
+    .game-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    /* HEADER */
+
+    .game-header {
+        background: #eef3f6;
+        border-radius: 10px 10px 0 0;
+        padding: 18px 24px 14px 24px;
+    }
+
+    .academy-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: bold;
+        color: #284f73;
+        font-size: 18px;
+    }
+
+    .mission-number {
+        font-size: 14px;
+        color: #68798a;
+        font-weight: normal;
+    }
+
+    .progress-container {
+        height: 7px;
+        background: #dbe3e8;
+        border-radius: 10px;
+        margin-top: 18px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 20%;
+        background: #284f73;
+        transition: width 0.5s ease;
+    }
+
+    /* MAIN CARD */
+
+    .mission-card {
+        background: white;
+        border-radius: 0 0 14px 14px;
+        padding: 40px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        min-height: 550px;
+    }
+
+    .screen {
+        display: none;
+    }
+
+    .screen.active {
+        display: block;
+    }
+
+    /* INTRO */
+
+    .mission-icon {
+        font-size: 64px;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #284f73;
+        font-size: 36px;
+        margin: 10px 0;
+    }
+
+    h2 {
+        text-align: center;
+        color: #5c7183;
+        font-weight: normal;
+        font-size: 21px;
+        margin-top: 5px;
+    }
+
+    .intro-text {
+        text-align: center;
+        max-width: 680px;
+        margin: 30px auto;
+        font-size: 17px;
+        line-height: 1.7;
+        color: #555;
+    }
+
+    .objective {
+        background: #eef6fc;
+        border-left: 4px solid #284f73;
+        padding: 18px 22px;
+        margin: 25px auto;
+        max-width: 700px;
+        line-height: 1.6;
+    }
+
+    /* BUTTONS */
+
+    button {
+        border: none;
+        border-radius: 7px;
+        padding: 14px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .primary-button {
+        display: block;
+        margin: 30px auto 0 auto;
+        background: #284f73;
+        color: white;
+    }
+
+    .primary-button:hover {
+        background: #1e3d59;
+        transform: translateY(-1px);
+    }
+
+    .answer-button {
+        width: 100%;
+        text-align: left;
+        background: #f7f9fa;
+        border: 2px solid #dce4e9;
+        color: #334e62;
+        margin: 8px 0;
+        font-weight: normal;
+    }
+
+    .answer-button:hover {
+        background: #edf4f8;
+        border-color: #9fb5c5;
+    }
+
+    .answer-button.correct {
+        background: #e8f6ed;
+        border-color: #4caf72;
+        color: #245d3b;
+    }
+
+    .answer-button.incorrect {
+        background: #fbecec;
+        border-color: #d96c6c;
+        color: #7a2929;
+    }
+
+    .answer-button:disabled {
+        cursor: default;
+    }
+
+    /* QUESTIONS */
+
+    .question-counter {
+        color: #7b8b97;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    .question {
+        font-size: 24px;
+        font-weight: bold;
+        color: #284f73;
+        line-height: 1.4;
+        margin-bottom: 25px;
+    }
+
+    .scenario {
+        background: #f5f7f8;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 25px;
+        line-height: 1.6;
+        border: 1px solid #e1e7eb;
+    }
+
+    .feedback {
+        display: none;
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    .feedback.correct {
+        display: block;
+        background: #edf8f1;
+        border-left: 4px solid #4caf72;
+    }
+
+    .feedback.incorrect {
+        display: block;
+        background: #fff1f1;
+        border-left: 4px solid #d96c6c;
+    }
+
+    .next-button {
+        display: none;
+        margin: 25px auto 0 auto;
+        background: #284f73;
+        color: white;
+    }
+
+    /* SCORE */
+
+    .score-box {
+        text-align: center;
+        background: #f4f7f9;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 25px;
+    }
+
+    .score {
+        font-size: 18px;
+        font-weight: bold;
+        color: #284f73;
+    }
+
+    /* FINAL */
+
+    .final-score {
+        text-align: center;
+        font-size: 55px;
+        font-weight: bold;
+        color: #284f73;
+        margin: 25px 0;
+    }
+
+    .final-message {
+        text-align: center;
+        font-size: 19px;
+        line-height: 1.7;
+        color: #555;
+        max-width: 650px;
+        margin: 0 auto;
+    }
+
+    .badge {
+        text-align: center;
+        margin: 30px auto;
+        padding: 20px;
+        background: #eef6fc;
+        border-radius: 10px;
+        max-width: 500px;
+    }
+
+    .badge-icon {
+        font-size: 45px;
+    }
+
+    .badge-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #284f73;
+        margin-top: 8px;
+    }
+
+    .small-note {
+        text-align: center;
+        color: #7b8790;
+        font-size: 13px;
+        margin-top: 25px;
+    }
+
+    @media (max-width: 600px) {
+
+        body {
+            padding: 8px;
+        }
+
+        .mission-card {
+            padding: 25px 20px;
+        }
+
+        h1 {
+            font-size: 29px;
+        }
+
+        .question {
+            font-size: 21px;
+        }
+
+        .academy-title {
+            font-size: 16px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <!-- HEADER -->
+
+    <div class="game-header">
+
+        <div class="academy-title">
+            <span>🤖 AGENT ACADEMY</span>
+            <span class="mission-number">Mission 1 / 6</span>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+    </div>
+
+
+    <!-- MAIN CARD -->
+
+    <div class="mission-card">
+
+
+        <!-- INTRO SCREEN -->
+
+        <div class="screen active" id="introScreen">
+
+            <div class="mission-icon">🛰️</div>
+
+            <h1>Meet the Agent</h1>
+
+            <h2>Mission 1: Perception and Action</h2>
+
+            <p class="intro-text">
+
+                Welcome to <strong>Agent Academy</strong>.
+
+                Before an intelligent agent can make decisions,
+                it needs to interact with its environment.
+
+                Your first mission is to learn how an agent
+                <strong>perceives</strong> the world and
+                <strong>acts</strong> upon it.
+
+            </p>
+
+            <div class="objective">
+
+                <strong>🎯 Mission objective</strong><br><br>
+
+                Identify the difference between:
+
+                <ul>
+                    <li>the <strong>agent</strong></li>
+                    <li>the <strong>environment</strong></li>
+                    <li><strong>sensors</strong></li>
+                    <li><strong>percepts</strong></li>
+                    <li><strong>actuators</strong></li>
+                </ul>
+
+            </div>
+
+            <button class="primary-button"
+                    onclick="startMission()">
+
+                START MISSION →
+
+            </button>
+
+        </div>
+
+
+        <!-- QUESTION SCREEN -->
+
+        <div class="screen" id="questionScreen">
+
+            <div class="score-box">
+                <span class="score">
+                    ⭐ XP: <span id="score">0</span>
+                </span>
+            </div>
+
+            <div class="question-counter" id="questionCounter">
+                Question 1 of 5
+            </div>
+
+            <div class="question" id="questionText"></div>
+
+            <div class="scenario" id="scenarioText"></div>
+
+            <div id="answers"></div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <button class="next-button"
+                    id="nextButton"
+                    onclick="nextQuestion()">
+
+                NEXT QUESTION →
+
+            </button>
+
+        </div>
+
+
+        <!-- FINAL SCREEN -->
+
+        <div class="screen" id="finalScreen">
+
+            <div class="mission-icon">🏆</div>
+
+            <h1>Mission Complete!</h1>
+
+            <div class="final-score">
+                <span id="finalScore">0</span> XP
+            </div>
+
+            <p class="final-message" id="finalMessage"></p>
+
+            <div class="badge">
+
+                <div class="badge-icon">🛰️</div>
+
+                <div class="badge-title">
+                    Agent Observer
+                </div>
+
+                <p>
+                    You have demonstrated that you understand
+                    how agents perceive their environment
+                    and act upon it.
+                </p>
+
+            </div>
+
+            <button class="primary-button"
+                    onclick="restartMission()">
+
+                PLAY AGAIN ↻
+
+            </button>
+
+            <div class="small-note">
+                Mission 2 will introduce the Vacuum Cleaner Agent.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* ============================================================
+   AGENT ACADEMY
+   MISSION 1 — MEET THE AGENT
+   ============================================================ */
+
+
+const questions = [
+
+    {
+        question:
+            "A robot uses a camera to obtain information about the world. What is the camera?",
+
+        scenario:
+            "🤖 The robot is moving through a university building. " +
+            "Its camera detects a person standing in front of it.",
+
+        answers: [
+            "An actuator",
+            "A sensor",
+            "The environment",
+            "A performance measure"
+        ],
+
+        correct: 1,
+
+        explanation:
+            "Correct! A camera is a sensor because it allows the agent to receive information from its environment."
+    },
+
+
+    {
+        question:
+            "The robot moves its arm to pick up an object. What is the robot's arm?",
+
+        scenario:
+            "The robot has decided to pick up a book. " +
+            "It sends commands to its motor and moves its robotic arm.",
+
+        answers: [
+            "A sensor",
+            "A percept",
+            "An actuator",
+            "The environment"
+        ],
+
+        correct: 2,
+
+        explanation:
+            "Correct! An actuator allows the agent to act upon its environment. The robotic arm is therefore an actuator."
+    },
+
+
+    {
+        question:
+            "What is a percept?",
+
+        scenario:
+            "A delivery robot receives information from its sensors: " +
+            "\"Obstacle detected 2 metres ahead.\"", 
+
+        answers: [
+            "The physical sensor itself",
+            "The information received by the agent",
+            "The action performed by the robot",
+            "The robot's goal"
+        ],
+
+        correct: 1,
+
+        explanation:
+            "Correct! A percept is the information received by an agent through its sensors."
+    },
+
+
+    {
+        question:
+            "In the following situation, what is the environment?",
+
+        scenario:
+            "🚗 An autonomous car uses cameras, GPS and other sensors " +
+            "to navigate through city streets.",
+
+        answers: [
+            "The autonomous car",
+            "The cameras inside the car",
+            "The city streets and surrounding world",
+            "The navigation algorithm"
+        ],
+
+        correct: 2,
+
+        explanation:
+            "Correct! The environment is the world in which the agent operates and with which it interacts."
+    },
+
+
+    {
+        question:
+            "Which sequence best describes the basic interaction between an agent and its environment?",
+
+        scenario:
+            "Think about the general cycle of an intelligent agent: " +
+            "it needs to obtain information about its environment " +
+            "and then act upon it.",
+
+        answers: [
+            "Act → perceive → disappear",
+            "Perceive → decide → act",
+            "Act → forget → perceive",
+            "Environment → actuator → sensor"
+        ],
+
+        correct: 1,
+
+        explanation:
+            "Correct! At a basic level, an agent perceives its environment, makes decisions based on what it knows, and acts through its actuators."
+    }
+
+];
+
+
+let currentQuestion = 0;
+let score = 0;
+let answered = false;
+
+
+/* START */
+
+function startMission() {
+
+    document.getElementById("introScreen")
+        .classList.remove("active");
+
+    document.getElementById("questionScreen")
+        .classList.add("active");
+
+    showQuestion();
+
+}
+
+
+/* SHOW QUESTION */
+
+function showQuestion() {
+
+    answered = false;
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("questionCounter")
+        .textContent =
+        "Question " +
+        (currentQuestion + 1) +
+        " of " +
+        questions.length;
+
+    document.getElementById("questionText")
+        .textContent = q.question;
+
+    document.getElementById("scenarioText")
+        .textContent = q.scenario;
+
+    const answersContainer =
+        document.getElementById("answers");
+
+    answersContainer.innerHTML = "";
+
+    q.answers.forEach((answer, index) => {
+
+        const button =
+            document.createElement("button");
+
+        button.className = "answer-button";
+
+        button.textContent =
+            String.fromCharCode(65 + index) +
+            ". " +
+            answer;
+
+        button.onclick = function() {
+
+            checkAnswer(index, button);
+
+        };
+
+        answersContainer.appendChild(button);
+
+    });
+
+    document.getElementById("feedback")
+        .className = "feedback";
+
+    document.getElementById("feedback")
+        .innerHTML = "";
+
+    document.getElementById("nextButton")
+        .style.display = "none";
+
+
+    /* Progress */
+
+    const progress =
+        ((currentQuestion + 1) /
+        questions.length) * 100;
+
+    document.getElementById("progressBar")
+        .style.width = progress + "%";
+}
+
+
+/* CHECK ANSWER */
+
+function checkAnswer(selected, selectedButton) {
+
+    if (answered) return;
+
+    answered = true;
+
+    const q = questions[currentQuestion];
+
+    const buttons =
+        document.querySelectorAll(".answer-button");
+
+    buttons.forEach(button => {
+        button.disabled = true;
+    });
+
+
+    if (selected === q.correct) {
+
+        selectedButton.classList.add("correct");
+
+        score += 100;
+
+        document.getElementById("score")
+            .textContent = score;
+
+        showFeedback(
+            true,
+            "✓ Correct! +" + 100 + " XP<br><br>" +
+            q.explanation
+        );
+
+    } else {
+
+        selectedButton.classList.add("incorrect");
+
+        buttons[q.correct]
+            .classList.add("correct");
+
+        showFeedback(
+            false,
+            "Not quite. The correct answer is " +
+            "<strong>" +
+            q.answers[q.correct] +
+            "</strong>.<br><br>" +
+            q.explanation
+        );
+
+    }
+
+    document.getElementById("nextButton")
+        .style.display = "block";
+}
+
+
+/* FEEDBACK */
+
+function showFeedback(correct, text) {
+
+    const feedback =
+        document.getElementById("feedback");
+
+    feedback.innerHTML = text;
+
+    feedback.className =
+        correct
+        ? "feedback correct"
+        : "feedback incorrect";
+
+}
+
+
+/* NEXT QUESTION */
+
+function nextQuestion() {
+
+    currentQuestion++;
+
+    if (currentQuestion >= questions.length) {
+
+        finishMission();
+
+    } else {
+
+        showQuestion();
+
+    }
+
+}
+
+
+/* FINISH */
+
+function finishMission() {
+
+    document.getElementById("questionScreen")
+        .classList.remove("active");
+
+    document.getElementById("finalScreen")
+        .classList.add("active");
+
+    document.getElementById("finalScore")
+        .textContent = score;
+
+    let message = "";
+
+    if (score === 500) {
+
+        message =
+            "Outstanding! You have mastered the basic " +
+            "perception-action relationship of intelligent agents. " +
+            "You are ready for the next mission.";
+
+    }
+    else if (score >= 300) {
+
+        message =
+            "Good work! You understand the fundamental concepts " +
+            "of agents, sensors, percepts and actuators. " +
+            "A little more practice will make you an agent expert.";
+
+    }
+    else {
+
+        message =
+            "You have completed the mission! " +
+            "Review the concepts of sensors, percepts and actuators " +
+            "before moving on to the next mission.";
+
+    }
+
+}
+
+
+/* RESTART */
+
+function restartMission() {
+
+    currentQuestion = 0;
+    score = 0;
+
+    document.getElementById("score")
+        .textContent = score;
+
+    document.getElementById("finalScreen")
+        .classList.remove("active");
+
+    document.getElementById("questionScreen")
+        .classList.add("active");
+
+    showQuestion();
+
+}
+
+</script>
+
+</body>
+</html>
