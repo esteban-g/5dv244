@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reasoning Quest - Mission 2</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f3f6f9;
+        color: #29435c;
+    }
+
+    .game-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 28px 24px 50px;
+    }
+
+    /* Header */
+
+    .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .game-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #244b70;
+    }
+
+    .mission-counter {
+        font-size: 14px;
+        color: #60758a;
+    }
+
+    .progress-container {
+        height: 8px;
+        background: #dce4ea;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 40%;
+        background: #2b587d;
+        border-radius: 10px;
+    }
+
+    /* Main card */
+
+    .mission-card {
+        background: white;
+        border-radius: 16px;
+        padding: 38px 42px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+    }
+
+    .mission-icon {
+        text-align: center;
+        font-size: 58px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 34px;
+        margin: 5px 0 8px;
+        color: #244b70;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: #66798b;
+        margin-bottom: 28px;
+    }
+
+    .intro {
+        font-size: 17px;
+        line-height: 1.65;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    /* Challenge */
+
+    .challenge {
+        background: #f7f9fb;
+        border-left: 4px solid #2b587d;
+        border-radius: 8px;
+        padding: 22px;
+        margin-top: 25px;
+    }
+
+    .challenge h2 {
+        margin-top: 0;
+        font-size: 20px;
+        color: #244b70;
+    }
+
+    .question {
+        font-size: 17px;
+        line-height: 1.55;
+        margin-bottom: 18px;
+    }
+
+    /* Code */
+
+    .code-block {
+        background: #1f2933;
+        color: #f4f7f9;
+        padding: 18px;
+        border-radius: 8px;
+        font-family: Consolas, Monaco, monospace;
+        font-size: 15px;
+        line-height: 1.65;
+        overflow-x: auto;
+        margin: 18px 0;
+    }
+
+    .code-comment {
+        color: #8fa3b5;
+    }
+
+    .code-keyword {
+        color: #9cdcfe;
+    }
+
+    .code-predicate {
+        color: #dcdcaa;
+    }
+
+    /* Answers */
+
+    .answers {
+        display: grid;
+        gap: 12px;
+    }
+
+    .answer {
+        border: 1px solid #d5dde5;
+        background: white;
+        border-radius: 8px;
+        padding: 14px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 16px;
+    }
+
+    .answer:hover {
+        background: #eef4f8;
+        border-color: #2b587d;
+    }
+
+    .answer.correct {
+        background: #e8f5e9;
+        border-color: #4caf50;
+    }
+
+    .answer.incorrect {
+        background: #fff0f0;
+        border-color: #d9534f;
+    }
+
+    /* Feedback */
+
+    .feedback {
+        display: none;
+        margin-top: 18px;
+        padding: 15px 18px;
+        border-radius: 8px;
+        line-height: 1.55;
+    }
+
+    .feedback.show {
+        display: block;
+    }
+
+    .feedback.correct-feedback {
+        background: #e8f5e9;
+        color: #285b32;
+    }
+
+    .feedback.incorrect-feedback {
+        background: #fff3f3;
+        color: #7a3030;
+    }
+
+    /* Mini ASP builder */
+
+    .builder {
+        margin-top: 20px;
+    }
+
+    .builder-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    .builder-option {
+        border: 1px solid #ccd6df;
+        background: white;
+        border-radius: 7px;
+        padding: 10px 14px;
+        cursor: pointer;
+        font-family: Consolas, Monaco, monospace;
+        font-size: 14px;
+    }
+
+    .builder-option:hover {
+        border-color: #2b587d;
+        background: #eef4f8;
+    }
+
+    .builder-option.selected {
+        background: #dcecf7;
+        border-color: #2b587d;
+        font-weight: bold;
+    }
+
+    .builder-result {
+        background: #1f2933;
+        color: #f4f7f9;
+        border-radius: 8px;
+        padding: 18px;
+        font-family: Consolas, Monaco, monospace;
+        min-height: 65px;
+        margin-top: 15px;
+        line-height: 1.6;
+    }
+
+    /* Button */
+
+    .button-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        background: #2b587d;
+        color: white;
+        padding: 14px 26px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #1f4568;
+    }
+
+    /* Completion */
+
+    .completion {
+        display: none;
+        text-align: center;
+        padding: 30px 10px 10px;
+    }
+
+    .completion.show {
+        display: block;
+    }
+
+    .completion-icon {
+        font-size: 60px;
+        margin-bottom: 10px;
+    }
+
+    .xp {
+        font-size: 20px;
+        font-weight: bold;
+        color: #2b587d;
+        margin: 18px 0;
+    }
+
+    .mission-note {
+        background: #edf4f8;
+        border-radius: 8px;
+        padding: 18px;
+        text-align: left;
+        line-height: 1.6;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 650px) {
+
+        .game-container {
+            padding: 18px 12px;
+        }
+
+        .mission-card {
+            padding: 28px 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .game-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 5px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <!-- Header -->
+
+    <div class="game-header">
+        <div class="game-title">⚙️ REASONING QUEST</div>
+        <div class="mission-counter">Mission 2 / 5</div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress-bar"></div>
+    </div>
+
+
+    <!-- Mission -->
+
+    <div class="mission-card">
+
+        <div class="mission-icon">🧩</div>
+
+        <h1>Enter the Answer Set</h1>
+
+        <div class="subtitle">
+            Facts, rules, and logical consequences
+        </div>
+
+        <div class="intro">
+
+            Welcome back, reasoning apprentice.
+
+            <br><br>
+
+            In the previous mission you discovered the idea behind
+            <strong>declarative reasoning</strong>.
+
+            Now you must learn how an ASP program describes a problem
+            and how new information can be <strong>derived from facts and rules</strong>.
+
+            <br><br>
+
+            Your task is to predict what the reasoning system can conclude
+            <strong>before</strong> we let the solver do it for us.
+
+        </div>
+
+
+        <!-- Challenge 1 -->
+
+        <div class="challenge">
+
+            <h2>Challenge 1 — Fact or conclusion?</h2>
+
+            <div class="question">
+
+                Consider the following ASP program:
+
+            </div>
+
+            <div class="code-block">
+
+bird(tux).<br>
+bird(eddy).<br>
+penguin(eddy).<br>
+<br>
+flies(X) :- bird(X), not penguin(X).
+
+            </div>
+
+            <div class="question">
+
+                Which of the following is an explicitly stated
+                <strong>fact</strong>?
+
+            </div>
+
+            <div class="answers">
+
+                <div class="answer"
+                     onclick="answerQuestion(1, true, this)">
+                    A. bird(tux)
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(1, false, this)">
+                    B. flies(tux)
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(1, false, this)">
+                    C. flies(eddy)
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(1, false, this)">
+                    D. not penguin(tux)
+                </div>
+
+            </div>
+
+            <div id="feedback1" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Challenge 2 -->
+
+        <div class="challenge">
+
+            <h2>Challenge 2 — Follow the rule</h2>
+
+            <div class="question">
+
+                Now reason about the same program.
+
+                We know:
+
+            </div>
+
+            <div class="code-block">
+
+bird(tux).<br>
+bird(eddy).<br>
+penguin(eddy).<br>
+<br>
+flies(X) :- bird(X), not penguin(X).
+
+            </div>
+
+            <div class="question">
+
+                What can we derive about <strong>Tux</strong>?
+
+            </div>
+
+            <div class="answers">
+
+                <div class="answer"
+                     onclick="answerQuestion(2, true, this)">
+                    A. flies(tux)
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(2, false, this)">
+                    B. penguin(tux)
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(2, false, this)">
+                    C. flies(eddy)
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(2, false, this)">
+                    D. Nothing can be derived about Tux.
+                </div>
+
+            </div>
+
+            <div id="feedback2" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Challenge 3 -->
+
+        <div class="challenge">
+
+            <h2>Challenge 3 — What about Eddy?</h2>
+
+            <div class="question">
+
+                Eddy is known to be both a bird and a penguin.
+
+                The rule is:
+
+            </div>
+
+            <div class="code-block">
+
+flies(X) :- bird(X), not penguin(X).
+
+            </div>
+
+            <div class="question">
+
+                Should <strong>flies(eddy)</strong> be derived?
+
+            </div>
+
+            <div class="answers">
+
+                <div class="answer"
+                     onclick="answerQuestion(3, true, this)">
+                    A. No. The condition <code>not penguin(eddy)</code>
+                    is not satisfied.
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(3, false, this)">
+                    B. Yes. Every bird must fly.
+                </div>
+
+                <div class="answer"
+                     onclick="answerQuestion(3, false, this)">
+                    C. Yes. Penguins are birds.
+                </div>
+
+            </div>
+
+            <div id="feedback3" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Challenge 4 -->
+
+        <div class="challenge">
+
+            <h2>Challenge 4 — Build the consequence</h2>
+
+            <div class="question">
+
+                Now you become the reasoning engine.
+
+                Choose the facts that belong in the answer set
+                after applying the rule.
+
+            </div>
+
+            <div class="code-block">
+
+bird(tux).<br>
+bird(eddy).<br>
+penguin(eddy).<br>
+<br>
+flies(X) :- bird(X), not penguin(X).
+
+            </div>
+
+            <p>
+                Select the statements that should appear in the resulting
+                answer set.
+            </p>
+
+            <div class="builder">
+
+                <div class="builder-row">
+
+                    <div class="builder-option"
+                         onclick="toggleOption(this, 'bird(tux)')">
+                        bird(tux)
+                    </div>
+
+                    <div class="builder-option"
+                         onclick="toggleOption(this, 'bird(eddy)')">
+                        bird(eddy)
+                    </div>
+
+                    <div class="builder-option"
+                         onclick="toggleOption(this, 'penguin(eddy)')">
+                        penguin(eddy)
+                    </div>
+
+                    <div class="builder-option"
+                         onclick="toggleOption(this, 'flies(tux)')">
+                        flies(tux)
+                    </div>
+
+                    <div class="builder-option"
+                         onclick="toggleOption(this, 'flies(eddy)')">
+                        flies(eddy)
+                    </div>
+
+                </div>
+
+                <div class="builder-result" id="builderResult">
+                    Your answer set is empty...
+                </div>
+
+                <div class="button-container">
+
+                    <button onclick="checkBuilder()">
+                        CHECK ANSWER SET
+                    </button>
+
+                </div>
+
+                <div id="builderFeedback"
+                     class="feedback">
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Completion -->
+
+        <div id="completion" class="completion">
+
+            <div class="completion-icon">🎯</div>
+
+            <h2>Mission Complete!</h2>
+
+            <p>
+                You have entered your first answer set.
+            </p>
+
+            <div class="xp">
+                +150 XP
+            </div>
+
+            <div class="mission-note">
+
+                <strong>Key idea to remember:</strong><br><br>
+
+                An ASP program describes a problem using
+                <strong>facts and rules</strong>.
+
+                <br><br>
+
+                Facts represent information that is explicitly given.
+
+                Rules describe conditions under which new information
+                can be derived.
+
+                <br><br>
+
+                The resulting collection of facts and derived conclusions
+                forms an <strong>answer set</strong>.
+
+                <br><br>
+
+                Notice also that the rule
+
+                <br><br>
+
+                <code>
+                flies(X) :- bird(X), not penguin(X).
+                </code>
+
+                <br><br>
+
+                does not say that birds fly.
+
+                It says that <strong>flies(X)</strong> can be derived when
+                X is a bird and X is not known to be a penguin.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let completed = {
+    q1: false,
+    q2: false,
+    q3: false,
+    builder: false
+};
+
+
+/* -----------------------------
+   Multiple choice questions
+----------------------------- */
+
+function answerQuestion(question, correct, element) {
+
+    const challenge = element.closest(".challenge");
+
+    if (challenge.dataset.answered === "true") {
+        return;
+    }
+
+    challenge.dataset.answered = "true";
+
+    const feedback =
+        document.getElementById("feedback" + question);
+
+    if (correct) {
+
+        element.classList.add("correct");
+
+        feedback.className =
+            "feedback show correct-feedback";
+
+        if (question === 1) {
+
+            feedback.innerHTML =
+                "<strong>✓ Correct!</strong> " +
+                "<code>bird(tux)</code> is explicitly given " +
+                "as a fact in the program.";
+
+            completed.q1 = true;
+        }
+
+        if (question === 2) {
+
+            feedback.innerHTML =
+                "<strong>✓ Correct!</strong> " +
+                "Tux is a bird and there is no fact stating " +
+                "that Tux is a penguin. Therefore the rule allows " +
+                "<code>flies(tux)</code> to be derived.";
+
+            completed.q2 = true;
+        }
+
+        if (question === 3) {
+
+            feedback.innerHTML =
+                "<strong>✓ Correct!</strong> " +
+                "Because <code>penguin(eddy)</code> is known, " +
+                "the condition <code>not penguin(eddy)</code> " +
+                "does not hold. Therefore the rule does not derive " +
+                "<code>flies(eddy)</code>.";
+
+            completed.q3 = true;
+        }
+
+    } else {
+
+        element.classList.add("incorrect");
+
+        feedback.className =
+            "feedback show incorrect-feedback";
+
+        feedback.innerHTML =
+            "<strong>✗ Not quite.</strong> " +
+            "Separate what is explicitly stated as a fact " +
+            "from what can be derived by applying the rule.";
+    }
+
+    checkCompletion();
+}
+
+
+/* -----------------------------
+   Answer-set builder
+----------------------------- */
+
+let selectedFacts = [];
+
+
+function toggleOption(element, value) {
+
+    if (selectedFacts.includes(value)) {
+
+        selectedFacts =
+            selectedFacts.filter(
+                item => item !== value
+            );
+
+        element.classList.remove("selected");
+
+    } else {
+
+        selectedFacts.push(value);
+
+        element.classList.add("selected");
+    }
+
+    updateBuilderDisplay();
+}
+
+
+function updateBuilderDisplay() {
+
+    const result =
+        document.getElementById("builderResult");
+
+    if (selectedFacts.length === 0) {
+
+        result.innerHTML =
+            "Your answer set is empty...";
+
+        return;
+    }
+
+    result.innerHTML =
+        "{ " +
+        selectedFacts.join(", ") +
+        " }";
+}
+
+
+function checkBuilder() {
+
+    const correctSet = [
+        "bird(tux)",
+        "bird(eddy)",
+        "penguin(eddy)",
+        "flies(tux)"
+    ];
+
+    const selectedSorted =
+        [...selectedFacts].sort();
+
+    const correctSorted =
+        [...correctSet].sort();
+
+    const correct =
+        JSON.stringify(selectedSorted) ===
+        JSON.stringify(correctSorted);
+
+    const feedback =
+        document.getElementById("builderFeedback");
+
+    if (correct) {
+
+        feedback.className =
+            "feedback show correct-feedback";
+
+        feedback.innerHTML =
+            "<strong>✓ Excellent!</strong> " +
+            "You reconstructed the answer set correctly. " +
+            "The solver would retain the given facts and add " +
+            "<code>flies(tux)</code> as a derived consequence.";
+
+        completed.builder = true;
+
+        checkCompletion();
+
+    } else {
+
+        feedback.className =
+            "feedback show incorrect-feedback";
+
+        feedback.innerHTML =
+            "<strong>Not quite.</strong> " +
+            "Remember: an answer set contains the original facts " +
+            "as well as conclusions that follow from the rules. " +
+            "Eddy is a penguin, so <code>flies(eddy)</code> " +
+            "should not be included.";
+
+    }
+}
+
+
+/* -----------------------------
+   Completion
+----------------------------- */
+
+function checkCompletion() {
+
+    if (
+        completed.q1 &&
+        completed.q2 &&
+        completed.q3 &&
+        completed.builder
+    ) {
+
+        document
+            .getElementById("completion")
+            .classList.add("show");
+
+        setTimeout(function() {
+
+            document
+                .getElementById("completion")
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        }, 500);
+    }
+}
+
+</script>
+
+</body>
+</html>
