@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Knowledge Quest – Mission 5</title>
+
+
+<style>
+
+/* =========================================================
+   GLOBAL
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f3f6f9;
+
+    color: #294866;
+
+}
+
+
+.container {
+
+    max-width: 950px;
+
+    margin: auto;
+
+    padding: 25px;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.quest-header {
+
+    background: white;
+
+    border-radius: 12px;
+
+    padding: 22px 28px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #d9e2ea;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,0.05);
+
+}
+
+
+.quest-header-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 10px;
+
+}
+
+
+.quest-title {
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+}
+
+
+.mission-number {
+
+    font-size: 14px;
+
+    color: #777;
+
+}
+
+
+.progress {
+
+    height: 8px;
+
+    background: #dfe7ed;
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+}
+
+
+.progress-bar {
+
+    height: 100%;
+
+    width: 100%;
+
+    background: #2c567a;
+
+}
+
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.card {
+
+    background: white;
+
+    border-radius: 14px;
+
+    padding: 35px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 5px 20px rgba(0,0,0,0.06);
+
+}
+
+
+h1 {
+
+    font-size: 34px;
+
+    margin-top: 0;
+
+    text-align: center;
+
+    color: #244f73;
+
+}
+
+
+h2 {
+
+    color: #244f73;
+
+    margin-top: 0;
+
+}
+
+
+h3 {
+
+    color: #244f73;
+
+}
+
+
+.subtitle {
+
+    text-align: center;
+
+    font-size: 18px;
+
+    color: #60788d;
+
+    margin-bottom: 25px;
+
+}
+
+
+.intro {
+
+    text-align: center;
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+}
+
+
+/* =========================================================
+   CHALLENGES
+========================================================= */
+
+.task {
+
+    border-left:
+        4px solid #2c567a;
+
+    background: #f7f9fb;
+
+    padding: 20px;
+
+    margin: 25px 0;
+
+    border-radius:
+        0 8px 8px 0;
+
+}
+
+
+.task-number {
+
+    font-weight: bold;
+
+    color: #2c567a;
+
+    margin-bottom: 8px;
+
+}
+
+
+/* =========================================================
+   ANSWER CARDS
+========================================================= */
+
+.options {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 20px;
+
+}
+
+
+.option {
+
+    background: white;
+
+    border:
+        1px solid #bdcad4;
+
+    padding:
+        12px 16px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-weight: bold;
+
+    transition:
+        all 0.15s ease;
+
+}
+
+
+.option:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 3px 8px rgba(0,0,0,0.08);
+
+}
+
+
+.option.correct {
+
+    background: #e5f4e9;
+
+    border-color: #63a476;
+
+}
+
+
+.option.incorrect {
+
+    background: #fae8e8;
+
+    border-color: #d17878;
+
+}
+
+
+.option.disabled {
+
+    pointer-events: none;
+
+}
+
+
+/* =========================================================
+   KNOWLEDGE MODEL
+========================================================= */
+
+.knowledge-model {
+
+    background: #f7f9fb;
+
+    border:
+        1px solid #d6e0e7;
+
+    border-radius: 10px;
+
+    padding: 20px;
+
+    margin-top: 20px;
+
+}
+
+
+.model-row {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 12px;
+
+}
+
+
+.model-label {
+
+    width: 100px;
+
+    font-weight: bold;
+
+    color: #5b7082;
+
+}
+
+
+.model-item {
+
+    background: white;
+
+    border:
+        1px solid #b8c8d4;
+
+    border-radius: 7px;
+
+    padding:
+        8px 12px;
+
+    font-family: monospace;
+
+}
+
+
+/* =========================================================
+   FEEDBACK
+========================================================= */
+
+.feedback {
+
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 15px;
+
+    border-radius: 7px;
+
+    line-height: 1.5;
+
+}
+
+
+.feedback.success {
+
+    display: block;
+
+    background: #e8f6ed;
+
+    border-left:
+        4px solid #4b9b67;
+
+}
+
+
+.feedback.error {
+
+    display: block;
+
+    background: #fdeaea;
+
+    border-left:
+        4px solid #c94b4b;
+
+}
+
+
+/* =========================================================
+   BUTTON
+========================================================= */
+
+button {
+
+    background: #2c567a;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 7px;
+
+    padding:
+        11px 20px;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    margin-top: 15px;
+
+}
+
+
+button:hover {
+
+    background: #1f425f;
+
+}
+
+
+button:disabled {
+
+    background: #aab7c1;
+
+    cursor: not-allowed;
+
+}
+
+
+/* =========================================================
+   REFLECTION
+========================================================= */
+
+.reflection {
+
+    background:
+        linear-gradient(
+            135deg,
+            #f5f8fb,
+            #edf3f7
+        );
+
+    border:
+        1px solid #cbd9e3;
+
+    border-radius: 12px;
+
+    padding: 25px;
+
+    margin-top: 20px;
+
+}
+
+
+.reflection-question {
+
+    background: white;
+
+    border-radius: 8px;
+
+    padding: 15px;
+
+    margin-top: 15px;
+
+    border:
+        1px solid #d5dfe6;
+
+}
+
+
+textarea {
+
+    width: 100%;
+
+    min-height: 110px;
+
+    margin-top: 10px;
+
+    padding: 12px;
+
+    border:
+        1px solid #bdcad4;
+
+    border-radius: 7px;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    font-size: 15px;
+
+    resize: vertical;
+
+}
+
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+.final-message {
+
+    display: none;
+
+    text-align: center;
+
+    background: #e8f4fb;
+
+    border:
+        1px solid #b7d1e2;
+
+    border-radius: 12px;
+
+    padding: 30px;
+
+    margin-top: 25px;
+
+}
+
+
+.trophy {
+
+    font-size: 50px;
+
+}
+
+
+.score {
+
+    font-size: 30px;
+
+    font-weight: bold;
+
+    color: #2c567a;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:650px) {
+
+    .container {
+
+        padding: 12px;
+
+    }
+
+    .card {
+
+        padding: 22px;
+
+    }
+
+    h1 {
+
+        font-size: 28px;
+
+    }
+
+    .model-label {
+
+        width: 100%;
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<div class="quest-header">
+
+    <div class="quest-header-top">
+
+        <div class="quest-title">
+
+            🧠 KNOWLEDGE QUEST
+
+        </div>
+
+
+        <div class="mission-number">
+
+            Mission 5 / 5
+
+        </div>
+
+    </div>
+
+
+    <div class="progress">
+
+        <div class="progress-bar"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<div class="card">
+
+    <h1>
+
+        🏛️ The Knowledge Engineer
+
+    </h1>
+
+
+    <div class="subtitle">
+
+        Final Mission — Integrate the knowledge
+
+    </div>
+
+
+    <div class="intro">
+
+        <p>
+
+            You have reached the final mission.
+
+        </p>
+
+
+        <p>
+
+            During the previous missions you have worked
+            with classes, individuals, relationships,
+            knowledge graphs, queries, and reasoning.
+
+        </p>
+
+
+        <p>
+
+            Now you must combine these ideas to solve a
+            knowledge representation problem.
+
+        </p>
+
+
+        <p>
+
+            <strong>
+                Welcome to the final challenge.
+            </strong>
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CHALLENGE 1
+===================================================== -->
+
+<div class="card">
+
+    <div class="task">
+
+        <div class="task-number">
+
+            CHALLENGE 1 — T-Box or A-Box?
+
+        </div>
+
+
+        <p>
+
+            A knowledge engineer creates the following
+            statements:
+
+        </p>
+
+
+        <div class="knowledge-model">
+
+            <div class="model-row">
+
+                <div class="model-label">
+
+                    Statement:
+
+                </div>
+
+                <div class="model-item">
+
+                    Student ⊂ Person
+
+                </div>
+
+            </div>
+
+
+            <div class="model-row">
+
+                <div class="model-label">
+
+                    Statement:
+
+                </div>
+
+                <div class="model-item">
+
+                    Alice ∈ Student
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <p>
+
+            Which statement belongs to the
+            <strong>T-Box</strong>?
+
+        </p>
+
+
+        <div class="options">
+
+            <div class="option"
+                 onclick="answer1(this,false)">
+
+                Alice ∈ Student
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer1(this,true)">
+
+                Student ⊂ Person
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer1(this,false)">
+
+                Alice is a Person
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer1(this,false)">
+
+                Alice studies AI
+
+            </div>
+
+        </div>
+
+
+        <div id="feedback1"
+             class="feedback">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CHALLENGE 2
+===================================================== -->
+
+<div class="card">
+
+    <div class="task">
+
+        <div class="task-number">
+
+            CHALLENGE 2 — What can the reasoner infer?
+
+        </div>
+
+
+        <p>
+
+            Consider the following knowledge:
+
+        </p>
+
+
+        <div class="knowledge-model">
+
+            <div class="model-row">
+
+                <div class="model-label">
+
+                    T-Box:
+
+                </div>
+
+                <div class="model-item">
+
+                    Student ⊂ Person
+
+                </div>
+
+            </div>
+
+
+            <div class="model-row">
+
+                <div class="model-label">
+
+                    A-Box:
+
+                </div>
+
+                <div class="model-item">
+
+                    Alice ∈ Student
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <p>
+
+            What can logically be inferred?
+
+        </p>
+
+
+        <div class="options">
+
+            <div class="option"
+                 onclick="answer2(this,true)">
+
+                Alice ∈ Person
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer2(this,false)">
+
+                Person ⊂ Student
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer2(this,false)">
+
+                Alice ∈ Teacher
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer2(this,false)">
+
+                Every Person is a Student
+
+            </div>
+
+        </div>
+
+
+        <div id="feedback2"
+             class="feedback">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CHALLENGE 3
+===================================================== -->
+
+<div class="card">
+
+    <div class="task">
+
+        <div class="task-number">
+
+            CHALLENGE 3 — Choose the right representation
+
+        </div>
+
+
+        <p>
+
+            Imagine that you want to represent:
+
+        </p>
+
+
+        <p>
+
+            <strong>
+
+                "Maria has a pet called Luna."
+
+            </strong>
+
+        </p>
+
+
+        <p>
+
+            Which representation best captures this
+            relationship?
+
+        </p>
+
+
+        <div class="options">
+
+            <div class="option"
+                 onclick="answer3(this,false)">
+
+                Maria → Person
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer3(this,true)">
+
+                Maria → has_pet → Luna
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer3(this,false)">
+
+                Luna → Maria → Person
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer3(this,false)">
+
+                has_pet → Maria → Luna
+
+            </div>
+
+        </div>
+
+
+        <div id="feedback3"
+             class="feedback">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CHALLENGE 4
+===================================================== -->
+
+<div class="card">
+
+    <div class="task">
+
+        <div class="task-number">
+
+            CHALLENGE 4 — Why use an ontology?
+
+        </div>
+
+
+        <p>
+
+            Suppose you have a collection of data about
+            people, vehicles and pets.
+
+        </p>
+
+
+        <p>
+
+            Why would an ontology be useful?
+
+        </p>
+
+
+        <div class="options">
+
+            <div class="option"
+                 onclick="answer4(this,false)">
+
+                To make the database visually attractive.
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer4(this,true)">
+
+                To formally represent concepts,
+                relationships and constraints so that
+                knowledge can be interpreted and reasoned
+                about.
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer4(this,false)">
+
+                To replace all machine learning algorithms.
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer4(this,false)">
+
+                To guarantee that all data is correct.
+
+            </div>
+
+        </div>
+
+
+        <div id="feedback4"
+             class="feedback">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CHALLENGE 5
+===================================================== -->
+
+<div class="card">
+
+    <div class="task">
+
+        <div class="task-number">
+
+            CHALLENGE 5 — The final knowledge problem
+
+        </div>
+
+
+        <p>
+
+            You are designing an AI system for a university.
+
+        </p>
+
+
+        <p>
+
+            The system needs to know:
+
+        </p>
+
+
+        <ul>
+
+            <li>
+                which people are students;
+            </li>
+
+            <li>
+                which courses students attend;
+            </li>
+
+            <li>
+                which courses belong to which programmes;
+            </li>
+
+            <li>
+                and which students satisfy certain conditions.
+            </li>
+
+        </ul>
+
+
+        <p>
+
+            The system should also be able to answer questions
+            that were <strong>not explicitly stored as facts</strong>.
+        </p>
+
+
+        <p>
+
+            Which combination is most appropriate?
+
+        </p>
+
+
+        <div class="options">
+
+            <div class="option"
+                 onclick="answer5(this,false)">
+
+                Only a list of student names.
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer5(this,false)">
+
+                Only a neural network.
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer5(this,true)">
+
+                An ontology / knowledge base together with
+                a reasoning mechanism.
+
+            </div>
+
+
+            <div class="option"
+                 onclick="answer5(this,false)">
+
+                A collection of unrelated text documents.
+
+            </div>
+
+        </div>
+
+
+        <div id="feedback5"
+             class="feedback">
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     SCORE
+===================================================== -->
+
+<div class="card">
+
+    <div style="text-align:center;">
+
+        <h2>
+
+            🏆 Final Knowledge Quest Score
+
+        </h2>
+
+
+        <div class="score">
+
+            <span id="score">
+
+                0
+
+            </span>
+
+            / 5
+
+        </div>
+
+
+        <p>
+
+            Complete all five challenges to unlock
+            the final reflection.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     REFLECTION
+===================================================== -->
+
+<div id="reflection"
+     class="card"
+     style="display:none;">
+
+    <div class="reflection">
+
+        <h2>
+
+            💭 Final Reflection — What is knowledge
+            representation for?
+
+        </h2>
+
+
+        <p>
+
+            Congratulations. You have completed the
+            five Knowledge Quest missions.
+
+        </p>
+
+
+        <p>
+
+            Before leaving the game, take a few minutes
+            to think about what you have learned in
+            <strong>Lecture 2 — Knowledge Graphs and
+            Ontologies</strong>.
+
+        </p>
+
+
+        <p>
+
+            There is no single "correct" answer to the
+            questions below. The goal is to connect the
+            technical concepts from the lecture with your
+            own understanding.
+
+        </p>
+
+
+
+        <!-- REFLECTION 1 -->
+
+        <div class="reflection-question">
+
+            <strong>
+                1. What is the main advantage of representing
+                knowledge explicitly?
+            </strong>
+
+
+            <textarea
+                id="reflection1"
+                placeholder="Write a few sentences..."></textarea>
+
+        </div>
+
+
+
+        <!-- REFLECTION 2 -->
+
+        <div class="reflection-question">
+
+            <strong>
+
+                2. What is the difference between storing
+                a fact and being able to reason from that fact?
+
+            </strong>
+
+
+            <textarea
+                id="reflection2"
+                placeholder="Think about the examples with classes, individuals and subclasses..."></textarea>
+
+        </div>
+
+
+
+        <!-- REFLECTION 3 -->
+
+        <div class="reflection-question">
+
+            <strong>
+
+                3. Imagine you are designing an AI system
+                for a real-world problem. When might an
+                ontology or knowledge graph be useful?
+
+            </strong>
+
+
+            <textarea
+                id="reflection3"
+                placeholder="Give one concrete example..."></textarea>
+
+        </div>
+
+
+
+        <!-- REFLECTION 4 -->
+
+        <div class="reflection-question">
+
+            <strong>
+
+                4. What do you think is the biggest
+                challenge of building and maintaining
+                a knowledge representation system?
+
+            </strong>
+
+
+            <textarea
+                id="reflection4"
+                placeholder="There is no single correct answer..."></textarea>
+
+        </div>
+
+
+
+        <div style="text-align:center;">
+
+            <button onclick="saveReflection()">
+
+                SAVE REFLECTION
+
+            </button>
+
+        </div>
+
+
+        <div id="reflectionSaved"
+             class="feedback success">
+
+            ✓ Reflection completed. Excellent work!
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     FINAL MESSAGE
+===================================================== -->
+
+<div id="finalMessage"
+     class="final-message">
+
+    <div class="trophy">
+
+        🏆
+
+    </div>
+
+
+    <h2>
+
+        Knowledge Quest Complete!
+
+    </h2>
+
+
+    <p>
+
+        You have completed all five missions.
+
+    </p>
+
+
+    <p>
+
+        You have explored how knowledge can be represented
+        using classes, individuals and relationships; how
+        ontologies organize concepts; how knowledge graphs
+        represent connected information; how queries can
+        retrieve knowledge; and how reasoning can derive
+        new information.
+
+    </p>
+
+
+    <p>
+
+        <strong>
+
+            You are now ready to move from "What is
+            knowledge representation?" to "How can we
+            build AI systems that use it?"
+
+        </strong>
+
+    </p>
+
+
+    <p>
+
+        🚀 Well done, Knowledge Engineer!
+
+    </p>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let score = 0;
+
+
+let completed = {
+
+    q1: false,
+
+    q2: false,
+
+    q3: false,
+
+    q4: false,
+
+    q5: false
+
+};
+
+
+
+/* =========================================================
+   UPDATE SCORE
+========================================================= */
+
+function updateScore() {
+
+    document.getElementById(
+        "score"
+    ).textContent = score;
+
+
+    if (score === 5) {
+
+        document.getElementById(
+            "reflection"
+        ).style.display = "block";
+
+
+        setTimeout(function() {
+
+            document.getElementById(
+                "reflection"
+            ).scrollIntoView({
+
+                behavior: "smooth"
+
+            });
+
+        }, 300);
+
+    }
+
+}
+
+
+
+/* =========================================================
+   GENERIC ANSWER HANDLER
+========================================================= */
+
+function answer(
+    element,
+    correct,
+    feedbackId,
+    stateName
+) {
+
+    if (completed[stateName]) {
+
+        return;
+
+    }
+
+
+    const options =
+        element.parentElement
+        .querySelectorAll(".option");
+
+
+    options.forEach(function(option) {
+
+        option.classList.add(
+            "disabled"
+        );
+
+    });
+
+
+    const feedback =
+        document.getElementById(
+            feedbackId
+        );
+
+
+    if (correct) {
+
+        element.classList.add(
+            "correct"
+        );
+
+
+        feedback.className =
+            "feedback success";
+
+
+        completed[stateName] =
+            true;
+
+
+        score++;
+
+
+        updateScore();
+
+
+    } else {
+
+        element.classList.add(
+            "incorrect"
+        );
+
+
+        feedback.className =
+            "feedback error";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   QUESTION 1
+========================================================= */
+
+function answer1(
+    element,
+    correct
+) {
+
+    answer(
+
+        element,
+
+        correct,
+
+        "feedback1",
+
+        "q1"
+
+    );
+
+
+    const feedback =
+        document.getElementById(
+            "feedback1"
+        );
+
+
+    if (correct) {
+
+        feedback.innerHTML =
+
+            "✓ Correct. The T-Box contains the conceptual "
+            + "knowledge of the ontology: classes and their "
+            + "relationships. <strong>Student ⊂ Person</strong> "
+            + "describes a class relationship.";
+
+    } else {
+
+        feedback.innerHTML =
+
+            "✗ Not quite. Think about the distinction between "
+            + "the schema/conceptual part of the knowledge base "
+            + "and the concrete facts about individuals.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   QUESTION 2
+========================================================= */
+
+function answer2(
+    element,
+    correct
+) {
+
+    answer(
+
+        element,
+
+        correct,
+
+        "feedback2",
+
+        "q2"
+
+    );
+
+
+    const feedback =
+        document.getElementById(
+            "feedback2"
+        );
+
+
+    if (correct) {
+
+        feedback.innerHTML =
+
+            "✓ Correct. Because Student is a subclass of "
+            + "Person, membership in Student allows the "
+            + "reasoner to infer membership in Person.";
+
+    } else {
+
+        feedback.innerHTML =
+
+            "✗ Not quite. Follow the direction of the "
+            + "subclass relationship: Student ⊂ Person.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   QUESTION 3
+========================================================= */
+
+function answer3(
+    element,
+    correct
+) {
+
+    answer(
+
+        element,
+
+        correct,
+
+        "feedback3",
+
+        "q3"
+
+    );
+
+
+    const feedback =
+        document.getElementById(
+            "feedback3"
+        );
+
+
+    if (correct) {
+
+        feedback.innerHTML =
+
+            "✓ Correct. The triple has a subject "
+            + "(Maria), a predicate (has_pet), and an "
+            + "object (Luna).";
+
+    } else {
+
+        feedback.innerHTML =
+
+            "✗ Think in terms of subject → relationship → "
+            + "object.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   QUESTION 4
+========================================================= */
+
+function answer4(
+    element,
+    correct
+) {
+
+    answer(
+
+        element,
+
+        correct,
+
+        "feedback4",
+
+        "q4"
+
+    );
+
+
+    const feedback =
+        document.getElementById(
+            "feedback4"
+        );
+
+
+    if (correct) {
+
+        feedback.innerHTML =
+
+            "✓ Exactly. Ontologies provide a formal way "
+            + "to represent concepts, relationships and "
+            + "constraints, enabling computational "
+            + "interpretation and reasoning.";
+
+    } else {
+
+        feedback.innerHTML =
+
+            "✗ Think beyond data storage. The important "
+            + "question is what an ontology allows an AI "
+            + "system to understand and reason about.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   QUESTION 5
+========================================================= */
+
+function answer5(
+    element,
+    correct
+) {
+
+    answer(
+
+        element,
+
+        correct,
+
+        "feedback5",
+
+        "q5"
+
+    );
+
+
+    const feedback =
+        document.getElementById(
+            "feedback5"
+        );
+
+
+    if (correct) {
+
+        feedback.innerHTML =
+
+            "✓ Correct. A knowledge base combined with "
+            + "a reasoning mechanism can represent "
+            + "explicit knowledge and derive additional "
+            + "conclusions.";
+
+    } else {
+
+        feedback.innerHTML =
+
+            "✗ Think about the requirement that the system "
+            + "must answer questions that are not explicitly "
+            + "stored as facts.";
+
+    }
+
+}
+
+
+
+/* =========================================================
+   REFLECTION
+========================================================= */
+
+function saveReflection() {
+
+    const answers = [
+
+        document.getElementById(
+            "reflection1"
+        ).value.trim(),
+
+        document.getElementById(
+            "reflection2"
+        ).value.trim(),
+
+        document.getElementById(
+            "reflection3"
+        ).value.trim(),
+
+        document.getElementById(
+            "reflection4"
+        ).value.trim()
+
+    ];
+
+
+    const completedAnswers =
+        answers.filter(
+            answer => answer.length > 0
+        ).length;
+
+
+    const message =
+        document.getElementById(
+            "reflectionSaved"
+        );
+
+
+    if (completedAnswers < 4) {
+
+        message.className =
+            "feedback error";
+
+
+        message.style.display =
+            "block";
+
+
+        message.innerHTML =
+
+            "Please answer all four reflection "
+            + "questions before completing the mission.";
+
+
+        return;
+
+    }
+
+
+    message.className =
+        "feedback success";
+
+
+    message.style.display =
+        "block";
+
+
+    message.innerHTML =
+
+        "✓ Reflection completed. Excellent work!";
+
+
+    document.getElementById(
+        "finalMessage"
+    ).style.display =
+        "block";
+
+
+    setTimeout(function() {
+
+        document.getElementById(
+            "finalMessage"
+        ).scrollIntoView({
+
+            behavior: "smooth"
+
+        });
+
+    }, 300);
+
+}
+
+</script>
+
+
+</body>
+
+</html>
