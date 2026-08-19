@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Knowledge Quest – Mission 1</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7f9;
+        color: #2d4f70;
+    }
+
+    .game {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 0 20px 40px 20px;
+    }
+
+    /* Header */
+    .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 20px;
+        border-bottom: 1px solid #d7dde3;
+        background: #ffffff;
+    }
+
+    .game-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #234f76;
+    }
+
+    .mission-number {
+        font-size: 14px;
+        color: #667788;
+    }
+
+    .progress-container {
+        background: #dfe6eb;
+        height: 8px;
+        border-radius: 5px;
+        margin: 0 20px 25px 20px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        width: 20%;
+        background: #2d587e;
+        border-radius: 5px;
+    }
+
+    /* Main card */
+    .mission-card {
+        background: white;
+        border-radius: 14px;
+        padding: 35px;
+        box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        text-align: center;
+    }
+
+    .icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 34px;
+        margin: 5px 0 10px 0;
+        color: #234f76;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #667788;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        max-width: 750px;
+        margin: auto;
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    /* Knowledge graph */
+    .graph-box {
+        margin: 30px auto;
+        padding: 25px;
+        max-width: 750px;
+        background: #f7f9fb;
+        border: 1px solid #d7e0e7;
+        border-radius: 12px;
+    }
+
+    .graph-title {
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #234f76;
+    }
+
+    .graph {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .node {
+        padding: 14px 20px;
+        border-radius: 10px;
+        background: #e8f1f8;
+        border: 2px solid #8eabc2;
+        font-weight: bold;
+        color: #234f76;
+        min-width: 120px;
+    }
+
+    .node.individual {
+        background: #fff4dc;
+        border-color: #e4bd67;
+    }
+
+    .relation {
+        font-size: 14px;
+        color: #667788;
+        font-weight: bold;
+    }
+
+    /* Questions */
+    .question {
+        margin-top: 35px;
+        text-align: left;
+    }
+
+    .question h2 {
+        font-size: 20px;
+        color: #234f76;
+        margin-bottom: 15px;
+    }
+
+    .options {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .option {
+        padding: 15px;
+        border: 1px solid #ccd6df;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 16px;
+    }
+
+    .option:hover {
+        background: #f0f5f9;
+        border-color: #2d587e;
+    }
+
+    .option.correct {
+        background: #e5f4e9;
+        border-color: #65a878;
+    }
+
+    .option.incorrect {
+        background: #fae8e8;
+        border-color: #d77a7a;
+    }
+
+    /* Feedback */
+    .feedback {
+        display: none;
+        margin-top: 20px;
+        padding: 15px 18px;
+        border-radius: 8px;
+        text-align: left;
+        line-height: 1.5;
+    }
+
+    .feedback.success {
+        background: #e7f4ea;
+        border-left: 4px solid #5d9d6b;
+    }
+
+    .feedback.error {
+        background: #faeeee;
+        border-left: 4px solid #c86d6d;
+    }
+
+    /* Buttons */
+    .button-container {
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    button {
+        background: #2d587e;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 13px 25px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #234965;
+    }
+
+    button:disabled {
+        background: #aeb9c3;
+        cursor: not-allowed;
+    }
+
+    /* Score */
+    .score {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        background: #eef4f8;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .mission-complete {
+        display: none;
+        margin-top: 20px;
+        padding: 20px;
+        background: #e8f4eb;
+        border-radius: 10px;
+        color: #315f3b;
+    }
+
+    @media (max-width: 700px) {
+
+        .options {
+            grid-template-columns: 1fr;
+        }
+
+        .mission-card {
+            padding: 25px 18px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .graph {
+            flex-direction: column;
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <!-- Header -->
+    <div class="game-header">
+        <div class="game-title">🧠 KNOWLEDGE QUEST</div>
+        <div class="mission-number">Mission 1 / 5</div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress"></div>
+    </div>
+
+
+    <!-- Mission -->
+    <div class="mission-card">
+
+        <div class="icon">🗺️</div>
+
+        <h1>The Knowledge Map</h1>
+
+        <div class="subtitle">
+            Discover how knowledge can be represented
+        </div>
+
+        <div class="intro">
+
+            <p>
+                Intelligent systems need more than data.
+                They also need ways to represent <strong>entities,
+                concepts, and relationships</strong>.
+            </p>
+
+            <p>
+                In this mission, you will learn to distinguish
+                between <strong>classes</strong>, <strong>individuals</strong>,
+                and <strong>relationships</strong>.
+            </p>
+
+        </div>
+
+
+        <!-- Example graph -->
+
+        <div class="graph-box">
+
+            <div class="graph-title">
+                🔎 Inspect the knowledge graph
+            </div>
+
+            <div class="graph">
+
+                <div class="node individual">
+                    Alice
+                </div>
+
+                <div class="relation">
+                    is a
+                </div>
+
+                <div class="node">
+                    Student
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="graph">
+
+                <div class="node individual">
+                    Alice
+                </div>
+
+                <div class="relation">
+                    studies
+                </div>
+
+                <div class="node individual">
+                    Artificial Intelligence
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Question 1 -->
+
+        <div class="question">
+
+            <h2>
+                Question 1 — What is Alice?
+            </h2>
+
+            <p>
+                In the knowledge graph above, what kind of entity is
+                <strong>Alice</strong>?
+            </p>
+
+            <div class="options">
+
+                <div class="option"
+                     onclick="answer(this, false, 1)">
+                    A class
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, true, 1)">
+                    An individual
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 1)">
+                    A relationship
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 1)">
+                    An ontology
+                </div>
+
+            </div>
+
+            <div id="feedback1" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Question 2 -->
+
+        <div class="question">
+
+            <h2>
+                Question 2 — What is Student?
+            </h2>
+
+            <p>
+                In the statement
+                <strong>Alice is a Student</strong>,
+                what does <strong>Student</strong> represent?
+            </p>
+
+            <div class="options">
+
+                <div class="option"
+                     onclick="answer(this, false, 2)">
+                    An individual
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, true, 2)">
+                    A class
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 2)">
+                    A relationship
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 2)">
+                    A database
+                </div>
+
+            </div>
+
+            <div id="feedback2" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Question 3 -->
+
+        <div class="question">
+
+            <h2>
+                Question 3 — Find the relationship
+            </h2>
+
+            <p>
+                Which element connects Alice with
+                <strong>Artificial Intelligence</strong>?
+            </p>
+
+            <div class="options">
+
+                <div class="option"
+                     onclick="answer(this, false, 3)">
+                    Alice
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 3)">
+                    Artificial Intelligence
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, true, 3)">
+                    studies
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 3)">
+                    Student
+                </div>
+
+            </div>
+
+            <div id="feedback3" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Question 4 -->
+
+        <div class="question">
+
+            <h2>
+                Question 4 — Think like a knowledge engineer
+            </h2>
+
+            <p>
+                Which of the following is the best representation
+                of the statement:
+            </p>
+
+            <p>
+                <strong>
+                    "Alice studies Artificial Intelligence."
+                </strong>
+            </p>
+
+            <div class="options">
+
+                <div class="option"
+                     onclick="answer(this, false, 4)">
+                    Student → Alice → AI
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, true, 4)">
+                    Alice → studies → Artificial Intelligence
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 4)">
+                    Alice → Student → Artificial Intelligence
+                </div>
+
+                <div class="option"
+                     onclick="answer(this, false, 4)">
+                    Artificial Intelligence → Alice → studies
+                </div>
+
+            </div>
+
+            <div id="feedback4" class="feedback"></div>
+
+        </div>
+
+
+        <!-- Finish -->
+
+        <div class="button-container">
+
+            <button id="finishButton"
+                    onclick="finishMission()"
+                    disabled>
+                COMPLETE MISSION →
+            </button>
+
+        </div>
+
+        <div id="score" class="score"></div>
+
+        <div id="complete"
+             class="mission-complete">
+
+            🏆 <strong>Mission complete!</strong>
+
+            <p>
+                You have learned the basic building blocks of a
+                knowledge graph: <strong>individuals, classes,
+                and relationships</strong>.
+            </p>
+
+            <p>
+                In the next mission, you will become an
+                <strong>Ontology Architect</strong> and start
+                constructing your own knowledge structure.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let score = 0;
+let answered = {
+    1: false,
+    2: false,
+    3: false,
+    4: false
+};
+
+const explanations = {
+
+    1: {
+        correct:
+        "Correct! Alice is a concrete entity — an individual. " +
+        "The class Student describes what kind of entity Alice is.",
+
+        incorrect:
+        "Not quite. Alice refers to a particular entity, so she is " +
+        "an individual rather than a class."
+    },
+
+    2: {
+        correct:
+        "Correct! Student represents a class. It describes a category " +
+        "of entities that can contain individuals such as Alice.",
+
+        incorrect:
+        "Not quite. Student represents a category or class. Alice is " +
+        "the individual belonging to that class."
+    },
+
+    3: {
+        correct:
+        "Exactly! 'studies' is the relationship connecting the two " +
+        "individuals.",
+
+        incorrect:
+        "Look at what connects the two entities. Alice and Artificial " +
+        "Intelligence are the nodes; 'studies' describes their relationship."
+    },
+
+    4: {
+        correct:
+        "Excellent! This has the structure subject → relationship → object. " +
+        "This is the basic pattern behind a knowledge-graph triple.",
+
+        incorrect:
+        "Think in terms of subject → relationship → object. " +
+        "Alice is the subject, 'studies' is the relationship, and " +
+        "Artificial Intelligence is the object."
+    }
+
+};
+
+
+function answer(element, correct, questionNumber) {
+
+    if (answered[questionNumber]) {
+        return;
+    }
+
+    answered[questionNumber] = true;
+
+    const options =
+        element.parentElement.querySelectorAll(".option");
+
+    options.forEach(option => {
+        option.style.pointerEvents = "none";
+    });
+
+    const feedback =
+        document.getElementById("feedback" + questionNumber);
+
+    if (correct) {
+
+        element.classList.add("correct");
+
+        feedback.className =
+            "feedback success";
+
+        feedback.innerHTML =
+            "✓ " + explanations[questionNumber].correct;
+
+        score++;
+
+    } else {
+
+        element.classList.add("incorrect");
+
+        feedback.className =
+            "feedback error";
+
+        feedback.innerHTML =
+            "✗ " + explanations[questionNumber].incorrect;
+
+        /* Highlight correct answer */
+        options.forEach(option => {
+
+            const text = option.textContent.trim();
+
+            if (
+                (questionNumber === 1 && text === "An individual") ||
+                (questionNumber === 2 && text === "A class") ||
+                (questionNumber === 3 && text === "studies") ||
+                (questionNumber === 4 &&
+                 text.includes("Alice → studies → Artificial Intelligence"))
+            ) {
+                option.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    feedback.style.display = "block";
+
+    checkCompletion();
+}
+
+
+function checkCompletion() {
+
+    if (
+        answered[1] &&
+        answered[2] &&
+        answered[3] &&
+        answered[4]
+    ) {
+
+        document.getElementById("finishButton")
+            .disabled = false;
+
+    }
+
+}
+
+
+function finishMission() {
+
+    const scoreElement =
+        document.getElementById("score");
+
+    const completeElement =
+        document.getElementById("complete");
+
+    scoreElement.style.display = "block";
+
+    scoreElement.innerHTML =
+        "Your score: " + score + " / 4";
+
+    completeElement.style.display = "block";
+
+    document.getElementById("finishButton")
+        .style.display = "none";
+
+    window.scrollTo({
+        top: document.body.scrollHeight,
+        behavior: "smooth"
+    });
+
+}
+
+</script>
+
+</body>
+</html>
