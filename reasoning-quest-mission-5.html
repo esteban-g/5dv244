@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reasoning Quest — Mission 5</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f6f8;
+    color: #284b63;
+}
+
+.game {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* HEADER */
+
+.header {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 25px 30px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+
+.brand {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #d7e0e6;
+    padding-bottom: 15px;
+}
+
+.brand-title {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.mission-number {
+    font-size: 14px;
+    color: #657786;
+}
+
+.progress {
+    height: 8px;
+    background: #dce5ea;
+    border-radius: 8px;
+    margin-top: 15px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 100%;
+    background: #2b5876;
+    border-radius: 8px;
+}
+
+/* HERO */
+
+.hero {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.hero-icon {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 10px 0;
+    color: #244f70;
+}
+
+h2 {
+    color: #244f70;
+    margin-top: 0;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: #657786;
+    margin-bottom: 25px;
+}
+
+.intro {
+    max-width: 760px;
+    margin: auto;
+    line-height: 1.6;
+    font-size: 17px;
+}
+
+/* PANELS */
+
+.panel {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 30px;
+    margin-top: 20px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* CODE */
+
+.code-box {
+    background: #202b33;
+    color: #f4f7f9;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 15px;
+    text-align: left;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 20px 0;
+}
+
+.keyword {
+    color: #ffcf66;
+}
+
+.comment {
+    color: #8fb3c9;
+}
+
+/* QUESTIONS */
+
+.question {
+    background: #f7f9fa;
+    border: 1px solid #d9e2e7;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 20px;
+}
+
+.question-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+button {
+    background: #2b5876;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    cursor: pointer;
+    margin: 6px 4px;
+}
+
+button:hover {
+    background: #214861;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #ffffff;
+    color: #284b63;
+    border: 1px solid #cbd8df;
+    margin: 8px 0;
+}
+
+.option:hover {
+    background: #eef4f7;
+}
+
+/* FEEDBACK */
+
+.feedback {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.correct {
+    background: #e8f5e9;
+    border-left: 4px solid #4caf50;
+}
+
+.incorrect {
+    background: #fff3e0;
+    border-left: 4px solid #ff9800;
+}
+
+/* TERMINAL */
+
+.terminal {
+    background: #111820;
+    color: #d6f5d6;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: Consolas, Monaco, monospace;
+    text-align: left;
+    line-height: 1.6;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.terminal-title {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+/* ROBOT */
+
+.robot-status {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 25px 0;
+}
+
+.status-card {
+    background: #f7f9fa;
+    border: 1px solid #d9e2e7;
+    border-radius: 10px;
+    padding: 18px;
+    margin: 8px;
+    min-width: 180px;
+    text-align: center;
+}
+
+.status-icon {
+    font-size: 30px;
+}
+
+.status-value {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 8px;
+}
+
+/* FINAL CHALLENGE */
+
+.challenge {
+    background: #eef5fa;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 20px;
+    border-left: 5px solid #2b5876;
+}
+
+.challenge-title {
+    font-size: 21px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* REFLECTION */
+
+.reflection {
+    background: #eef5fa;
+    border-left: 5px solid #2b5876;
+    padding: 22px;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.reflection-question {
+    background: #ffffff;
+    border: 1px solid #ccd9e0;
+    border-radius: 10px;
+    padding: 18px;
+    margin-top: 15px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 130px;
+    margin-top: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #b9c9d2;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    resize: vertical;
+}
+
+/* SUCCESS */
+
+.success {
+    display: none;
+    background: #e8f5e9;
+    border-left: 5px solid #4caf50;
+    padding: 22px;
+    border-radius: 8px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.xp {
+    text-align: center;
+    font-size: 23px;
+    font-weight: bold;
+    color: #2b5876;
+    margin-top: 25px;
+}
+
+.final-badge {
+    text-align: center;
+    font-size: 70px;
+    margin: 20px 0;
+}
+
+@media (max-width: 700px) {
+
+    .hero,
+    .panel {
+        padding: 22px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+<div class="game">
+
+
+<!-- ==================================================
+     HEADER
+================================================== -->
+
+<div class="header">
+
+    <div class="brand">
+
+        <div class="brand-title">
+            🧠 REASONING QUEST
+        </div>
+
+        <div class="mission-number">
+            Mission 5 / 5
+        </div>
+
+    </div>
+
+    <div class="progress">
+
+        <div class="progress-bar"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     HERO
+================================================== -->
+
+<div class="hero">
+
+    <div class="hero-icon">
+        🧠🤖
+    </div>
+
+    <h1>The Autonomous Agent</h1>
+
+    <div class="subtitle">
+        Your final reasoning challenge
+    </div>
+
+    <div class="intro">
+
+        <p>
+            You have learned how to represent knowledge,
+            derive conclusions, handle constraints, and
+            construct plans.
+        </p>
+
+        <p>
+            Now it is time to put everything together.
+        </p>
+
+        <p>
+            You are the AI engineer responsible for an
+            autonomous robot operating in a hospital.
+        </p>
+
+        <p>
+            The robot must reason about its environment,
+            choose appropriate actions, and achieve its goal
+            without violating the constraints of the environment.
+        </p>
+
+        <p>
+            <strong>
+                Can you design the reasoning process?
+            </strong>
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     MISSION 1 — KNOWLEDGE
+================================================== -->
+
+<div class="panel">
+
+    <h2>🧠 Stage 1 — What Does the Robot Know?</h2>
+
+    <p>
+        The robot receives the following knowledge:
+    </p>
+
+    <div class="code-box">
+
+patient(alice).<br>
+medicine(aspirin).<br>
+<br>
+location(alice,room1).<br>
+location(aspirin,pharmacy).<br>
+<br>
+robot_at(robot,pharmacy).
+
+    </div>
+
+    <p>
+        The robot needs to deliver the medicine to Alice.
+    </p>
+
+    <div class="question">
+
+        <div class="question-title">
+
+            What information is explicitly represented?
+
+        </div>
+
+        <button class="option"
+            onclick="checkAnswer1(1)">
+
+            A. Alice needs aspirin.
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer1(2)">
+
+            B. The medicine is in the pharmacy and
+            Alice is in room 1.
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer1(3)">
+
+            C. The robot has already delivered the medicine.
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer1(4)">
+
+            D. Alice is in the pharmacy.
+
+        </button>
+
+        <div id="feedback1" class="feedback"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     MISSION 2 — REASONING
+================================================== -->
+
+<div class="panel">
+
+    <h2>🔎 Stage 2 — Derive New Knowledge</h2>
+
+    <p>
+        The robot also has the following rule:
+    </p>
+
+    <div class="code-box">
+
+ready_to_deliver(X) :-
+&nbsp;&nbsp;&nbsp;&nbsp;medicine(X),
+&nbsp;&nbsp;&nbsp;&nbsp;location(X,pharmacy),
+&nbsp;&nbsp;&nbsp;&nbsp;robot_at(robot,pharmacy).
+
+    </div>
+
+    <p>
+        Given the facts from the previous stage, what can the
+        robot conclude?
+    </p>
+
+    <div class="question">
+
+        <button class="option"
+            onclick="checkAnswer2(1)">
+
+            A. ready_to_deliver(aspirin)
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer2(2)">
+
+            B. ready_to_deliver(alice)
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer2(3)">
+
+            C. ready_to_deliver(robot)
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer2(4)">
+
+            D. Nothing.
+
+        </button>
+
+        <div id="feedback2" class="feedback"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     MISSION 3 — CONSTRAINTS
+================================================== -->
+
+<div class="panel">
+
+    <h2>🛡️ Stage 3 — Respect the Constraints</h2>
+
+    <p>
+        The hospital contains a restricted area.
+    </p>
+
+    <div class="code-box">
+
+restricted(room3).<br>
+<br>
+:- robot_at(robot,room3).
+
+    </div>
+
+    <p>
+        What does this constraint express?
+    </p>
+
+    <div class="question">
+
+        <button class="option"
+            onclick="checkAnswer3(1)">
+
+            A. The robot should always go to room 3.
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer3(2)">
+
+            B. A solution in which the robot is in room 3
+            is rejected.
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer3(3)">
+
+            C. Room 3 disappears from the environment.
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer3(4)">
+
+            D. The robot automatically leaves room 3.
+
+        </button>
+
+        <div id="feedback3" class="feedback"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     MISSION 4 — PLANNING
+================================================== -->
+
+<div class="panel">
+
+    <h2>🗺️ Stage 4 — Construct the Plan</h2>
+
+    <p>
+        The robot is currently at the pharmacy.
+    </p>
+
+    <p>
+        The medicine must reach Alice in room 1.
+    </p>
+
+    <p>
+        The available actions are:
+    </p>
+
+    <div class="code-box">
+
+move(pharmacy,room1).<br>
+move(pharmacy,room2).<br>
+move(room1,pharmacy).<br>
+move(room2,room1).
+
+    </div>
+
+    <p>
+        Which sequence achieves the goal?
+    </p>
+
+    <div class="question">
+
+        <button class="option"
+            onclick="checkAnswer4(1)">
+
+            A. pharmacy → room2 → room1
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer4(2)">
+
+            B. pharmacy → room1
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer4(3)">
+
+            C. room1 → pharmacy → room2
+
+        </button>
+
+        <button class="option"
+            onclick="checkAnswer4(4)">
+
+            D. pharmacy → room2 → pharmacy
+
+        </button>
+
+        <div id="feedback4" class="feedback"></div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     MISSION 5 — FINAL CHALLENGE
+================================================== -->
+
+<div class="panel">
+
+    <h2>⚔️ Final Challenge — Design the Agent</h2>
+
+    <div class="challenge">
+
+        <div class="challenge-title">
+
+            🚨 Emergency Delivery
+
+        </div>
+
+        <p>
+            The hospital robot must deliver medicine from the
+            pharmacy to a patient in room 1.
+        </p>
+
+        <p>
+            However:
+        </p>
+
+        <ul>
+
+            <li>
+                The robot cannot enter restricted areas.
+            </li>
+
+            <li>
+                The robot must start at the pharmacy.
+            </li>
+
+            <li>
+                The medicine must reach room 1.
+            </li>
+
+            <li>
+                The plan must consist only of valid actions.
+            </li>
+
+        </ul>
+
+        <p>
+            A simplified ASP representation is:
+        </p>
+
+        <div class="code-box">
+
+robot_at(robot,pharmacy).<br>
+medicine_at(aspirin,pharmacy).<br>
+patient_at(alice,room1).<br>
+restricted(room3).<br>
+<br>
+move(pharmacy,room1).<br>
+move(pharmacy,room2).<br>
+move(room2,room1).<br>
+move(room1,pharmacy).<br>
+<br>
+<span class="comment">% Goal</span><br>
+:- not medicine_at(aspirin,room1).<br>
+<br>
+<span class="comment">% Safety constraint</span><br>
+:- robot_at(robot,room3).
+
+        </div>
+
+    </div>
+
+
+    <div class="question">
+
+        <div class="question-title">
+
+            What makes this an intelligent-agent problem?
+
+        </div>
+
+        <button class="option"
+            onclick="finalAnswer(1)">
+
+            A. The system only stores facts.
+
+        </button>
+
+        <button class="option"
+            onclick="finalAnswer(2)">
+
+            B. The system reasons about its knowledge,
+            selects actions, respects constraints, and
+            pursues a goal.
+
+        </button>
+
+        <button class="option"
+            onclick="finalAnswer(3)">
+
+            C. The robot performs random movements.
+
+        </button>
+
+        <button class="option"
+            onclick="finalAnswer(4)">
+
+            D. The system does not need a representation
+            of the environment.
+
+        </button>
+
+        <div id="feedback5" class="feedback"></div>
+
+    </div>
+
+
+    <div id="missionSuccess" class="success">
+
+        <h3>🎉 Mission Complete!</h3>
+
+        <p>
+            You have successfully completed the Reasoning Quest.
+        </p>
+
+        <p>
+            You have worked through the complete chain:
+        </p>
+
+        <p style="text-align:center; font-size:20px;">
+
+            <strong>
+                Knowledge → Reasoning → Constraints →
+                Planning → Action
+            </strong>
+
+        </p>
+
+        <p>
+            This is one of the central ideas behind
+            symbolic approaches to intelligent agents:
+            an agent can use an explicit representation of
+            its world to reason about possible actions and
+            select solutions satisfying its goals and constraints.
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     AGENT ARCHITECTURE
+================================================== -->
+
+<div class="panel">
+
+    <h2>🤖 The Complete Agent</h2>
+
+    <p>
+        Step back and look at the complete architecture.
+    </p>
+
+    <div class="robot-status">
+
+        <div class="status-card">
+
+            <div class="status-icon">
+                📚
+            </div>
+
+            <div>
+                Knowledge
+            </div>
+
+            <div class="status-value">
+                Facts
+            </div>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <div class="status-icon">
+                🧠
+            </div>
+
+            <div>
+                Reasoning
+            </div>
+
+            <div class="status-value">
+                Rules
+            </div>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <div class="status-icon">
+                🛡️
+            </div>
+
+            <div>
+                Constraints
+            </div>
+
+            <div class="status-value">
+                Validity
+            </div>
+
+        </div>
+
+
+        <div class="status-card">
+
+            <div class="status-icon">
+                🗺️
+            </div>
+
+            <div>
+                Planning
+            </div>
+
+            <div class="status-value">
+                Actions
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="terminal">
+
+        <div class="terminal-title">
+            🤖 AGENT REASONING TRACE
+        </div>
+
+        <div>
+            Perceive environment...
+        </div>
+
+        <div>
+            ✓ Knowledge acquired
+        </div>
+
+        <br>
+
+        <div>
+            Reason about current state...
+        </div>
+
+        <div>
+            ✓ Relevant facts derived
+        </div>
+
+        <br>
+
+        <div>
+            Generate possible plans...
+        </div>
+
+        <div>
+            ✓ Candidate plans generated
+        </div>
+
+        <br>
+
+        <div>
+            Check constraints...
+        </div>
+
+        <div>
+            ✓ Invalid plans eliminated
+        </div>
+
+        <br>
+
+        <div>
+            Select valid plan...
+        </div>
+
+        <div>
+            ✓ Goal achieved
+        </div>
+
+        <br>
+
+        <div>
+            STATUS: SUCCESS
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     REFLECTION
+================================================== -->
+
+<div class="panel">
+
+    <h2>🎓 Final Reflection</h2>
+
+    <div class="reflection">
+
+        <p>
+            You have reached the end of the Reasoning Quest.
+        </p>
+
+        <p>
+            Think about the progression through the five missions.
+        </p>
+
+        <div class="reflection-question">
+
+            <strong>
+                1. What is the difference between reasoning
+                and planning?
+            </strong>
+
+            <textarea
+                placeholder="Write your answer here...">
+            </textarea>
+
+        </div>
+
+
+        <div class="reflection-question">
+
+            <strong>
+                2. Why are constraints useful when an AI system
+                is planning actions?
+            </strong>
+
+            <textarea
+                placeholder="Write your answer here...">
+            </textarea>
+
+        </div>
+
+
+        <div class="reflection-question">
+
+            <strong>
+                3. What advantage could an explicit knowledge
+                representation provide to an intelligent agent?
+            </strong>
+
+            <textarea
+                placeholder="Write your answer here...">
+            </textarea>
+
+        </div>
+
+
+        <div class="reflection-question">
+
+            <strong>
+                4. In your own words, what does ASP contribute
+                to an intelligent agent?
+            </strong>
+
+            <textarea
+                placeholder="Write your answer here...">
+            </textarea>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==================================================
+     COMPLETION
+================================================== -->
+
+<div class="panel">
+
+    <div class="final-badge">
+        🏆
+    </div>
+
+    <h2 style="text-align:center;">
+        REASONING QUEST COMPLETE
+    </h2>
+
+    <p style="text-align:center; line-height:1.6;">
+
+        You have completed all five missions.
+        You are now ready to move from
+        <strong>reasoning about intelligent agents</strong>
+        to exploring how these ideas can be implemented
+        computationally.
+
+    </p>
+
+    <div class="xp">
+
+        ⭐ +200 XP — AUTONOMOUS AGENT CERTIFIED
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+/* ==================================================
+   QUESTION 1
+================================================== */
+
+function checkAnswer1(answer) {
+
+    const feedback =
+        document.getElementById("feedback1");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! The knowledge base explicitly states that Alice is in room 1 and the aspirin is in the pharmacy. It does not explicitly state that Alice needs aspirin.";
+
+    } else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Look only at the facts that are explicitly represented. Do not assume information that is not present.";
+
+    }
+
+}
+
+
+/* ==================================================
+   QUESTION 2
+================================================== */
+
+function checkAnswer2(answer) {
+
+    const feedback =
+        document.getElementById("feedback2");
+
+    feedback.style.display = "block";
+
+    if (answer === 1) {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! aspirin is medicine, it is located in the pharmacy, and the robot is also at the pharmacy. Therefore ready_to_deliver(aspirin) can be derived.";
+
+    } else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Check all three conditions in the rule. They must hold for the same object X.";
+
+    }
+
+}
+
+
+/* ==================================================
+   QUESTION 3
+================================================== */
+
+function checkAnswer3(answer) {
+
+    const feedback =
+        document.getElementById("feedback3");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! The constraint eliminates candidate solutions in which robot_at(robot,room3) holds.";
+
+    } else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Remember that an ASP constraint does not normally perform an action. It eliminates answer sets that violate the condition.";
+
+    }
+
+}
+
+
+/* ==================================================
+   QUESTION 4
+================================================== */
+
+function checkAnswer4(answer) {
+
+    const feedback =
+        document.getElementById("feedback4");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✅ Correct! The robot can move directly from the pharmacy to room 1, giving a valid plan that reaches the patient's room.";
+
+    } else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Start at the pharmacy and follow only the listed actions. Which sequence reaches room 1?";
+
+    }
+
+}
+
+
+/* ==================================================
+   FINAL CHALLENGE
+================================================== */
+
+function finalAnswer(answer) {
+
+    const feedback =
+        document.getElementById("feedback5");
+
+    const success =
+        document.getElementById("missionSuccess");
+
+    feedback.style.display = "block";
+
+    if (answer === 2) {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "🎉 Exactly! An intelligent agent must combine information about its environment with reasoning, goals, constraints, and actions. ASP provides a formal way to represent and solve parts of this problem.";
+
+        success.style.display = "block";
+
+    } else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "❌ Think about the complete process. An autonomous agent needs more than stored facts: it needs to reason, consider possible actions, respect constraints, and pursue goals.";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
