@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reasoning Quest — Mission 3</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f3f6f8;
+        color: #284b63;
+    }
+
+    .game {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .header {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 25px 30px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .brand {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #d7e0e6;
+        padding-bottom: 15px;
+    }
+
+    .brand-title {
+        font-size: 25px;
+        font-weight: bold;
+    }
+
+    .mission-number {
+        font-size: 14px;
+        color: #657786;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dce5ea;
+        border-radius: 8px;
+        margin-top: 15px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 60%;
+        background: #2b5876;
+        border-radius: 8px;
+    }
+
+    .hero {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .hero-icon {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin: 10px 0;
+        color: #244f70;
+    }
+
+    h2 {
+        color: #244f70;
+        margin-top: 0;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #657786;
+        margin-bottom: 25px;
+    }
+
+    .intro {
+        max-width: 750px;
+        margin: auto;
+        line-height: 1.6;
+        font-size: 17px;
+    }
+
+    .panel {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 30px;
+        margin-top: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    }
+
+    .code-box {
+        background: #202b33;
+        color: #f4f7f9;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: Consolas, Monaco, monospace;
+        font-size: 16px;
+        text-align: left;
+        line-height: 1.6;
+        overflow-x: auto;
+        margin: 20px 0;
+    }
+
+    .keyword {
+        color: #ffcf66;
+    }
+
+    .comment {
+        color: #8fb3c9;
+    }
+
+    .question {
+        background: #f7f9fa;
+        border: 1px solid #d9e2e7;
+        border-radius: 12px;
+        padding: 22px;
+        margin-top: 20px;
+    }
+
+    .question-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    button {
+        background: #2b5876;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 15px;
+        cursor: pointer;
+        margin: 6px 4px;
+    }
+
+    button:hover {
+        background: #214861;
+    }
+
+    .option {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: #ffffff;
+        color: #284b63;
+        border: 1px solid #cbd8df;
+        margin: 8px 0;
+    }
+
+    .option:hover {
+        background: #eef4f7;
+    }
+
+    .feedback {
+        display: none;
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        line-height: 1.5;
+    }
+
+    .correct {
+        background: #e8f5e9;
+        border-left: 4px solid #4caf50;
+    }
+
+    .incorrect {
+        background: #fff3e0;
+        border-left: 4px solid #ff9800;
+    }
+
+    .terminal {
+        background: #111820;
+        color: #d6f5d6;
+        padding: 20px;
+        border-radius: 10px;
+        font-family: Consolas, Monaco, monospace;
+        text-align: left;
+        line-height: 1.6;
+        margin-top: 20px;
+    }
+
+    .terminal-title {
+        color: #ffffff;
+        margin-bottom: 10px;
+    }
+
+    .input-area {
+        width: 100%;
+        min-height: 150px;
+        background: #202b33;
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 18px;
+        font-family: Consolas, Monaco, monospace;
+        font-size: 15px;
+        resize: vertical;
+        margin-top: 10px;
+    }
+
+    .success {
+        display: none;
+        background: #e8f5e9;
+        border-left: 5px solid #4caf50;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 20px;
+        line-height: 1.6;
+    }
+
+    .reflection {
+        background: #eef5fa;
+        border-left: 5px solid #2b5876;
+        padding: 20px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    .xp {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        color: #2b5876;
+        margin-top: 25px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media (max-width: 700px) {
+        .hero,
+        .panel {
+            padding: 22px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="brand">
+
+            <div class="brand-title">
+                🧠 REASONING QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 3 / 5
+            </div>
+
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
+
+
+    <!-- HERO -->
+    <div class="hero">
+
+        <div class="hero-icon">⚙️</div>
+
+        <h1>The Clingo Solver</h1>
+
+        <div class="subtitle">
+            Can you think like an ASP solver?
+        </div>
+
+        <div class="intro">
+
+            <p>
+                You have learned how ASP represents knowledge using
+                <strong>facts</strong>, <strong>rules</strong>, and
+                <strong>negation as failure</strong>.
+            </p>
+
+            <p>
+                Now it is time to become the solver.
+            </p>
+
+            <p>
+                Your mission is to inspect an ASP program, determine
+                what can be derived, and identify the correct
+                <strong>answer set</strong>.
+            </p>
+
+            <p>
+                Remember:
+                <strong>Clingo does not simply execute the rules like
+                a conventional program.</strong>
+                It searches for stable models satisfying the program.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 1 -->
+    <div class="panel">
+
+        <h2>🔎 Mission Briefing</h2>
+
+        <p>
+            Consider the following ASP program:
+        </p>
+
+        <div class="code-box">
+
+bird(tweety).<br>
+bird(polly).<br>
+penguin(polly).<br>
+<br>
+flies(X) :- bird(X), <span class="keyword">not</span> penguin(X).
+
+        </div>
+
+        <p>
+            Your first task is to determine what the solver should
+            conclude.
+        </p>
+
+
+        <div class="question">
+
+            <div class="question-title">
+                Which answer set is correct?
+            </div>
+
+            <button class="option"
+                onclick="checkAnswer(1)">
+                A. { bird(tweety), bird(polly),
+                penguin(polly), flies(tweety) }
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer(2)">
+                B. { bird(tweety), bird(polly),
+                penguin(polly), flies(tweety), flies(polly) }
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer(3)">
+                C. { bird(tweety), bird(polly),
+                penguin(polly) }
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer(4)">
+                D. { flies(tweety), flies(polly) }
+
+            </button>
+
+            <div id="feedback1" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 2 -->
+    <div class="panel">
+
+        <h2>🧩 The Solver's Reasoning</h2>
+
+        <p>
+            Now let's slow the reasoning down.
+        </p>
+
+        <p>
+            The solver sees:
+        </p>
+
+        <div class="code-box">
+
+bird(tweety).<br>
+bird(polly).<br>
+penguin(polly).<br>
+<br>
+flies(X) :- bird(X), <span class="keyword">not</span> penguin(X).
+
+        </div>
+
+        <p>
+            For <code>tweety</code>:
+        </p>
+
+        <ul>
+            <li><code>bird(tweety)</code> is true.</li>
+            <li><code>penguin(tweety)</code> cannot be derived.</li>
+            <li>Therefore <code>not penguin(tweety)</code> succeeds.</li>
+            <li>So <code>flies(tweety)</code> is derived.</li>
+        </ul>
+
+        <p>
+            For <code>polly</code>:
+        </p>
+
+        <ul>
+            <li><code>bird(polly)</code> is true.</li>
+            <li><code>penguin(polly)</code> is explicitly true.</li>
+            <li>Therefore <code>not penguin(polly)</code> fails.</li>
+            <li>So <code>flies(polly)</code> is not derived.</li>
+        </ul>
+
+        <div class="question">
+
+            <div class="question-title">
+                What role does <code>not</code> play here?
+            </div>
+
+            <button class="option"
+                onclick="checkAnswer2(1)">
+                A. It means that penguin(X) is false.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer2(2)">
+                B. It means that penguin(X) cannot be proven
+                from the current knowledge.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer2(3)">
+                It randomly chooses whether X is a penguin.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer2(4)">
+                It removes penguin(X) from the program.
+            </button>
+
+            <div id="feedback2" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 3 -->
+    <div class="panel">
+
+        <h2>💻 Debug the Knowledge Base</h2>
+
+        <p>
+            A researcher gives you the following ASP program.
+            Something is wrong with the intended reasoning.
+        </p>
+
+        <div class="code-box">
+
+bird(tweety).<br>
+penguin(tweety).<br>
+<br>
+flies(X) :- bird(X), <span class="keyword">not</span> penguin(X).
+
+        </div>
+
+        <p>
+            The researcher claims:
+        </p>
+
+        <blockquote>
+            "Tweety is a bird, therefore Tweety flies."
+        </blockquote>
+
+        <p>
+            Is this conclusion supported by the ASP program?
+        </p>
+
+        <div class="question">
+
+            <button class="option"
+                onclick="checkAnswer3(1)">
+                A. Yes. bird(X) is enough to derive flies(X).
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer3(2)">
+                B. No. penguin(tweety) prevents
+                not penguin(tweety) from succeeding.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer3(3)">
+                C. Yes. ASP ignores negative conditions.
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer3(4)">
+                D. No. ASP cannot represent birds.
+            </button>
+
+            <div id="feedback3" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 4 -->
+    <div class="panel">
+
+        <h2>🧠 Predict Before You Solve</h2>
+
+        <p>
+            One of the most useful skills when working with ASP is
+            learning to predict what the solver should produce
+            <strong>before</strong> running the program.
+        </p>
+
+        <p>
+            Consider:
+        </p>
+
+        <div class="code-box">
+
+student(alice).<br>
+student(bob).<br>
+<br>
+studies(alice).<br>
+<br>
+prepared(X) :- student(X), studies(X).
+
+        </div>
+
+        <p>
+            Which atom should be derived?
+        </p>
+
+        <div class="question">
+
+            <button class="option"
+                onclick="checkAnswer4(1)">
+                prepared(alice)
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer4(2)">
+                prepared(bob)
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer4(3)">
+                prepared(alice) and prepared(bob)
+            </button>
+
+            <button class="option"
+                onclick="checkAnswer4(4)">
+                Neither.
+            </button>
+
+            <div id="feedback4" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 5 -->
+    <div class="panel">
+
+        <h2>⚔️ Final Solver Challenge</h2>
+
+        <p>
+            You now receive a slightly larger ASP knowledge base.
+        </p>
+
+        <div class="code-box">
+
+bird(tweety).<br>
+bird(polly).<br>
+penguin(polly).<br>
+<br>
+small(tweety).<br>
+large(polly).<br>
+<br>
+flies(X) :- bird(X), <span class="keyword">not</span> penguin(X).<br>
+<br>
+can_escape(X) :- flies(X), small(X).
+
+        </div>
+
+        <p>
+            Your challenge is to identify all conclusions that can
+            be derived.
+        </p>
+
+        <div class="question">
+
+            <div class="question-title">
+                Which statement is correct?
+            </div>
+
+            <button class="option"
+                onclick="finalAnswer(1)">
+                A. flies(tweety) and can_escape(tweety)
+                are derived.
+            </button>
+
+            <button class="option"
+                onclick="finalAnswer(2)">
+                B. flies(polly) and can_escape(polly)
+                are derived.
+            </button>
+
+            <button class="option"
+                onclick="finalAnswer(3)">
+                C. Only flies(tweety) is derived.
+            </button>
+
+            <button class="option"
+                onclick="finalAnswer(4)">
+                D. No new atoms are derived.
+            </button>
+
+            <div id="feedback5" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CLINGO MENTAL MODEL -->
+    <div class="panel">
+
+        <h2>⚙️ Think Like Clingo</h2>
+
+        <div class="terminal">
+
+            <div class="terminal-title">
+                $ clingo program.lp
+            </div>
+
+            <div>
+                Loading...
+            </div>
+
+            <br>
+
+            <div>
+                Solving...
+            </div>
+
+            <br>
+
+            <div>
+                Answer: 1
+            </div>
+
+            <div>
+                Stable Model:
+            </div>
+
+            <div>
+                bird(tweety)
+            </div>
+
+            <div>
+                bird(polly)
+            </div>
+
+            <div>
+                penguin(polly)
+            </div>
+
+            <div>
+                flies(tweety)
+            </div>
+
+            <div>
+                small(tweety)
+            </div>
+
+            <div>
+                can_escape(tweety)
+            </div>
+
+        </div>
+
+        <p style="margin-top:20px;">
+            The important idea is not memorizing the output.
+            The important idea is understanding <strong>why</strong>
+            these atoms belong to the stable model.
+        </p>
+
+    </div>
+
+
+    <!-- REFLECTION -->
+    <div class="panel">
+
+        <h2>🎓 Mission Reflection</h2>
+
+        <div class="reflection">
+
+            <p>
+                You have now moved from reading ASP rules to
+                <strong>reasoning about what an ASP solver will derive</strong>.
+            </p>
+
+            <p>
+                Three ideas are particularly important:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Facts</strong> describe what is explicitly
+                    known.
+                </li>
+
+                <li>
+                    <strong>Rules</strong> describe how additional
+                    knowledge can be derived.
+                </li>
+
+                <li>
+                    <strong>Negation as failure</strong> means that a
+                    literal cannot currently be established from the
+                    knowledge base.
+                </li>
+            </ul>
+
+            <p>
+                In the next mission, we will move from reasoning about
+                static knowledge to something more challenging:
+                <strong>planning actions over time.</strong>
+            </p>
+
+            <p>
+                🤖 Your next challenge will be to make a robot
+                <strong>find a plan</strong>.
+            </p>
+
+        </div>
+
+        <div class="xp">
+            ⭐ +100 XP — CLINGO SOLVER CERTIFIED
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showFeedback(id, message, correct) {
+
+    const box = document.getElementById(id);
+
+    box.style.display = "block";
+
+    box.innerHTML = message;
+
+    if (correct) {
+        box.className = "feedback correct";
+    } else {
+        box.className = "feedback incorrect";
+    }
+}
+
+
+/* QUESTION 1 */
+
+function checkAnswer(answer) {
+
+    if (answer === 1) {
+
+        showFeedback(
+            "feedback1",
+            "✅ Correct! Tweety is a bird and there is no evidence that Tweety is a penguin. Therefore the rule derives flies(tweety). Polly is explicitly a penguin, so flies(polly) cannot be derived.",
+            true
+        );
+
+    } else {
+
+        showFeedback(
+            "feedback1",
+            "❌ Not quite. Look carefully at the condition not penguin(X). Polly is explicitly known to be a penguin, while Tweety is not.",
+            false
+        );
+
+    }
+
+}
+
+
+/* QUESTION 2 */
+
+function checkAnswer2(answer) {
+
+    if (answer === 2) {
+
+        showFeedback(
+            "feedback2",
+            "✅ Correct! In ASP, not penguin(X) is negation as failure: the solver cannot establish penguin(X) from the current knowledge. It should not simply be interpreted as classical logical negation.",
+            true
+        );
+
+    } else {
+
+        showFeedback(
+            "feedback2",
+            "❌ Think carefully about the meaning of not in ASP. It is not simply classical Boolean negation.",
+            false
+        );
+
+    }
+
+}
+
+
+/* QUESTION 3 */
+
+function checkAnswer3(answer) {
+
+    if (answer === 2) {
+
+        showFeedback(
+            "feedback3",
+            "✅ Correct! Because penguin(tweety) is explicitly known, the condition not penguin(tweety) fails. Therefore flies(tweety) cannot be derived.",
+            true
+        );
+
+    } else {
+
+        showFeedback(
+            "feedback3",
+            "❌ Look at the complete rule. The bird condition is necessary, but it is not sufficient: not penguin(X) must also succeed.",
+            false
+        );
+
+    }
+
+}
+
+
+/* QUESTION 4 */
+
+function checkAnswer4(answer) {
+
+    if (answer === 1) {
+
+        showFeedback(
+            "feedback4",
+            "✅ Correct! Alice satisfies both conditions: student(alice) and studies(alice). Therefore prepared(alice) is derived. Bob is a student but there is no studies(bob) fact.",
+            true
+        );
+
+    } else {
+
+        showFeedback(
+            "feedback4",
+            "❌ Check the body of the rule. Both student(X) and studies(X) must hold for the same X.",
+            false
+        );
+
+    }
+
+}
+
+
+/* FINAL QUESTION */
+
+function finalAnswer(answer) {
+
+    if (answer === 1) {
+
+        showFeedback(
+            "feedback5",
+            "🎉 Excellent! Tweety is a bird and not a penguin, so flies(tweety) is derived. Tweety is also small, so can_escape(tweety) follows. Polly is a penguin, so she does not satisfy the flying rule.",
+            true
+        );
+
+    } else if (answer === 3) {
+
+        showFeedback(
+            "feedback5",
+            "🟡 Almost! flies(tweety) is indeed derived, but there is another rule: can_escape(X) :- flies(X), small(X). Since Tweety is small, can_escape(tweety) is also derived.",
+            false
+        );
+
+    } else {
+
+        showFeedback(
+            "feedback5",
+            "❌ Trace the rules one by one. First determine who flies, then use that result together with small(X) to determine who can escape.",
+            false
+        );
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
