@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ML Quest – Mission 1</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f3f6f9;
+        color: #294d70;
+    }
+
+    .game-container {
+        max-width: 1050px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .game-header {
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 22px 28px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+        border: 1px solid #d8e1e8;
+    }
+
+    .header-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .game-title {
+        font-size: 26px;
+        font-weight: bold;
+        color: #244f73;
+    }
+
+    .mission-number {
+        font-size: 15px;
+        color: #6d7f8f;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dfe7ed;
+        border-radius: 10px;
+        margin-top: 18px;
+        overflow: hidden;
+    }
+
+    .progress-bar {
+        height: 100%;
+        width: 20%;
+        background: #2c587d;
+        border-radius: 10px;
+    }
+
+    .mission-card {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 35px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        border: 1px solid #d8e1e8;
+    }
+
+    .hero {
+        text-align: center;
+        padding: 15px 20px 30px;
+    }
+
+    .hero-icon {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        margin: 5px 0 10px;
+        font-size: 34px;
+        color: #244f73;
+    }
+
+    h2 {
+        color: #244f73;
+        margin-top: 30px;
+    }
+
+    p {
+        line-height: 1.6;
+        font-size: 16px;
+    }
+
+    .intro {
+        max-width: 760px;
+        margin: auto;
+        color: #4e6578;
+    }
+
+    .lab {
+        background: #f5f8fa;
+        border: 1px solid #d6e0e7;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 25px;
+    }
+
+    .lab-title {
+        font-size: 21px;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    .scenario {
+        background: white;
+        border: 1px solid #d9e1e7;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 18px 0;
+    }
+
+    .scenario h3 {
+        margin-top: 0;
+        color: #244f73;
+    }
+
+    .data-box {
+        background: #eef4f8;
+        border-radius: 8px;
+        padding: 15px;
+        margin: 15px 0;
+        font-family: monospace;
+        color: #334f66;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    button {
+        border: none;
+        border-radius: 7px;
+        padding: 12px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        background: #2c587d;
+        color: white;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #1f4565;
+        transform: translateY(-1px);
+    }
+
+    button.secondary {
+        background: #e7edf2;
+        color: #294d70;
+    }
+
+    button.secondary:hover {
+        background: #d7e2ea;
+    }
+
+    .result {
+        margin-top: 18px;
+        padding: 16px;
+        border-radius: 8px;
+        display: none;
+        line-height: 1.5;
+    }
+
+    .correct {
+        background: #e7f4ea;
+        border-left: 5px solid #3b8c55;
+        color: #285d38;
+    }
+
+    .incorrect {
+        background: #fbeaea;
+        border-left: 5px solid #b84b4b;
+        color: #7a3030;
+    }
+
+    .question {
+        margin-top: 30px;
+        padding: 25px;
+        border-radius: 10px;
+        background: #ffffff;
+        border: 1px solid #d8e1e8;
+    }
+
+    .question-number {
+        font-size: 14px;
+        color: #74899a;
+        margin-bottom: 8px;
+    }
+
+    .question-text {
+        font-size: 19px;
+        font-weight: bold;
+        margin-bottom: 18px;
+    }
+
+    .option {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin: 8px 0;
+        background: #f1f5f8;
+        color: #294d70;
+        border: 1px solid #d5dfe6;
+    }
+
+    .option:hover {
+        background: #e5edf3;
+    }
+
+    .score {
+        margin-top: 25px;
+        padding: 18px;
+        background: #eef4f8;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .mission-complete {
+        display: none;
+        margin-top: 30px;
+        padding: 25px;
+        background: #eaf4ed;
+        border: 1px solid #b8d6c0;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .mission-complete h2 {
+        color: #2f7044;
+    }
+
+    .next-button {
+        display: inline-block;
+        margin-top: 15px;
+        text-decoration: none;
+        background: #2c587d;
+        color: white;
+        padding: 13px 22px;
+        border-radius: 7px;
+    }
+
+    .reflection {
+        margin-top: 30px;
+        background: #fff7df;
+        border-left: 5px solid #e4ae22;
+        padding: 18px;
+        border-radius: 6px;
+    }
+
+    @media (max-width: 700px) {
+
+        .mission-card {
+            padding: 20px;
+        }
+
+        .header-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+    }
+
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <!-- HEADER -->
+
+    <div class="game-header">
+
+        <div class="header-top">
+
+            <div class="game-title">
+                🧠 ML QUEST
+            </div>
+
+            <div class="mission-number">
+                Mission 1 / 5
+            </div>
+
+        </div>
+
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+
+    </div>
+
+
+    <!-- MAIN CARD -->
+
+    <div class="mission-card">
+
+        <div class="hero">
+
+            <div class="hero-icon">
+                🕵️
+            </div>
+
+            <h1>Mission 1: Data Detective</h1>
+
+            <p class="intro">
+
+                Machine learning starts with a surprisingly important question:
+
+                <strong>
+                    What kind of problem are we trying to solve?
+                </strong>
+
+                Before choosing an algorithm, you need to understand the
+                data, the target, and whether the answers are already known.
+
+            </p>
+
+        </div>
+
+
+        <!-- INTERACTIVE LAB -->
+
+        <div class="lab">
+
+            <div class="lab-title">
+                🔬 First stop: The Learning Lab
+            </div>
+
+            <p>
+                Imagine that you are designing a machine learning system.
+                The first thing you must determine is whether the training
+                data contains known answers.
+            </p>
+
+            <div class="scenario">
+
+                <h3>Scenario A — The Spam Detector</h3>
+
+                <p>
+                    You have thousands of emails. Each email has already been
+                    labelled as either <strong>spam</strong> or
+                    <strong>not spam</strong>.
+                </p>
+
+                <div class="data-box">
+                    Email → [features] → "spam" / "not spam"
+                </div>
+
+                <p>
+                    Does the dataset contain a target value?
+                </p>
+
+                <div class="controls">
+
+                    <button onclick="checkScenario('A','supervised')">
+                        Yes — supervised
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="checkScenario('A','unsupervised')">
+                        No — unsupervised
+                    </button>
+
+                </div>
+
+                <div id="resultA" class="result"></div>
+
+            </div>
+
+
+            <div class="scenario">
+
+                <h3>Scenario B — Discovering Customer Groups</h3>
+
+                <p>
+                    You have information about 10,000 customers, but nobody
+                    has labelled the customers into groups.
+                </p>
+
+                <div class="data-box">
+                    Customer → [age, spending, visits, ...]
+                </div>
+
+                <p>
+                    You want the algorithm to discover possible groups
+                    in the data.
+                </p>
+
+                <div class="controls">
+
+                    <button
+                        onclick="checkScenario('B','supervised')">
+                        Yes — supervised
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="checkScenario('B','unsupervised')">
+                        No — unsupervised
+                    </button>
+
+                </div>
+
+                <div id="resultB" class="result"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SECOND LAB -->
+
+        <div class="lab">
+
+            <div class="lab-title">
+                🎯 Target Detective
+            </div>
+
+            <p>
+                Now suppose that the problem <strong>is supervised</strong>.
+                Your next question is:
+            </p>
+
+            <div class="data-box">
+                Is the target numerical or categorical?
+            </div>
+
+            <p>
+                Remember the distinction from the lecture:
+                <strong>regression</strong> predicts numerical targets,
+                while <strong>classification</strong> predicts categorical
+                targets.
+            </p>
+
+            <div class="scenario">
+
+                <h3>Scenario C — Predicting House Prices</h3>
+
+                <p>
+                    Input:
+                    house size, number of rooms, location, age...
+                </p>
+
+                <div class="data-box">
+                    Target y = €350,000
+                </div>
+
+                <p>
+                    What kind of supervised learning problem is this?
+                </p>
+
+                <div class="controls">
+
+                    <button onclick="checkScenario('C','classification')">
+                        Classification
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="checkScenario('C','regression')">
+                        Regression
+                    </button>
+
+                </div>
+
+                <div id="resultC" class="result"></div>
+
+            </div>
+
+
+            <div class="scenario">
+
+                <h3>Scenario D — Detecting a Disease</h3>
+
+                <p>
+                    A model receives medical measurements and predicts:
+                </p>
+
+                <div class="data-box">
+                    Target y ∈ {disease, no disease}
+                </div>
+
+                <p>
+                    What kind of supervised learning problem is this?
+                </p>
+
+                <div class="controls">
+
+                    <button onclick="checkScenario('D','classification')">
+                        Classification
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="checkScenario('D','regression')">
+                        Regression
+                    </button>
+
+                </div>
+
+                <div id="resultD" class="result"></div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FINAL QUESTION -->
+
+        <div class="question">
+
+            <div class="question-number">
+                FINAL CHECK
+            </div>
+
+            <div class="question-text">
+
+                A researcher has a dataset containing observations
+                <em>x</em>, but no labels <em>y</em>.
+                They want to discover structure in the data.
+
+                Which statement is the best description?
+
+            </div>
+
+            <button
+                class="option"
+                onclick="answerFinal(1)">
+                A. Supervised learning, because the model predicts y.
+            </button>
+
+            <button
+                class="option"
+                onclick="answerFinal(2)">
+                B. Unsupervised learning, because no labels are provided.
+            </button>
+
+            <button
+                class="option"
+                onclick="answerFinal(3)">
+                C. Regression, because every ML problem predicts numbers.
+            </button>
+
+            <button
+                class="option"
+                onclick="answerFinal(4)">
+                D. Classification, because the data must contain categories.
+            </button>
+
+            <div id="finalResult" class="result"></div>
+
+        </div>
+
+
+        <!-- SCORE -->
+
+        <div class="score">
+
+            Mission score:
+            <span id="score">0</span> / 5
+
+        </div>
+
+
+        <!-- COMPLETION -->
+
+        <div id="missionComplete" class="mission-complete">
+
+            <h2>🎉 Mission Complete!</h2>
+
+            <p>
+                You have learned to identify the basic structure of a
+                machine learning problem.
+            </p>
+
+            <p>
+                You can now distinguish:
+            </p>
+
+            <p>
+                <strong>
+                    Supervised ↔ Unsupervised
+                    <br>
+                    Regression ↔ Classification
+                </strong>
+            </p>
+
+            <div class="reflection">
+
+                <strong>Think like a machine learning engineer:</strong>
+
+                <br><br>
+
+                Before choosing an algorithm, ask:
+
+                <br><br>
+
+                <em>
+                    "What information do I have, and what am I actually
+                    trying to predict or discover?"
+                </em>
+
+            </div>
+
+            <!-- Replace this URL with the Canvas page for Mission 2 -->
+            <a
+                class="next-button"
+                href="https://www.canvas.umu.se/courses/22669/pages/ml-quest-mission-2">
+                Continue to Mission 2 →
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let score = 0;
+
+const completed = {
+    A: false,
+    B: false,
+    C: false,
+    D: false,
+    final: false
+};
+
+
+function checkScenario(id, answer) {
+
+    const result = document.getElementById("result" + id);
+
+    let correctAnswer;
+
+    if (id === "A" || id === "B") {
+        correctAnswer =
+            (id === "A")
+                ? "supervised"
+                : "unsupervised";
+    }
+
+    if (id === "C") {
+        correctAnswer = "regression";
+    }
+
+    if (id === "D") {
+        correctAnswer = "classification";
+    }
+
+
+    if (answer === correctAnswer) {
+
+        result.style.display = "block";
+        result.className = "result correct";
+
+        result.innerHTML =
+            "✓ Correct! You identified the learning problem correctly.";
+
+        if (!completed[id]) {
+
+            score++;
+            completed[id] = true;
+
+            updateScore();
+        }
+
+    } else {
+
+        result.style.display = "block";
+        result.className = "result incorrect";
+
+        if (id === "A") {
+
+            result.innerHTML =
+                "✗ Not quite. The important clue is that each email already has a known label: spam or not spam.";
+
+        } else if (id === "B") {
+
+            result.innerHTML =
+                "✗ Look carefully at the dataset. There are no predefined group labels. The goal is to discover structure.";
+
+        } else if (id === "C") {
+
+            result.innerHTML =
+                "✗ The target is a numerical value: a house price. This is regression.";
+
+        } else if (id === "D") {
+
+            result.innerHTML =
+                "✗ The target consists of categories: disease or no disease. This is classification.";
+        }
+    }
+
+    checkCompletion();
+
+}
+
+
+function answerFinal(answer) {
+
+    const result = document.getElementById("finalResult");
+
+    result.style.display = "block";
+
+    if (answer === 2) {
+
+        result.className = "result correct";
+
+        result.innerHTML =
+            "✓ Correct! This is unsupervised learning because the observations x are available, but there are no target labels y.";
+
+        if (!completed.final) {
+
+            score++;
+            completed.final = true;
+
+            updateScore();
+        }
+
+    } else {
+
+        result.className = "result incorrect";
+
+        result.innerHTML =
+            "✗ Not quite. The key clue is that there are no labels y. The goal is to discover structure in the observed data.";
+    }
+
+    checkCompletion();
+
+}
+
+
+function updateScore() {
+
+    document.getElementById("score").textContent = score;
+
+}
+
+
+function checkCompletion() {
+
+    if (score >= 5) {
+
+        document.getElementById("missionComplete").style.display = "block";
+
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth"
+        });
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
