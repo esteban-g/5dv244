@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Uncertainty Quest — Mission 2</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fa;
+        color: #294e70;
+    }
+
+    .game-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .brand {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .mission-count {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dce5ec;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 28px;
+    }
+
+    .progress-bar {
+        width: 40%;
+        height: 100%;
+        background: #2b567a;
+    }
+
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 38px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+
+    .hero {
+        text-align: center;
+    }
+
+    .emoji {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 36px;
+        margin: 10px 0;
+        color: #234d70;
+    }
+
+    h2 {
+        color: #234d70;
+        margin-top: 0;
+    }
+
+    h3 {
+        color: #315f84;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #66788a;
+        margin-bottom: 25px;
+    }
+
+    .story {
+        font-size: 17px;
+        line-height: 1.7;
+        max-width: 760px;
+        margin: auto;
+    }
+
+    .button {
+        display: inline-block;
+        background: #2b567a;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 13px 22px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    .button:hover {
+        background: #1f4564;
+    }
+
+    .question {
+        margin-top: 25px;
+        padding: 22px;
+        background: #f7f9fb;
+        border-left: 4px solid #2b567a;
+        border-radius: 6px;
+    }
+
+    .option {
+        display: block;
+        padding: 13px 15px;
+        margin: 10px 0;
+        background: white;
+        border: 1px solid #d5dde5;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .option:hover {
+        background: #eef4f8;
+    }
+
+    .feedback {
+        display: none;
+        margin-top: 18px;
+        padding: 15px;
+        border-radius: 7px;
+        line-height: 1.5;
+    }
+
+    .correct {
+        background: #e8f5e9;
+        border-left: 4px solid #43a047;
+    }
+
+    .incorrect {
+        background: #ffebee;
+        border-left: 4px solid #e53935;
+    }
+
+    .formula {
+        background: #eef4f8;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        font-size: 21px;
+        margin: 20px 0;
+        font-family: Georgia, serif;
+    }
+
+    .code-lab {
+        background: #17202a;
+        color: #e8edf2;
+        border-radius: 10px;
+        padding: 25px;
+        margin-top: 20px;
+    }
+
+    .code-lab h3 {
+        color: white;
+        margin-top: 0;
+    }
+
+    .inputs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .input-group label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 6px;
+    }
+
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #aab6c2;
+        font-size: 16px;
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 18px;
+        background: #263746;
+        border-radius: 8px;
+        font-size: 18px;
+        display: none;
+    }
+
+    .result strong {
+        font-size: 25px;
+    }
+
+    .reflection {
+        background: #fff7df;
+        border-left: 5px solid #e5a900;
+    }
+
+    .completion {
+        text-align: center;
+        display: none;
+    }
+
+    .completion .emoji {
+        font-size: 65px;
+    }
+
+    @media (max-width: 700px) {
+        .inputs {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 30px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div class="brand">🧭 UNCERTAINTY QUEST</div>
+        <div class="mission-count">Mission 2 / 5</div>
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+
+    <!-- INTRO -->
+    <div class="card hero" id="intro">
+
+        <div class="emoji">🔎</div>
+
+        <h1>THE BAYES INVESTIGATION</h1>
+
+        <div class="subtitle">
+            Mission 2: Updating beliefs with evidence
+        </div>
+
+        <div class="story">
+
+            <p>
+                In the previous mission, you learned that uncertainty can be
+                represented using probabilities.
+            </p>
+
+            <p>
+                But intelligent agents rarely receive all the information
+                they need at once.
+            </p>
+
+            <p>
+                Instead, they observe evidence and must
+                <strong>update their beliefs</strong>.
+            </p>
+
+            <p>
+                Your mission is to investigate how evidence changes
+                probability.
+            </p>
+
+            <button class="button" onclick="startMission()">
+                START INVESTIGATION →
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- PART 1 -->
+    <div class="card" id="part1" style="display:none;">
+
+        <h2>🔬 Investigation 1 — Before the evidence</h2>
+
+        <p>
+            Imagine an intelligent diagnostic agent trying to determine
+            whether a patient has a particular condition.
+        </p>
+
+        <p>
+            Before receiving any additional information, the agent has a
+            <strong>prior probability</strong>.
+        </p>
+
+        <div class="question">
+
+            <h3>What does a prior probability represent?</h3>
+
+            <label class="option">
+                <input type="radio" name="q1" value="a">
+                The probability after observing new evidence
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q1" value="b">
+                The degree of belief before considering additional evidence
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q1" value="c">
+                The probability that two events are independent
+            </label>
+
+            <button class="button" onclick="checkQ1()">
+                CHECK ANSWER
+            </button>
+
+            <div class="feedback" id="feedback1"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PART 2 -->
+    <div class="card" id="part2" style="display:none;">
+
+        <h2>🧠 Investigation 2 — Evidence arrives</h2>
+
+        <p>
+            Now the agent receives evidence.
+        </p>
+
+        <p>
+            We are no longer asking:
+        </p>
+
+        <div class="formula">
+            P(Cavity)
+        </div>
+
+        <p>
+            Instead, we ask:
+        </p>
+
+        <div class="formula">
+            P(Cavity | Evidence)
+        </div>
+
+        <p>
+            This is a <strong>conditional probability</strong>.
+            It represents our belief after taking the evidence into account.
+        </p>
+
+        <div class="question">
+
+            <h3>What happens when new evidence is incorporated?</h3>
+
+            <label class="option">
+                <input type="radio" name="q2" value="a">
+                The agent updates its degree of belief
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q2" value="b">
+                The probability must always become 1
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q2" value="c">
+                Probability can no longer be used
+            </label>
+
+            <button class="button" onclick="checkQ2()">
+                CHECK ANSWER
+            </button>
+
+            <div class="feedback" id="feedback2"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PART 3 -->
+    <div class="card" id="part3" style="display:none;">
+
+        <h2>⚖️ Investigation 3 — The Bayes Rule</h2>
+
+        <p>
+            Bayes' rule provides a formal relationship between a hypothesis,
+            evidence, and our updated belief.
+        </p>
+
+        <div class="formula">
+            P(H | E) =
+            <br><br>
+            P(E | H) × P(H)
+            <br>
+            ─────────────
+            <br>
+            P(E)
+        </div>
+
+        <p>
+            The important idea is not simply memorizing the equation.
+        </p>
+
+        <p>
+            Think of it as a mechanism for moving from:
+        </p>
+
+        <div class="formula">
+            <strong>Prior belief + Evidence → Updated belief</strong>
+        </div>
+
+        <div class="question">
+
+            <h3>Which quantity represents the updated belief?</h3>
+
+            <label class="option">
+                <input type="radio" name="q3" value="a">
+                P(H)
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q3" value="b">
+                P(E | H)
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q3" value="c">
+                P(H | E)
+            </label>
+
+            <button class="button" onclick="checkQ3()">
+                CHECK ANSWER
+            </button>
+
+            <div class="feedback" id="feedback3"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CODE LAB -->
+    <div class="card" id="codelab" style="display:none;">
+
+        <div class="code-lab">
+
+            <h3>💻 CODE LAB — Build Your Bayesian Update</h3>
+
+            <p>
+                Now you become the reasoning engine.
+            </p>
+
+            <p>
+                Enter three probabilities and let the browser calculate
+                the posterior probability using Bayes' rule.
+            </p>
+
+            <p>
+                Try different values and observe how the evidence changes
+                the result.
+            </p>
+
+            <div class="inputs">
+
+                <div class="input-group">
+                    <label>Prior P(H)</label>
+                    <input
+                        type="number"
+                        id="prior"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="0.20">
+                </div>
+
+                <div class="input-group">
+                    <label>Likelihood P(E | H)</label>
+                    <input
+                        type="number"
+                        id="likelihood"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="0.80">
+                </div>
+
+                <div class="input-group">
+                    <label>Evidence P(E)</label>
+                    <input
+                        type="number"
+                        id="evidence"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value="0.40">
+                </div>
+
+            </div>
+
+            <button class="button" onclick="calculateBayes()">
+                RUN BAYES UPDATE →
+            </button>
+
+            <div class="result" id="bayesResult"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REFLECTION -->
+    <div class="card reflection" id="reflection" style="display:none;">
+
+        <h2>🧩 Final Investigation</h2>
+
+        <p>
+            Suppose an agent initially believes that a hypothesis has a
+            probability of <strong>0.10</strong>.
+        </p>
+
+        <p>
+            After receiving evidence, its posterior probability becomes
+            <strong>0.60</strong>.
+        </p>
+
+        <p>
+            What happened?
+        </p>
+
+        <div class="question">
+
+            <label class="option">
+                <input type="radio" name="q4" value="a">
+                The hypothesis became objectively true.
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q4" value="b">
+                The agent's degree of belief changed because new evidence
+                was incorporated.
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q4" value="c">
+                The prior probability was mathematically incorrect.
+            </label>
+
+            <button class="button" onclick="finishMission()">
+                COMPLETE MISSION →
+            </button>
+
+            <div class="feedback" id="feedback4"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMPLETION -->
+    <div class="card completion" id="completion">
+
+        <div class="emoji">🎯</div>
+
+        <h1>MISSION COMPLETE!</h1>
+
+        <p class="subtitle">
+            You have learned how an intelligent agent updates beliefs
+            when evidence arrives.
+        </p>
+
+        <p>
+            You can now distinguish between:
+        </p>
+
+        <p>
+            <strong>Prior → Evidence → Posterior</strong>
+        </p>
+
+        <p>
+            But Bayesian reasoning becomes much more interesting when
+            several uncertain variables interact...
+        </p>
+
+        <button class="button" onclick="nextMission()">
+            CONTINUE TO MISSION 3 →
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function startMission() {
+
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("part1").style.display = "block";
+
+}
+
+function checkQ1() {
+
+    const answer = document.querySelector(
+        'input[name="q1"]:checked'
+    );
+
+    const feedback = document.getElementById("feedback1");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "b") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! A prior is the degree of belief assigned before additional evidence is considered.";
+
+        setTimeout(function() {
+            document.getElementById("part2").style.display = "block";
+        }, 700);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Not quite. Think about what the agent believes before it receives new evidence.";
+
+    }
+
+}
+
+
+function checkQ2() {
+
+    const answer = document.querySelector(
+        'input[name="q2"]:checked'
+    );
+
+    const feedback = document.getElementById("feedback2");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "a") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! Conditional probability allows the agent to express its belief given observed evidence.";
+
+        setTimeout(function() {
+            document.getElementById("part3").style.display = "block";
+        }, 700);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Not quite. Evidence changes what the agent should believe, but it does not automatically make the probability 1.";
+
+    }
+
+}
+
+
+function checkQ3() {
+
+    const answer = document.querySelector(
+        'input[name="q3"]:checked'
+    );
+
+    const feedback = document.getElementById("feedback3");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "c") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! P(H | E) is the posterior probability: the belief in H after considering evidence E.";
+
+        setTimeout(function() {
+            document.getElementById("codelab").style.display = "block";
+        }, 700);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Look carefully at the notation. Which expression says 'probability of H given E'?";
+
+    }
+
+}
+
+
+function calculateBayes() {
+
+    const prior = parseFloat(
+        document.getElementById("prior").value
+    );
+
+    const likelihood = parseFloat(
+        document.getElementById("likelihood").value
+    );
+
+    const evidence = parseFloat(
+        document.getElementById("evidence").value
+    );
+
+    const result = document.getElementById("bayesResult");
+
+    if (
+        isNaN(prior) ||
+        isNaN(likelihood) ||
+        isNaN(evidence) ||
+        evidence <= 0 ||
+        prior < 0 ||
+        prior > 1 ||
+        likelihood < 0 ||
+        likelihood > 1 ||
+        evidence > 1
+    ) {
+
+        result.style.display = "block";
+
+        result.innerHTML =
+            "⚠️ Please enter valid probabilities between 0 and 1, and make sure P(E) is greater than 0.";
+
+        return;
+    }
+
+    const posterior =
+        (likelihood * prior) / evidence;
+
+    result.style.display = "block";
+
+    result.innerHTML =
+        "Bayes' rule gives:<br><br>" +
+        "<strong>P(H | E) = " +
+        posterior.toFixed(4) +
+        "</strong><br><br>" +
+        "The agent has updated its belief from " +
+        prior.toFixed(2) +
+        " to " +
+        posterior.toFixed(4) +
+        ".";
+
+    document.getElementById("reflection").style.display = "block";
+
+}
+
+
+function finishMission() {
+
+    const answer = document.querySelector(
+        'input[name="q4"]:checked'
+    );
+
+    const feedback = document.getElementById("feedback4");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "b") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Exactly. Probability represents the agent's degree of belief given its information. New evidence can change that belief.";
+
+        setTimeout(function() {
+
+            document.getElementById("reflection").style.display = "none";
+            document.getElementById("completion").style.display = "block";
+
+        }, 900);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Think about the distinction between a change in the world and a change in the agent's belief about the world.";
+
+    }
+
+}
+
+
+function nextMission() {
+
+    /*
+     * Change this URL if your Canvas page uses another address.
+     * The game can also simply return to the Lecture 4 page.
+     */
+
+    window.location.href =
+        "https://www.canvas.umu.se/courses/22669/pages/uncertainty-quest-mission-3";
+
+}
+
+</script>
+
+</body>
+</html>
