@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Uncertainty Quest — Mission 3</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fa;
+    color: #294e70;
+}
+
+.game-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.brand {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.mission-count {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.progress {
+    height: 8px;
+    background: #dce5ec;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.progress-bar {
+    width: 60%;
+    height: 100%;
+    background: #2b567a;
+}
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 38px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+.hero {
+    text-align: center;
+}
+
+.emoji {
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 10px 0;
+    color: #234d70;
+}
+
+h2 {
+    color: #234d70;
+    margin-top: 0;
+}
+
+h3 {
+    color: #315f84;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: #66788a;
+    margin-bottom: 25px;
+}
+
+.story {
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 780px;
+    margin: auto;
+}
+
+.button {
+    display: inline-block;
+    background: #2b567a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 22px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.button:hover {
+    background: #1f4564;
+}
+
+.question {
+    margin-top: 25px;
+    padding: 22px;
+    background: #f7f9fb;
+    border-left: 4px solid #2b567a;
+    border-radius: 6px;
+}
+
+.option {
+    display: block;
+    padding: 13px 15px;
+    margin: 10px 0;
+    background: white;
+    border: 1px solid #d5dde5;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.option:hover {
+    background: #eef4f8;
+}
+
+.feedback {
+    display: none;
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 7px;
+    line-height: 1.5;
+}
+
+.correct {
+    background: #e8f5e9;
+    border-left: 4px solid #43a047;
+}
+
+.incorrect {
+    background: #ffebee;
+    border-left: 4px solid #e53935;
+}
+
+
+/* NETWORK */
+
+.network {
+    margin: 30px auto;
+    padding: 30px;
+    background: #f7f9fb;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.network-title {
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.network-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    flex-wrap: wrap;
+}
+
+.node {
+    background: white;
+    border: 2px solid #2b567a;
+    border-radius: 10px;
+    padding: 14px 22px;
+    min-width: 120px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.arrow {
+    font-size: 25px;
+    color: #6b7280;
+}
+
+.node.small {
+    border-color: #6b7280;
+}
+
+
+/* CODE LAB */
+
+.code-lab {
+    background: #17202a;
+    color: #e8edf2;
+    border-radius: 12px;
+    padding: 28px;
+    margin-top: 20px;
+}
+
+.code-lab h2,
+.code-lab h3 {
+    color: white;
+}
+
+.code-lab p {
+    line-height: 1.6;
+}
+
+.evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.evidence-card {
+    background: #263746;
+    padding: 18px;
+    border-radius: 8px;
+}
+
+.evidence-card label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 15px;
+}
+
+.result {
+    display: none;
+    margin-top: 25px;
+    padding: 20px;
+    background: #263746;
+    border-radius: 8px;
+    line-height: 1.7;
+}
+
+.result-number {
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.reasoning {
+    margin-top: 15px;
+    padding: 15px;
+    background: #1d2b36;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 14px;
+    overflow-x: auto;
+}
+
+
+/* CHECKLIST */
+
+.checklist {
+    background: #eef4f8;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.checklist li {
+    margin: 10px 0;
+}
+
+
+/* REFLECTION */
+
+.reflection {
+    background: #fff7df;
+    border-left: 5px solid #e5a900;
+}
+
+
+/* COMPLETION */
+
+.completion {
+    text-align: center;
+    display: none;
+}
+
+.completion .emoji {
+    font-size: 65px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .card {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .evidence-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .network-row {
+        flex-direction: column;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="game-container">
+
+    <!-- TOP BAR -->
+
+    <div class="topbar">
+
+        <div class="brand">
+            🧭 UNCERTAINTY QUEST
+        </div>
+
+        <div class="mission-count">
+            Mission 3 / 5
+        </div>
+
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+
+    <!-- INTRO -->
+
+    <div class="card hero" id="intro">
+
+        <div class="emoji">🕵️</div>
+
+        <h1>THE BAYESIAN NETWORK DETECTIVE</h1>
+
+        <div class="subtitle">
+            Mission 3: Reasoning with interconnected uncertainty
+        </div>
+
+        <div class="story">
+
+            <p>
+                You have learned how Bayes' rule allows an intelligent
+                agent to update a belief when new evidence arrives.
+            </p>
+
+            <p>
+                But real-world reasoning rarely involves only two
+                variables.
+            </p>
+
+            <p>
+                Several uncertain events may influence one another.
+            </p>
+
+            <p>
+                Your mission is to investigate a
+                <strong>Bayesian network</strong> and use it to answer
+                questions about an uncertain world.
+            </p>
+
+            <button class="button" onclick="startMission()">
+                ENTER THE INVESTIGATION →
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- PART 1 -->
+
+    <div class="card" id="part1" style="display:none;">
+
+        <h2>🧩 Investigation 1 — Why a network?</h2>
+
+        <p>
+            Imagine a building protected by an alarm system.
+        </p>
+
+        <p>
+            Several things could explain why the alarm goes off:
+        </p>
+
+        <ul>
+            <li>A burglary</li>
+            <li>An earthquake</li>
+        </ul>
+
+        <p>
+            The alarm can then cause another observable event:
+            <strong>John calls</strong>.
+        </p>
+
+        <div class="network">
+
+            <div class="network-title">
+                A simplified Bayesian network
+            </div>
+
+            <div class="network-row">
+
+                <div class="node">
+                    🏠 Burglary
+                </div>
+
+                <div class="arrow">
+                    →
+                </div>
+
+                <div class="node">
+                    🚨 Alarm
+                </div>
+
+                <div class="arrow">
+                    →
+                </div>
+
+                <div class="node">
+                    📞 John calls
+                </div>
+
+            </div>
+
+            <br>
+
+            <div class="network-row">
+
+                <div class="node">
+                    🌎 Earthquake
+                </div>
+
+                <div class="arrow">
+                    →
+                </div>
+
+                <div class="node">
+                    🚨 Alarm
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="question">
+
+            <h3>
+                What does an arrow in a Bayesian network primarily
+                represent?
+            </h3>
+
+            <label class="option">
+                <input type="radio" name="q1" value="a">
+                A guaranteed causal relationship
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q1" value="b">
+                A dependency relationship used to represent the
+                probabilistic structure
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q1" value="c">
+                That the two variables always have the same value
+            </label>
+
+            <button class="button" onclick="checkQ1()">
+                CHECK ANSWER
+            </button>
+
+            <div class="feedback" id="feedback1"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- PART 2 -->
+
+    <div class="card" id="part2" style="display:none;">
+
+        <h2>🧠 Investigation 2 — Conditional independence</h2>
+
+        <p>
+            One of the main advantages of a Bayesian network is that
+            it makes some independence assumptions explicit.
+        </p>
+
+        <p>
+            Consider <strong>John calls</strong>.
+        </p>
+
+        <p>
+            If we already know whether the alarm is sounding, does
+            knowing about the burglary directly add information about
+            John's call?
+        </p>
+
+        <div class="question">
+
+            <h3>
+                Which statement best describes the idea?
+            </h3>
+
+            <label class="option">
+                <input type="radio" name="q2" value="a">
+                John always calls whenever a burglary occurs.
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q2" value="b">
+                Given the alarm status, John's call can be conditionally
+                independent of upstream causes such as burglary.
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q2" value="c">
+                All variables in a Bayesian network are independent.
+            </label>
+
+            <button class="button" onclick="checkQ2()">
+                CHECK ANSWER
+            </button>
+
+            <div class="feedback" id="feedback2"></div>
+
+        </div>
+
+
+        <div class="checklist">
+
+            <strong>Detective clue:</strong>
+
+            <ul>
+                <li>
+                    Bayesian networks encode a joint probability
+                    distribution.
+                </li>
+
+                <li>
+                    The graph structure represents conditional
+                    dependencies and independencies.
+                </li>
+
+                <li>
+                    Inference combines the network structure with
+                    probability information.
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- PART 3 -->
+
+    <div class="card" id="part3" style="display:none;">
+
+        <h2>🔎 Investigation 3 — Find the hidden cause</h2>
+
+        <p>
+            Now imagine that you do not know whether a burglary occurred.
+        </p>
+
+        <p>
+            But you observe:
+        </p>
+
+        <ul>
+            <li>🚨 The alarm went off.</li>
+            <li>📞 John called.</li>
+        </ul>
+
+        <p>
+            The interesting question becomes:
+        </p>
+
+        <div class="network">
+
+            <div style="font-size:22px; font-weight:bold;">
+                P(Burglary | Alarm, John calls)
+            </div>
+
+        </div>
+
+        <p>
+            This is exactly the kind of inference question that a
+            Bayesian network allows us to investigate.
+        </p>
+
+        <div class="question">
+
+            <h3>
+                What is the agent trying to infer?
+            </h3>
+
+            <label class="option">
+                <input type="radio" name="q3" value="a">
+                The probability of the evidence given the burglary
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q3" value="b">
+                The probability of the burglary given the observed evidence
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q3" value="c">
+                Whether probabilities are necessary
+            </label>
+
+            <button class="button" onclick="checkQ3()">
+                CHECK ANSWER
+            </button>
+
+            <div class="feedback" id="feedback3"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CODE LAB -->
+
+    <div class="card" id="codelab" style="display:none;">
+
+        <div class="code-lab">
+
+            <h2>💻 CODE LAB — Bayesian Network Inference</h2>
+
+            <p>
+                Now you become the Bayesian network.
+            </p>
+
+            <p>
+                The small network below uses the classic
+                <strong>Burglary → Alarm ← Earthquake →</strong>
+                structure introduced in the lecture.
+            </p>
+
+            <p>
+                The probability values are a small
+                <strong>toy dataset for this game</strong>.
+                Your task is to investigate how different observations
+                change the probability of a burglary.
+            </p>
+
+
+            <div class="evidence-grid">
+
+                <div class="evidence-card">
+
+                    <label for="alarmEvidence">
+                        🚨 Alarm
+                    </label>
+
+                    <select id="alarmEvidence">
+
+                        <option value="true">
+                            Observed: ON
+                        </option>
+
+                        <option value="false">
+                            Observed: OFF
+                        </option>
+
+                        <option value="unknown">
+                            Unknown
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="evidence-card">
+
+                    <label for="johnEvidence">
+                        📞 John calls
+                    </label>
+
+                    <select id="johnEvidence">
+
+                        <option value="true">
+                            Observed: YES
+                        </option>
+
+                        <option value="false">
+                            Observed: NO
+                        </option>
+
+                        <option value="unknown">
+                            Unknown
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <button class="button" onclick="runInference()">
+                RUN NETWORK INFERENCE →
+            </button>
+
+
+            <div class="result" id="networkResult">
+
+                <div>
+                    Estimated probability of burglary:
+                </div>
+
+                <div class="result-number" id="posterior">
+                    --
+                </div>
+
+                <div id="explanation"></div>
+
+                <div class="reasoning" id="reasoning">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REFLECTION -->
+
+    <div class="card reflection" id="reflection" style="display:none;">
+
+        <h2>🧩 Detective's Reflection</h2>
+
+        <p>
+            A Bayesian network does not merely store isolated
+            probabilities.
+        </p>
+
+        <p>
+            It provides a structured representation of how uncertain
+            variables are related.
+        </p>
+
+        <p>
+            This allows an intelligent agent to answer questions such as:
+        </p>
+
+        <ul>
+
+            <li>
+                What is the probability of a hidden cause?
+            </li>
+
+            <li>
+                How does new evidence change that probability?
+            </li>
+
+            <li>
+                Which variables become conditionally independent when
+                other information is known?
+            </li>
+
+        </ul>
+
+
+        <div class="question">
+
+            <h3>
+                Final question
+            </h3>
+
+            <p>
+                Why is the network structure useful rather than simply
+                listing one enormous joint probability table?
+            </p>
+
+            <label class="option">
+                <input type="radio" name="q4" value="a">
+                Because the structure can represent conditional
+                independencies and make inference more manageable.
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q4" value="b">
+                Because it eliminates uncertainty.
+            </label>
+
+            <label class="option">
+                <input type="radio" name="q4" value="c">
+                Because every variable becomes deterministic.
+            </label>
+
+            <button class="button" onclick="finishMission()">
+                COMPLETE MISSION →
+            </button>
+
+            <div class="feedback" id="feedback4"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- COMPLETION -->
+
+    <div class="card completion" id="completion">
+
+        <div class="emoji">
+            🕵️‍♂️
+        </div>
+
+        <h1>MISSION COMPLETE!</h1>
+
+        <p class="subtitle">
+            You have become a Bayesian Network Detective.
+        </p>
+
+        <p>
+            You can now move from individual probabilities to
+            <strong>structured probabilistic reasoning</strong>.
+        </p>
+
+        <p>
+            You investigated:
+        </p>
+
+        <p>
+            <strong>
+                Variables → Dependencies → Evidence → Inference
+            </strong>
+        </p>
+
+        <p>
+            But there is another important question:
+            <strong>what happens when we deliberately change the world?</strong>
+        </p>
+
+        <button class="button" onclick="nextMission()">
+            CONTINUE TO MISSION 4 →
+        </button>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* ============================
+   NAVIGATION
+   ============================ */
+
+function startMission() {
+
+    document.getElementById("intro").style.display = "none";
+    document.getElementById("part1").style.display = "block";
+
+}
+
+
+/* ============================
+   QUESTION 1
+   ============================ */
+
+function checkQ1() {
+
+    const answer =
+        document.querySelector('input[name="q1"]:checked');
+
+    const feedback =
+        document.getElementById("feedback1");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "b") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! In a Bayesian network, the graph encodes the probabilistic dependency structure between variables. An arrow does not automatically mean a causal relationship.";
+
+        setTimeout(function() {
+
+            document.getElementById("part2").style.display = "block";
+
+        }, 700);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Not quite. Remember that the lecture distinguishes Bayesian networks from causal networks. A Bayesian-network edge represents probabilistic structure; it should not automatically be interpreted as causation.";
+
+    }
+
+}
+
+
+/* ============================
+   QUESTION 2
+   ============================ */
+
+function checkQ2() {
+
+    const answer =
+        document.querySelector('input[name="q2"]:checked');
+
+    const feedback =
+        document.getElementById("feedback2");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "b") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! Conditional independence is one of the key ideas that makes Bayesian networks useful. Knowing the relevant parents can make some other variables irrelevant for the conditional probability.";
+
+        setTimeout(function() {
+
+            document.getElementById("part3").style.display = "block";
+
+        }, 700);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Not quite. Bayesian networks do not make all variables independent. Instead, the graph expresses particular conditional-independence relationships.";
+
+    }
+
+}
+
+
+/* ============================
+   QUESTION 3
+   ============================ */
+
+function checkQ3() {
+
+    const answer =
+        document.querySelector('input[name="q3"]:checked');
+
+    const feedback =
+        document.getElementById("feedback3");
+
+    feedback.style.display = "block";
+
+    if (answer && answer.value === "b") {
+
+        feedback.className = "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! The agent wants P(Burglary | Alarm, John calls): the probability of the hidden cause given the observed evidence.";
+
+        setTimeout(function() {
+
+            document.getElementById("codelab").style.display = "block";
+
+        }, 700);
+
+    } else {
+
+        feedback.className = "feedback incorrect";
+
+        feedback.innerHTML =
+            "Look carefully at the direction of the question. We observe evidence and want to reason about the hidden cause.";
+
+    }
+
+}
+
+
+/* ==================================================
+   BAYESIAN NETWORK
+   ==================================================
+
+   Toy network:
+
+           Burglary ----\
+                         \
+                          Alarm ---- John calls
+                         /
+           Earthquake --/
+
+   Priors:
+
+   P(Burglary)   = 0.001
+   P(Earthquake) = 0.002
+
+   Alarm CPT:
+
+   B      E       P(A=true)
+
+   T      T       0.95
+   T      F       0.94
+   F      T       0.29
+   F      F       0.001
+
+   John CPT:
+
+   A=true   -> P(J=true) = 0.90
+   A=false  -> P(J=true) = 0.05
+
+   These numerical values are pedagogical
+   values chosen for the game.
+
+   ================================================== */
+
+
+/* Probability of Alarm given B and E */
+
+function probabilityAlarm(burglary, earthquake) {
+
+    if (burglary && earthquake) {
+        return 0.95;
+    }
+
+    if (burglary && !earthquake) {
+        return 0.94;
+    }
+
+    if (!burglary && earthquake) {
+        return 0.29;
+    }
+
+    return 0.001;
+}
+
+
+/* Probability of John calling given Alarm */
+
+function probabilityJohn(alarm) {
+
+    if (alarm) {
+        return 0.90;
+    }
+
+    return 0.05;
+}
+
+
+/* Joint probability P(B,E,A,J) */
+
+function jointProbability(
+    burglary,
+    earthquake,
+    alarm,
+    john
+) {
+
+    const pBurglary =
+        burglary ? 0.001 : 0.999;
+
+    const pEarthquake =
+        earthquake ? 0.002 : 0.998;
+
+    const pAlarm =
+        probabilityAlarm(
+            burglary,
+            earthquake
+        );
+
+    const pA =
+        alarm ? pAlarm : (1 - pAlarm);
+
+    const pJohn =
+        probabilityJohn(alarm);
+
+    const pJ =
+        john ? pJohn : (1 - pJohn);
+
+    return (
+        pBurglary *
+        pEarthquake *
+        pA *
+        pJ
+    );
+
+}
+
+
+/* ==================================================
+   INFERENCE BY ENUMERATION
+   ================================================== */
+
+function runInference() {
+
+    const alarmEvidence =
+        document.getElementById(
+            "alarmEvidence"
+        ).value;
+
+    const johnEvidence =
+        document.getElementById(
+            "johnEvidence"
+        ).value;
+
+
+    let numerator = 0;
+    let denominator = 0;
+
+
+    /*
+     * Enumerate every possible world.
+     */
+
+    for (let b of [false, true]) {
+
+        for (let e of [false, true]) {
+
+            for (let a of [false, true]) {
+
+                for (let j of [false, true]) {
+
+
+                    /*
+                     * Apply observed evidence.
+                     */
+
+                    if (
+                        alarmEvidence !== "unknown" &&
+                        String(a) !== alarmEvidence
+                    ) {
+                        continue;
+                    }
+
+                    if (
+                        johnEvidence !== "unknown" &&
+                        String(j) !== johnEvidence
+                    ) {
+                        continue;
+                    }
+
+
+                    const probability =
+                        jointProbability(
+                            b,
+                            e,
+                            a,
+                            j
+                        );
+
+
+                    denominator += probability;
+
+
+                    if (b) {
+
+                        numerator += probability;
+
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    const posterior =
+        numerator / denominator;
+
+
+    displayInference(
+        posterior,
+        alarmEvidence,
+        johnEvidence
+    );
+
+}
+
+
+/* ==================================================
+   DISPLAY RESULT
+   ================================================== */
+
+function displayInference(
+    posterior,
+    alarmEvidence,
+    johnEvidence
+) {
+
+    const result =
+        document.getElementById(
+            "networkResult"
+        );
+
+    const posteriorElement =
+        document.getElementById(
+            "posterior"
+        );
+
+    const explanation =
+        document.getElementById(
+            "explanation"
+        );
+
+    const reasoning =
+        document.getElementById(
+            "reasoning"
+        );
+
+
+    result.style.display = "block";
+
+
+    posteriorElement.innerHTML =
+        (posterior * 100).toFixed(2) + "%";
+
+
+    let evidenceText = "";
+
+
+    if (alarmEvidence === "true") {
+
+        evidenceText +=
+            "Alarm = ON";
+
+    }
+    else if (alarmEvidence === "false") {
+
+        evidenceText +=
+            "Alarm = OFF";
+
+    }
+    else {
+
+        evidenceText +=
+            "Alarm = unknown";
+
+    }
+
+
+    evidenceText += " &nbsp; | &nbsp; ";
+
+
+    if (johnEvidence === "true") {
+
+        evidenceText +=
+            "John calls = YES";
+
+    }
+    else if (johnEvidence === "false") {
+
+        evidenceText +=
+            "John calls = NO";
+
+    }
+    else {
+
+        evidenceText +=
+            "John calls = unknown";
+
+    }
+
+
+    explanation.innerHTML =
+        "<br>Evidence considered: <strong>" +
+        evidenceText +
+        "</strong><br><br>" +
+
+        "The network enumerated possible worlds " +
+        "and summed their probabilities to calculate " +
+        "the posterior probability of burglary.";
+
+
+    reasoning.innerHTML =
+        "P(B | evidence) = " +
+        "P(B AND evidence) / P(evidence)" +
+
+        "<br><br>" +
+
+        "The browser calculated this by " +
+        "enumerating the possible combinations " +
+        "of Burglary, Earthquake, Alarm, and John calls.";
+
+}
+
+
+/* ============================
+   FINAL QUESTION
+   ============================ */
+
+function finishMission() {
+
+    const answer =
+        document.querySelector(
+            'input[name="q4"]:checked'
+        );
+
+    const feedback =
+        document.getElementById(
+            "feedback4"
+        );
+
+    feedback.style.display = "block";
+
+
+    if (answer && answer.value === "a") {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Exactly. The network structure captures conditional-independence relationships, allowing us to represent the joint distribution more compactly and reason about evidence.";
+
+        setTimeout(function() {
+
+            document.getElementById(
+                "reflection"
+            ).style.display = "none";
+
+            document.getElementById(
+                "completion"
+            ).style.display = "block";
+
+        }, 900);
+
+    }
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "Think about why Bayesian networks use a graph instead of simply listing every possible combination of variable values.";
+
+    }
+
+}
+
+
+/* ============================
+   NEXT MISSION
+   ============================ */
+
+function nextMission() {
+
+    window.location.href =
+        "https://www.canvas.umu.se/courses/22669/pages/uncertainty-quest-mission-4";
+
+}
+
+</script>
+
+</body>
+</html>
