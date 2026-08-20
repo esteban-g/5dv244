@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ML Quest – Mission 2</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f3f6f9;
+    color: #294d70;
+}
+
+.game-container {
+    max-width: 1050px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.game-header {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 22px 28px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+    border: 1px solid #d8e1e8;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.game-title {
+    font-size: 26px;
+    font-weight: bold;
+    color: #244f73;
+}
+
+.mission-number {
+    font-size: 15px;
+    color: #6d7f8f;
+}
+
+.progress {
+    height: 8px;
+    background: #dfe7ed;
+    border-radius: 10px;
+    margin-top: 18px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 40%;
+    background: #2c587d;
+    border-radius: 10px;
+}
+
+.mission-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 35px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+    border: 1px solid #d8e1e8;
+}
+
+.hero {
+    text-align: center;
+    padding: 10px 20px 25px;
+}
+
+.hero-icon {
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    margin: 5px 0 10px;
+    font-size: 34px;
+    color: #244f73;
+}
+
+h2 {
+    color: #244f73;
+    margin-top: 30px;
+}
+
+p {
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.intro {
+    max-width: 800px;
+    margin: auto;
+    color: #4e6578;
+}
+
+.lab {
+    background: #f5f8fa;
+    border: 1px solid #d6e0e7;
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 25px;
+}
+
+.lab-title {
+    font-size: 21px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.formula {
+    background: #eef4f8;
+    border-radius: 8px;
+    padding: 18px;
+    margin: 18px 0;
+    text-align: center;
+    font-size: 24px;
+    font-family: Georgia, serif;
+    color: #244f73;
+}
+
+.explanation {
+    background: #ffffff;
+    border-left: 5px solid #2c587d;
+    padding: 15px 18px;
+    border-radius: 5px;
+    margin: 18px 0;
+}
+
+.canvas-container {
+    background: white;
+    border: 1px solid #d4dee6;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+canvas {
+    width: 100%;
+    max-width: 800px;
+    height: auto;
+    border-radius: 6px;
+}
+
+.controls {
+    background: white;
+    border: 1px solid #d8e1e8;
+    border-radius: 10px;
+    padding: 22px;
+    margin-top: 20px;
+}
+
+.control-row {
+    margin: 20px 0;
+}
+
+.control-label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.value {
+    background: #eef4f8;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: monospace;
+}
+
+input[type="range"] {
+    width: 100%;
+    cursor: pointer;
+}
+
+.loss-box {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.metric {
+    background: #eef4f8;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: center;
+}
+
+.metric-label {
+    font-size: 13px;
+    color: #718392;
+    margin-bottom: 7px;
+}
+
+.metric-value {
+    font-size: 22px;
+    font-weight: bold;
+    color: #244f73;
+}
+
+.good {
+    background: #e8f5eb;
+    border: 1px solid #b8d8c0;
+}
+
+.good .metric-value {
+    color: #2f7544;
+}
+
+.residual-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 18px;
+    background: white;
+}
+
+.residual-table th,
+.residual-table td {
+    border-bottom: 1px solid #dce4ea;
+    padding: 10px;
+    text-align: center;
+}
+
+.residual-table th {
+    background: #eef4f8;
+    color: #294d70;
+}
+
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 12px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    background: #2c587d;
+    color: white;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #1f4565;
+    transform: translateY(-1px);
+}
+
+button.secondary {
+    background: #e7edf2;
+    color: #294d70;
+}
+
+button.secondary:hover {
+    background: #d7e2ea;
+}
+
+.result {
+    margin-top: 18px;
+    padding: 16px;
+    border-radius: 8px;
+    display: none;
+    line-height: 1.5;
+}
+
+.correct {
+    background: #e7f4ea;
+    border-left: 5px solid #3b8c55;
+    color: #285d38;
+}
+
+.incorrect {
+    background: #fbeaea;
+    border-left: 5px solid #b84b4b;
+    color: #7a3030;
+}
+
+.question {
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 10px;
+    background: #ffffff;
+    border: 1px solid #d8e1e8;
+}
+
+.question-number {
+    font-size: 14px;
+    color: #74899a;
+    margin-bottom: 8px;
+}
+
+.question-text {
+    font-size: 19px;
+    font-weight: bold;
+    margin-bottom: 18px;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    margin: 8px 0;
+    background: #f1f5f8;
+    color: #294d70;
+    border: 1px solid #d5dfe6;
+}
+
+.option:hover {
+    background: #e5edf3;
+}
+
+.challenge {
+    background: #fff7df;
+    border-left: 5px solid #e4ae22;
+    padding: 20px;
+    border-radius: 6px;
+    margin-top: 25px;
+}
+
+.challenge h3 {
+    margin-top: 0;
+    color: #765d1e;
+}
+
+.score {
+    margin-top: 25px;
+    padding: 18px;
+    background: #eef4f8;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.mission-complete {
+    display: none;
+    margin-top: 30px;
+    padding: 25px;
+    background: #eaf4ed;
+    border: 1px solid #b8d6c0;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.mission-complete h2 {
+    color: #2f7044;
+}
+
+.reflection {
+    margin-top: 20px;
+    background: #fff7df;
+    border-left: 5px solid #e4ae22;
+    padding: 18px;
+    border-radius: 6px;
+}
+
+.next-button {
+    display: inline-block;
+    margin-top: 18px;
+    text-decoration: none;
+    background: #2c587d;
+    color: white;
+    padding: 13px 22px;
+    border-radius: 7px;
+}
+
+@media (max-width: 700px) {
+
+    .mission-card {
+        padding: 20px;
+    }
+
+    .header-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .loss-box {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game-container">
+
+
+<!-- HEADER -->
+
+<div class="game-header">
+
+    <div class="header-top">
+
+        <div class="game-title">
+            🧠 ML QUEST
+        </div>
+
+        <div class="mission-number">
+            Mission 2 / 5
+        </div>
+
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+</div>
+
+
+<!-- MAIN CARD -->
+
+<div class="mission-card">
+
+
+<div class="hero">
+
+    <div class="hero-icon">
+        📈
+    </div>
+
+    <h1>
+        Mission 2: Fit the Model
+    </h1>
+
+    <p class="intro">
+
+        You are now entering the <strong>Regression Lab</strong>.
+
+        Your mission is to discover how a machine learning model
+        learns a relationship between an input and a numerical output.
+
+        You will control the parameters of a linear model yourself.
+
+    </p>
+
+</div>
+
+
+<!-- CONCEPT -->
+
+<div class="lab">
+
+    <div class="lab-title">
+        🧩 Step 1 — Meet the model
+    </div>
+
+    <p>
+        In simple linear regression, we use a model of the form:
+    </p>
+
+    <div class="formula">
+        y = β₀ + β₁x
+    </div>
+
+    <p>
+
+        <strong>β₀</strong> is the intercept.
+
+        <br>
+
+        <strong>β₁</strong> is the slope.
+
+        <br>
+
+        <strong>x</strong> is the input variable.
+
+        <br>
+
+        <strong>y</strong> is the predicted output.
+
+    </p>
+
+    <div class="explanation">
+
+        <strong>Your task:</strong>
+
+        The data points are already given.
+
+        Your job is to find values of β₀ and β₁
+        that make the line fit the data well.
+
+    </div>
+
+</div>
+
+
+<!-- INTERACTIVE REGRESSION LAB -->
+
+<div class="lab">
+
+    <div class="lab-title">
+        🔬 Step 2 — Enter the Regression Lab
+    </div>
+
+    <p>
+
+        Move the sliders and watch the regression line change.
+
+        The vertical distances between the points and the line
+        are the <strong>errors</strong> (residuals).
+
+    </p>
+
+
+    <div class="canvas-container">
+
+        <canvas
+            id="regressionCanvas"
+            width="800"
+            height="450">
+        </canvas>
+
+    </div>
+
+
+    <!-- CONTROLS -->
+
+    <div class="controls">
+
+        <div class="control-row">
+
+            <div class="control-label">
+
+                <span>
+                    Intercept β₀
+                </span>
+
+                <span
+                    class="value"
+                    id="beta0Value">
+                    1.0
+                </span>
+
+            </div>
+
+            <input
+                type="range"
+                id="beta0"
+                min="-5"
+                max="8"
+                step="0.1"
+                value="1">
+
+        </div>
+
+
+        <div class="control-row">
+
+            <div class="control-label">
+
+                <span>
+                    Slope β₁
+                </span>
+
+                <span
+                    class="value"
+                    id="beta1Value">
+                    1.0
+                </span>
+
+            </div>
+
+            <input
+                type="range"
+                id="beta1"
+                min="-1"
+                max="3"
+                step="0.05"
+                value="1">
+
+        </div>
+
+
+        <div class="loss-box">
+
+            <div class="metric">
+
+                <div class="metric-label">
+                    β₀
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="beta0Metric">
+                    1.00
+                </div>
+
+            </div>
+
+
+            <div class="metric">
+
+                <div class="metric-label">
+                    β₁
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="beta1Metric">
+                    1.00
+                </div>
+
+            </div>
+
+
+            <div
+                class="metric"
+                id="lossMetric">
+
+                <div class="metric-label">
+                    Square Loss
+                </div>
+
+                <div
+                    class="metric-value"
+                    id="lossValue">
+                    -
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div style="margin-top:20px;">
+
+            <button onclick="resetModel()">
+                Reset Model
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHALLENGE -->
+
+    <div class="challenge">
+
+        <h3>
+            🎯 Challenge: Beat the Loss
+        </h3>
+
+        <p>
+
+            Adjust β₀ and β₁ until the square loss becomes:
+
+        </p>
+
+        <div
+            style="
+                text-align:center;
+                font-size:24px;
+                font-weight:bold;
+                margin:15px 0;
+            ">
+            Loss ≤ 0.30
+        </div>
+
+        <p>
+
+            Don't worry about finding the exact best model.
+
+            Your objective is to understand how changing
+            the parameters changes the model and its error.
+
+        </p>
+
+        <button onclick="checkChallenge()">
+            CHECK MY MODEL →
+        </button>
+
+        <div
+            id="challengeResult"
+            class="result">
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- RESIDUALS -->
+
+<div class="lab">
+
+    <div class="lab-title">
+        📏 Step 3 — Where does the error come from?
+    </div>
+
+    <p>
+
+        Select a data point mentally and look at its distance
+        from the regression line.
+
+        This distance is the model's <strong>residual</strong>:
+
+    </p>
+
+    <div class="formula">
+        error = y − ŷ
+    </div>
+
+    <p>
+
+        The lecture introduces square loss as a way of
+        quantifying how well the model's predictions match
+        the observed data.
+
+    </p>
+
+    <div class="explanation">
+
+        <strong>Important observation:</strong>
+
+        A model can have several different parameter values.
+
+        The loss gives us a way to compare them.
+
+        A smaller loss means a better fit to these observations.
+
+    </div>
+
+
+    <table class="residual-table">
+
+        <thead>
+
+            <tr>
+                <th>x</th>
+                <th>Observed y</th>
+                <th>Predicted ŷ</th>
+                <th>Error</th>
+            </tr>
+
+        </thead>
+
+        <tbody id="residualTable">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<!-- QUESTION -->
+
+<div class="question">
+
+    <div class="question-number">
+        FINAL CHECK
+    </div>
+
+    <div class="question-text">
+
+        You increase β₁ while keeping β₀ fixed.
+
+        What happens to the regression line?
+
+    </div>
+
+
+    <button
+        class="option"
+        onclick="answerQuestion(1)">
+
+        A. The line becomes steeper.
+
+    </button>
+
+
+    <button
+        class="option"
+        onclick="answerQuestion(2)">
+
+        B. The line moves vertically but keeps exactly the same slope.
+
+    </button>
+
+
+    <button
+        class="option"
+        onclick="answerQuestion(3)">
+
+        C. The data points themselves move.
+
+    </button>
+
+
+    <button
+        class="option"
+        onclick="answerQuestion(4)">
+
+        D. The number of observations changes.
+
+    </button>
+
+
+    <div
+        id="questionResult"
+        class="result">
+    </div>
+
+</div>
+
+
+<!-- SCORE -->
+
+<div class="score">
+
+    Mission score:
+    <span id="score">0</span> / 2
+
+</div>
+
+
+<!-- COMPLETE -->
+
+<div
+    id="missionComplete"
+    class="mission-complete">
+
+    <h2>
+        🎉 Mission Complete!
+    </h2>
+
+    <p>
+
+        You have successfully entered the Regression Lab.
+
+    </p>
+
+    <p>
+
+        You have seen that a model is not just an equation:
+
+        it is a function whose <strong>parameters determine its behaviour</strong>.
+
+    </p>
+
+
+    <div class="reflection">
+
+        <strong>Think about this:</strong>
+
+        <br><br>
+
+        Machine learning is not simply about finding a formula.
+
+        The learner must use data to determine parameters
+        that make the model useful.
+
+        <br><br>
+
+        In this mission:
+
+        <br><br>
+
+        <strong>
+            Data → Model → Predictions → Error → Better Parameters
+        </strong>
+
+    </div>
+
+
+    <!-- Canvas Mission 3 -->
+
+    <a
+        class="next-button"
+        href="https://www.canvas.umu.se/courses/22669/pages/ml-quest-mission-3">
+
+        Continue to Mission 3 →
+
+    </a>
+
+</div>
+
+
+</div>
+
+</div>
+
+
+<script>
+
+
+/*
+--------------------------------------------------
+DATASET
+--------------------------------------------------
+
+This is a small illustrative dataset.
+
+It follows the regression idea used in the lecture,
+where an input x is used to predict a numerical y.
+
+The values are intentionally simple so that students
+can focus on the relationship between:
+
+x → y
+
+rather than on a particular real-world dataset.
+*/
+
+const data = [
+
+    {x: 1, y: 2.1},
+    {x: 2, y: 3.9},
+    {x: 3, y: 6.2},
+    {x: 4, y: 7.8},
+    {x: 5, y: 10.3},
+    {x: 6, y: 11.9}
+
+];
+
+
+let score = 0;
+
+let challengeCompleted = false;
+
+let questionCompleted = false;
+
+
+/*
+--------------------------------------------------
+GET MODEL PARAMETERS
+--------------------------------------------------
+*/
+
+function getParameters() {
+
+    const beta0 =
+        parseFloat(
+            document.getElementById("beta0").value
+        );
+
+    const beta1 =
+        parseFloat(
+            document.getElementById("beta1").value
+        );
+
+    return {
+        beta0,
+        beta1
+    };
+
+}
+
+
+/*
+--------------------------------------------------
+PREDICTION
+--------------------------------------------------
+*/
+
+function predict(x, beta0, beta1) {
+
+    return beta0 + beta1 * x;
+
+}
+
+
+/*
+--------------------------------------------------
+SQUARE LOSS
+--------------------------------------------------
+
+Mean squared error:
+
+L = 1/n Σ(y - ŷ)^2
+
+--------------------------------------------------
+*/
+
+function calculateLoss(beta0, beta1) {
+
+    let total = 0;
+
+    data.forEach(point => {
+
+        const prediction =
+            predict(
+                point.x,
+                beta0,
+                beta1
+            );
+
+        const error =
+            point.y - prediction;
+
+        total += error * error;
+
+    });
+
+    return total / data.length;
+
+}
+
+
+/*
+--------------------------------------------------
+DRAW GRAPH
+--------------------------------------------------
+*/
+
+function drawGraph() {
+
+    const canvas =
+        document.getElementById(
+            "regressionCanvas"
+        );
+
+    const ctx =
+        canvas.getContext("2d");
+
+
+    const beta0 =
+        getParameters().beta0;
+
+    const beta1 =
+        getParameters().beta1;
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+    Graph dimensions
+    */
+
+    const marginLeft = 65;
+    const marginBottom = 45;
+    const marginTop = 25;
+    const marginRight = 25;
+
+
+    const width =
+        canvas.width -
+        marginLeft -
+        marginRight;
+
+    const height =
+        canvas.height -
+        marginTop -
+        marginBottom;
+
+
+    /*
+    Data ranges
+    */
+
+    const xMin = 0;
+    const xMax = 7;
+
+    const yMin = 0;
+    const yMax = 15;
+
+
+    function screenX(x) {
+
+        return marginLeft +
+            ((x - xMin) /
+            (xMax - xMin)) * width;
+
+    }
+
+
+    function screenY(y) {
+
+        return marginTop +
+            height -
+            ((y - yMin) /
+            (yMax - yMin)) * height;
+
+    }
+
+
+    /*
+    Background
+    */
+
+    ctx.fillStyle = "#ffffff";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+    Grid
+    */
+
+    ctx.strokeStyle = "#e2e8ed";
+    ctx.lineWidth = 1;
+
+
+    for (let x = 0; x <= 7; x++) {
+
+        const px = screenX(x);
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            px,
+            marginTop
+        );
+
+        ctx.lineTo(
+            px,
+            marginTop + height
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    for (let y = 0; y <= 15; y += 3) {
+
+        const py = screenY(y);
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            marginLeft,
+            py
+        );
+
+        ctx.lineTo(
+            marginLeft + width,
+            py
+        );
+
+        ctx.stroke();
+
+    }
+
+
+    /*
+    Axes
+    */
+
+    ctx.strokeStyle = "#718392";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        marginLeft,
+        marginTop
+    );
+
+    ctx.lineTo(
+        marginLeft,
+        marginTop + height
+    );
+
+    ctx.lineTo(
+        marginLeft + width,
+        marginTop + height
+    );
+
+    ctx.stroke();
+
+
+    /*
+    Axis labels
+    */
+
+    ctx.fillStyle = "#536b7d";
+
+    ctx.font = "14px Arial";
+
+    ctx.fillText(
+        "Input x",
+        marginLeft + width - 45,
+        marginTop + height + 35
+    );
+
+    ctx.save();
+
+    ctx.translate(
+        20,
+        marginTop + height / 2
+    );
+
+    ctx.rotate(-Math.PI / 2);
+
+    ctx.fillText(
+        "Output y",
+        0,
+        0
+    );
+
+    ctx.restore();
+
+
+    /*
+    Draw regression line
+    */
+
+    ctx.strokeStyle = "#2c587d";
+    ctx.lineWidth = 4;
+
+    ctx.beginPath();
+
+    const x1 = xMin;
+    const x2 = xMax;
+
+    const y1 =
+        predict(
+            x1,
+            beta0,
+            beta1
+        );
+
+    const y2 =
+        predict(
+            x2,
+            beta0,
+            beta1
+        );
+
+
+    ctx.moveTo(
+        screenX(x1),
+        screenY(y1)
+    );
+
+    ctx.lineTo(
+        screenX(x2),
+        screenY(y2)
+    );
+
+    ctx.stroke();
+
+
+    /*
+    Draw residuals
+    */
+
+    data.forEach(point => {
+
+        const prediction =
+            predict(
+                point.x,
+                beta0,
+                beta1
+            );
+
+
+        ctx.strokeStyle =
+            "#9aaab6";
+
+        ctx.lineWidth = 1.5;
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            screenX(point.x),
+            screenY(point.y)
+        );
+
+        ctx.lineTo(
+            screenX(point.x),
+            screenY(prediction)
+        );
+
+        ctx.stroke();
+
+    });
+
+
+    /*
+    Draw observations
+    */
+
+    data.forEach(point => {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            screenX(point.x),
+            screenY(point.y),
+            7,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "#e58a72";
+
+        ctx.fill();
+
+        ctx.strokeStyle = "#ffffff";
+
+        ctx.lineWidth = 2;
+
+        ctx.stroke();
+
+    });
+
+
+    /*
+    Update table
+    */
+
+    updateResidualTable(
+        beta0,
+        beta1
+    );
+
+}
+
+
+/*
+--------------------------------------------------
+UPDATE RESIDUAL TABLE
+--------------------------------------------------
+*/
+
+function updateResidualTable(beta0, beta1) {
+
+    const table =
+        document.getElementById(
+            "residualTable"
+        );
+
+    table.innerHTML = "";
+
+
+    data.forEach(point => {
+
+        const prediction =
+            predict(
+                point.x,
+                beta0,
+                beta1
+            );
+
+        const error =
+            point.y - prediction;
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>${point.x}</td>
+
+            <td>${point.y.toFixed(2)}</td>
+
+            <td>${prediction.toFixed(2)}</td>
+
+            <td>${error.toFixed(2)}</td>
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+/*
+--------------------------------------------------
+UPDATE EVERYTHING
+--------------------------------------------------
+*/
+
+function updateModel() {
+
+    const {
+        beta0,
+        beta1
+    } = getParameters();
+
+
+    const loss =
+        calculateLoss(
+            beta0,
+            beta1
+        );
+
+
+    /*
+    Display parameters
+    */
+
+    document.getElementById(
+        "beta0Value"
+    ).textContent =
+        beta0.toFixed(2);
+
+
+    document.getElementById(
+        "beta1Value"
+    ).textContent =
+        beta1.toFixed(2);
+
+
+    document.getElementById(
+        "beta0Metric"
+    ).textContent =
+        beta0.toFixed(2);
+
+
+    document.getElementById(
+        "beta1Metric"
+    ).textContent =
+        beta1.toFixed(2);
+
+
+    document.getElementById(
+        "lossValue"
+    ).textContent =
+        loss.toFixed(3);
+
+
+    /*
+    Highlight good loss
+    */
+
+    const lossMetric =
+        document.getElementById(
+            "lossMetric"
+        );
+
+
+    if (loss <= 0.30) {
+
+        lossMetric.classList.add("good");
+
+    } else {
+
+        lossMetric.classList.remove("good");
+
+    }
+
+
+    drawGraph();
+
+}
+
+
+/*
+--------------------------------------------------
+SLIDER EVENTS
+--------------------------------------------------
+*/
+
+document
+    .getElementById("beta0")
+    .addEventListener(
+        "input",
+        updateModel
+    );
+
+
+document
+    .getElementById("beta1")
+    .addEventListener(
+        "input",
+        updateModel
+    );
+
+
+/*
+--------------------------------------------------
+RESET
+--------------------------------------------------
+*/
+
+function resetModel() {
+
+    document.getElementById(
+        "beta0"
+    ).value = 1;
+
+
+    document.getElementById(
+        "beta1"
+    ).value = 1;
+
+
+    updateModel();
+
+}
+
+
+/*
+--------------------------------------------------
+CHALLENGE
+--------------------------------------------------
+*/
+
+function checkChallenge() {
+
+    const {
+        beta0,
+        beta1
+    } = getParameters();
+
+
+    const loss =
+        calculateLoss(
+            beta0,
+            beta1
+        );
+
+
+    const result =
+        document.getElementById(
+            "challengeResult"
+        );
+
+
+    result.style.display = "block";
+
+
+    if (loss <= 0.30) {
+
+        result.className =
+            "result correct";
+
+
+        result.innerHTML = `
+
+            ✓ Excellent!
+
+            Your model has a square loss of
+            <strong>${loss.toFixed(3)}</strong>.
+
+            <br><br>
+
+            You found a parameter combination
+            that fits the observations well.
+
+        `;
+
+
+        if (!challengeCompleted) {
+
+            challengeCompleted = true;
+
+            score++;
+
+            updateScore();
+
+        }
+
+    } else {
+
+        result.className =
+            "result incorrect";
+
+
+        result.innerHTML = `
+
+            Not quite yet.
+
+            Your current square loss is
+            <strong>${loss.toFixed(3)}</strong>.
+
+            <br><br>
+
+            Try adjusting β₀ and β₁.
+
+            Look at the residuals and try to make
+            the line pass closer to the observations.
+
+        `;
+
+    }
+
+
+    checkCompletion();
+
+}
+
+
+/*
+--------------------------------------------------
+FINAL QUESTION
+--------------------------------------------------
+*/
+
+function answerQuestion(answer) {
+
+    const result =
+        document.getElementById(
+            "questionResult"
+        );
+
+
+    result.style.display = "block";
+
+
+    if (answer === 1) {
+
+        result.className =
+            "result correct";
+
+
+        result.innerHTML = `
+
+            ✓ Correct!
+
+            β₁ controls the slope of the line.
+
+            Increasing β₁ makes the line steeper.
+
+        `;
+
+
+        if (!questionCompleted) {
+
+            questionCompleted = true;
+
+            score++;
+
+            updateScore();
+
+        }
+
+    } else {
+
+        result.className =
+            "result incorrect";
+
+
+        result.innerHTML = `
+
+            ✗ Not quite.
+
+            Remember:
+
+            <strong>β₁ is the slope</strong> and
+            <strong>β₀ is the intercept</strong>.
+
+            Therefore changing β₁ changes how steep
+            the line is.
+
+        `;
+
+    }
+
+
+    checkCompletion();
+
+}
+
+
+/*
+--------------------------------------------------
+SCORE
+--------------------------------------------------
+*/
+
+function updateScore() {
+
+    document.getElementById(
+        "score"
+    ).textContent =
+        score;
+
+}
+
+
+/*
+--------------------------------------------------
+COMPLETION
+--------------------------------------------------
+*/
+
+function checkCompletion() {
+
+    if (score >= 2) {
+
+        document.getElementById(
+            "missionComplete"
+        ).style.display =
+            "block";
+
+
+        setTimeout(() => {
+
+            document
+                .getElementById(
+                    "missionComplete"
+                )
+                .scrollIntoView({
+                    behavior: "smooth"
+                });
+
+        }, 300);
+
+    }
+
+}
+
+
+/*
+--------------------------------------------------
+INITIALIZE
+--------------------------------------------------
+*/
+
+updateModel();
+
+</script>
+
+
+</body>
+
+</html>
