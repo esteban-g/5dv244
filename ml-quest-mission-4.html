@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ML Quest – Mission 4: The Clustering Lab</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fa;
+        color: #29445f;
+    }
+
+    .game {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 28px 22px 50px;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .brand {
+        font-size: 20px;
+        font-weight: bold;
+        color: #234e73;
+    }
+
+    .mission {
+        font-size: 14px;
+        color: #607d98;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dce5ec;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 26px;
+    }
+
+    .progress-bar {
+        width: 80%;
+        height: 100%;
+        background: #2d587d;
+    }
+
+    /* =========================
+       CARDS
+       ========================= */
+
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 34px;
+        box-shadow: 0 5px 18px rgba(30, 60, 90, 0.08);
+        margin-bottom: 22px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #234e73;
+        font-size: 32px;
+        margin: 10px 0 6px;
+    }
+
+    h2 {
+        color: #234e73;
+        margin-top: 0;
+    }
+
+    h3 {
+        color: #315f83;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: #607d98;
+        margin-bottom: 28px;
+    }
+
+    .intro {
+        text-align: center;
+        max-width: 800px;
+        margin: auto;
+        line-height: 1.6;
+    }
+
+    /* =========================
+       FORMULA
+       ========================= */
+
+    .formula {
+        background: #eef4f8;
+        border-left: 5px solid #2d587d;
+        padding: 18px;
+        margin: 24px 0;
+        text-align: center;
+        font-size: 19px;
+        font-family: Georgia, serif;
+    }
+
+    .formula small {
+        display: block;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        margin-top: 10px;
+        color: #607d98;
+    }
+
+    /* =========================
+       LAB
+       ========================= */
+
+    .lab {
+        display: grid;
+        grid-template-columns: 300px 1fr;
+        gap: 25px;
+        margin-top: 25px;
+    }
+
+    .panel {
+        background: #f7f9fb;
+        border: 1px solid #dce5ec;
+        border-radius: 12px;
+        padding: 22px;
+    }
+
+    .control {
+        margin: 24px 0;
+    }
+
+    .control label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 9px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        accent-color: #2d587d;
+    }
+
+    .value {
+        color: #2d587d;
+    }
+
+    canvas {
+        width: 100%;
+        background: white;
+        border: 1px solid #d5dfe7;
+        border-radius: 8px;
+        display: block;
+    }
+
+    .algorithm {
+        margin-top: 20px;
+        background: #eef4f8;
+        border-radius: 10px;
+        padding: 15px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .algorithm strong {
+        color: #234e73;
+    }
+
+    .status {
+        text-align: center;
+        margin-top: 18px;
+        font-weight: bold;
+        color: #315f83;
+        min-height: 24px;
+    }
+
+    /* =========================
+       BUTTONS
+       ========================= */
+
+    .button-area {
+        text-align: center;
+        margin-top: 22px;
+    }
+
+    button.primary {
+        background: #2d587d;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 13px 23px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 5px;
+    }
+
+    button.primary:hover {
+        background: #234765;
+    }
+
+    button.secondary {
+        background: white;
+        color: #2d587d;
+        border: 1px solid #2d587d;
+        border-radius: 7px;
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        cursor: pointer;
+        margin: 5px;
+    }
+
+    button.secondary:hover {
+        background: #eef4f8;
+    }
+
+    /* =========================
+       QUESTIONS
+       ========================= */
+
+    .question {
+        background: #f7f9fb;
+        border: 1px solid #dce5ec;
+        border-radius: 12px;
+        padding: 22px;
+        margin-top: 18px;
+    }
+
+    .question p {
+        line-height: 1.55;
+    }
+
+    .option {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: white;
+        border: 1px solid #cbd8e2;
+        border-radius: 8px;
+        padding: 13px 15px;
+        margin: 9px 0;
+        cursor: pointer;
+        font-size: 15px;
+        color: #29445f;
+    }
+
+    .option:hover {
+        background: #eef4f8;
+        border-color: #2d587d;
+    }
+
+    .option.correct {
+        background: #e8f5ed;
+        border-color: #4b8b62;
+    }
+
+    .option.incorrect {
+        background: #f9eaea;
+        border-color: #b85c5c;
+    }
+
+    .feedback {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 8px;
+        display: none;
+        line-height: 1.5;
+    }
+
+    .feedback.show {
+        display: block;
+    }
+
+    /* =========================
+       SCORE
+       ========================= */
+
+    .score-box {
+        text-align: center;
+        background: #eef4f8;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
+    }
+
+    .score {
+        font-size: 28px;
+        font-weight: bold;
+        color: #234e73;
+    }
+
+    /* =========================
+       REFLECTION
+       ========================= */
+
+    .reflection {
+        display: none;
+        margin-top: 25px;
+        background: #fff7dc;
+        border-left: 5px solid #e4ae27;
+        padding: 20px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    /* =========================
+       RESPONSIVE
+       ========================= */
+
+    @media (max-width: 800px) {
+
+        .lab {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            padding: 22px;
+        }
+
+        h1 {
+            font-size: 27px;
+        }
+    }
+
+</style>
+</head>
+
+
+<body>
+
+<div class="game">
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="header">
+
+        <div class="brand">
+            🧠 ML QUEST
+        </div>
+
+        <div class="mission">
+            Mission 4 / 5
+        </div>
+
+    </div>
+
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+
+    <!-- =========================
+         INTRODUCTION
+         ========================= -->
+
+    <div class="card">
+
+        <h1>🔎 The Clustering Lab</h1>
+
+        <div class="subtitle">
+            Find structure without being told what to look for.
+        </div>
+
+        <div class="intro">
+
+            <p>
+                So far, you have worked with <strong>supervised learning</strong>:
+                the training examples came with information about what the
+                correct output should be.
+            </p>
+
+            <p>
+                But what happens when we have data and
+                <strong>no labels</strong>?
+            </p>
+
+            <p>
+                This is where <strong>unsupervised learning</strong> becomes
+                useful. Instead of predicting known labels, the algorithm can
+                search for structure in the data.
+            </p>
+
+            <p>
+                In this mission you will become the algorithm.
+                Your task is to experiment with <strong>K-Means clustering</strong>
+                and discover how changing the number of clusters changes the
+                structure that the algorithm finds.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         THEORY
+         ========================= -->
+
+    <div class="card">
+
+        <h2>🧠 Before entering the Lab</h2>
+
+        <p>
+            K-Means attempts to divide observations into
+            <strong>K clusters</strong>.
+        </p>
+
+        <div class="formula">
+
+            Assign each point to the nearest centroid
+
+            <br><br>
+
+            then update each centroid to the mean of its assigned points.
+
+            <small>
+                The process repeats until the assignments and centroids stabilize.
+            </small>
+
+        </div>
+
+        <p>
+            The important question is:
+            <strong>where does K come from?</strong>
+        </p>
+
+        <p>
+            The algorithm does not automatically know how many meaningful
+            groups exist. The choice of K is therefore an important modelling
+            decision.
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         INTERACTIVE LAB
+         ========================= -->
+
+    <div class="card">
+
+        <h2>🔬 K-Means Code Lab</h2>
+
+        <p>
+            The points below are unlabeled. Experiment with different values
+            of <strong>K</strong> and run the algorithm.
+        </p>
+
+        <div class="lab">
+
+            <!-- CONTROLS -->
+
+            <div class="panel">
+
+                <h3>⚙️ Algorithm parameters</h3>
+
+                <div class="control">
+
+                    <label>
+                        Number of clusters (K)
+
+                        <span
+                            class="value"
+                            id="kValue">
+                            3
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="range"
+                        id="kSlider"
+                        min="2"
+                        max="5"
+                        step="1"
+                        value="3">
+
+                </div>
+
+
+                <div class="algorithm">
+
+                    <strong>What the algorithm does:</strong>
+
+                    <ol>
+
+                        <li>
+                            Choose K initial centroids.
+                        </li>
+
+                        <li>
+                            Assign each point to its nearest centroid.
+                        </li>
+
+                        <li>
+                            Recalculate each centroid as the mean of its
+                            assigned points.
+                        </li>
+
+                        <li>
+                            Repeat until the clusters stabilize.
+                        </li>
+
+                    </ol>
+
+                </div>
+
+
+                <div class="button-area">
+
+                    <button
+                        class="primary"
+                        onclick="runKMeans()">
+
+                        ▶ RUN K-MEANS
+
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="resetLab()">
+
+                        ↺ RESET
+
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="status"
+                    id="status">
+
+                    Choose K and run the algorithm.
+
+                </div>
+
+            </div>
+
+
+            <!-- VISUALIZATION -->
+
+            <div class="panel">
+
+                <h3>📊 Unlabeled data</h3>
+
+                <canvas
+                    id="clusterCanvas"
+                    width="650"
+                    height="420">
+                </canvas>
+
+                <p
+                    style="
+                    font-size:14px;
+                    color:#607d98;
+                    margin-top:12px;">
+
+                    Each point represents an observation.
+                    The algorithm does not know the underlying groups.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CHALLENGE
+         ========================= -->
+
+    <div class="card">
+
+        <h2>🧩 Clustering Challenge</h2>
+
+        <p>
+            You have experimented with the algorithm.
+            Now test whether you understand what happened.
+        </p>
+
+
+        <!-- QUESTION 1 -->
+
+        <div class="question">
+
+            <strong>
+                Question 1
+            </strong>
+
+            <p>
+                What makes K-Means an example of
+                <strong>unsupervised learning</strong>?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 1)">
+
+                A. The training data do not require predefined class labels.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 1)">
+
+                B. The algorithm always knows the correct class of every point.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 1)">
+
+                C. The algorithm does not use any mathematical calculations.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 1)">
+
+                D. The algorithm can only be used with labeled images.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback1">
+            </div>
+
+        </div>
+
+
+        <!-- QUESTION 2 -->
+
+        <div class="question">
+
+            <strong>
+                Question 2
+            </strong>
+
+            <p>
+                What happens when you increase K?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 2)">
+
+                A. The algorithm is asked to create more clusters.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 2)">
+
+                B. The algorithm receives more labeled training examples.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 2)">
+
+                C. The number of observations automatically increases.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 2)">
+
+                D. The algorithm becomes a supervised classifier.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback2">
+            </div>
+
+        </div>
+
+
+        <!-- QUESTION 3 -->
+
+        <div class="question">
+
+            <strong>
+                Question 3
+            </strong>
+
+            <p>
+                Imagine that the data contain three clearly separated groups.
+                You choose K = 10. What is the main problem?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 3)">
+
+                A. The algorithm may divide meaningful groups into too many
+                smaller clusters.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 3)">
+
+                B. The algorithm will automatically discover that K should be 3.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 3)">
+
+                C. K-Means cannot operate when K is greater than 3.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 3)">
+
+                D. The data immediately become supervised.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback3">
+            </div>
+
+        </div>
+
+
+        <!-- QUESTION 4 -->
+
+        <div class="question">
+
+            <strong>
+                Question 4
+            </strong>
+
+            <p>
+                Which statement best describes a cluster produced by K-Means?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 4)">
+
+                A. It is guaranteed to correspond to a meaningful real-world
+                category.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 4)">
+
+                B. It is a grouping produced according to similarity in the
+                feature space.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 4)">
+
+                C. It is always identical to a human-defined class.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 4)">
+
+                D. It represents the ground-truth label.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback4">
+            </div>
+
+        </div>
+
+
+        <!-- SCORE -->
+
+        <div class="score-box">
+
+            <div>
+                Your clustering score
+            </div>
+
+            <div class="score">
+
+                <span id="scoreNumber">
+                    0
+                </span>
+
+                / 4
+
+            </div>
+
+        </div>
+
+
+        <div class="button-area">
+
+            <button
+                class="primary"
+                onclick="finishMission()">
+
+                COMPLETE MISSION →
+
+            </button>
+
+        </div>
+
+
+        <!-- REFLECTION -->
+
+        <div
+            class="reflection"
+            id="reflection">
+
+            <h3>
+                🎓 Mission Complete
+            </h3>
+
+            <p>
+                K-Means demonstrates an important difference between
+                supervised and unsupervised learning.
+                In supervised learning, the training data provide information
+                about the desired output. In clustering, the algorithm instead
+                searches for structure in the observations themselves.
+            </p>
+
+            <p>
+                But there is an important limitation:
+                <strong>a cluster is not automatically a meaningful real-world
+                category.</strong>
+            </p>
+
+            <p>
+                The interpretation of the clusters requires knowledge about
+                the problem domain.
+            </p>
+
+            <p>
+                <strong>Final thought:</strong>
+                If an algorithm discovers three clusters in a dataset,
+                does that prove that the real world contains exactly three
+                meaningful groups?
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   DATA
+   ========================================= */
+
+const points = [
+
+    {x: 120, y: 105},
+    {x: 145, y: 125},
+    {x: 100, y: 135},
+    {x: 155, y: 90},
+    {x: 130, y: 150},
+    {x: 175, y: 115},
+    {x: 110, y: 165},
+
+    {x: 330, y: 95},
+    {x: 360, y: 120},
+    {x: 315, y: 135},
+    {x: 380, y: 105},
+    {x: 345, y: 150},
+    {x: 395, y: 135},
+    {x: 365, y: 165},
+
+    {x: 225, y: 285},
+    {x: 250, y: 310},
+    {x: 205, y: 325},
+    {x: 275, y: 295},
+    {x: 235, y: 345},
+    {x: 290, y: 330},
+    {x: 215, y: 360}
+
+];
+
+
+/* =========================================
+   GLOBAL VARIABLES
+   ========================================= */
+
+const canvas =
+    document.getElementById("clusterCanvas");
+
+const ctx =
+    canvas.getContext("2d");
+
+const kSlider =
+    document.getElementById("kSlider");
+
+const kValue =
+    document.getElementById("kValue");
+
+const status =
+    document.getElementById("status");
+
+let clusters = [];
+
+let centroids = [];
+
+let assignments = [];
+
+
+/*
+ * We use visual colors only for the
+ * visualization of clusters.
+ */
+
+const clusterColors = [
+
+    "#2d587d",
+    "#d16b4d",
+    "#5d9270",
+    "#8b6cae",
+    "#d29b38"
+
+];
+
+
+/* =========================================
+   DRAW ORIGINAL DATA
+   ========================================= */
+
+function drawInitialData() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    points.forEach(function(point) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            point.x,
+            point.y,
+            6,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "#6d8293";
+
+        ctx.fill();
+
+    });
+
+
+    ctx.fillStyle = "#607d98";
+
+    ctx.font = "14px Arial";
+
+    ctx.fillText(
+        "Unlabeled observations",
+        20,
+        25
+    );
+
+}
+
+
+/* =========================================
+   RANDOM INITIAL CENTROIDS
+   ========================================= */
+
+function initializeCentroids(k) {
+
+    let selected = [];
+
+    while (selected.length < k) {
+
+        const index =
+            Math.floor(
+                Math.random() * points.length
+            );
+
+        if (!selected.includes(index)) {
+
+            selected.push(index);
+
+        }
+
+    }
+
+    return selected.map(function(index) {
+
+        return {
+
+            x: points[index].x,
+            y: points[index].y
+
+        };
+
+    });
+
+}
+
+
+/* =========================================
+   DISTANCE
+   ========================================= */
+
+function distance(a, b) {
+
+    const dx =
+        a.x - b.x;
+
+    const dy =
+        a.y - b.y;
+
+    return Math.sqrt(
+        dx * dx + dy * dy
+    );
+
+}
+
+
+/* =========================================
+   ASSIGN POINTS
+   ========================================= */
+
+function assignPoints() {
+
+    assignments = [];
+
+    points.forEach(function(point) {
+
+        let closest = 0;
+
+        let bestDistance =
+            distance(
+                point,
+                centroids[0]
+            );
+
+        for (
+            let i = 1;
+            i < centroids.length;
+            i++
+        ) {
+
+            const d =
+                distance(
+                    point,
+                    centroids[i]
+                );
+
+            if (d < bestDistance) {
+
+                bestDistance = d;
+
+                closest = i;
+
+            }
+
+        }
+
+        assignments.push(closest);
+
+    });
+
+}
+
+
+/* =========================================
+   UPDATE CENTROIDS
+   ========================================= */
+
+function updateCentroids() {
+
+    let sums = [];
+
+    let counts = [];
+
+    for (
+        let i = 0;
+        i < centroids.length;
+        i++
+    ) {
+
+        sums.push({
+            x: 0,
+            y: 0
+        });
+
+        counts.push(0);
+
+    }
+
+
+    points.forEach(function(point, index) {
+
+        const cluster =
+            assignments[index];
+
+        sums[cluster].x += point.x;
+
+        sums[cluster].y += point.y;
+
+        counts[cluster]++;
+
+    });
+
+
+    let changed = false;
+
+
+    for (
+        let i = 0;
+        i < centroids.length;
+        i++
+    ) {
+
+        if (counts[i] === 0) {
+            continue;
+        }
+
+        const newX =
+            sums[i].x / counts[i];
+
+        const newY =
+            sums[i].y / counts[i];
+
+
+        if (
+            Math.abs(
+                newX - centroids[i].x
+            ) > 0.5
+            ||
+            Math.abs(
+                newY - centroids[i].y
+            ) > 0.5
+        ) {
+
+            changed = true;
+
+        }
+
+
+        centroids[i].x = newX;
+
+        centroids[i].y = newY;
+
+    }
+
+    return changed;
+
+}
+
+
+/* =========================================
+   RUN K-MEANS
+   ========================================= */
+
+function runKMeans() {
+
+    const k =
+        parseInt(
+            kSlider.value
+        );
+
+
+    status.textContent =
+        "Running K-Means...";
+
+
+    centroids =
+        initializeCentroids(k);
+
+
+    let changed = true;
+
+    let iterations = 0;
+
+
+    while (
+        changed &&
+        iterations < 20
+    ) {
+
+        assignPoints();
+
+        changed =
+            updateCentroids();
+
+        iterations++;
+
+    }
+
+
+    assignPoints();
+
+
+    drawClusters();
+
+
+    status.textContent =
+        "K-Means converged after "
+        +
+        iterations
+        +
+        " iteration(s).";
+
+}
+
+
+/* =========================================
+   DRAW CLUSTERS
+   ========================================= */
+
+function drawClusters() {
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+     * Draw points
+     */
+
+    points.forEach(function(point, index) {
+
+        const cluster =
+            assignments[index];
+
+        ctx.beginPath();
+
+        ctx.arc(
+            point.x,
+            point.y,
+            7,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            clusterColors[
+                cluster %
+                clusterColors.length
+            ];
+
+        ctx.fill();
+
+    });
+
+
+    /*
+     * Draw centroids
+     */
+
+    centroids.forEach(function(centroid, index) {
+
+        ctx.beginPath();
+
+        ctx.arc(
+            centroid.x,
+            centroid.y,
+            13,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle = "white";
+
+        ctx.fill();
+
+        ctx.strokeStyle =
+            clusterColors[
+                index %
+                clusterColors.length
+            ];
+
+        ctx.lineWidth = 4;
+
+        ctx.stroke();
+
+
+        ctx.beginPath();
+
+        ctx.moveTo(
+            centroid.x - 7,
+            centroid.y
+        );
+
+        ctx.lineTo(
+            centroid.x + 7,
+            centroid.y
+        );
+
+        ctx.moveTo(
+            centroid.x,
+            centroid.y - 7
+        );
+
+        ctx.lineTo(
+            centroid.x,
+            centroid.y + 7
+        );
+
+        ctx.strokeStyle =
+            clusterColors[
+                index %
+                clusterColors.length
+            ];
+
+        ctx.stroke();
+
+    });
+
+
+    /*
+     * Legend
+     */
+
+    ctx.font =
+        "13px Arial";
+
+    ctx.fillStyle =
+        "#607d98";
+
+    ctx.fillText(
+        "● data point     ⊕ centroid",
+        20,
+        canvas.height - 18
+    );
+
+}
+
+
+/* =========================================
+   RESET
+   ========================================= */
+
+function resetLab() {
+
+    assignments = [];
+
+    centroids = [];
+
+    drawInitialData();
+
+    status.textContent =
+        "Choose K and run the algorithm.";
+
+}
+
+
+/* =========================================
+   K SLIDER
+   ========================================= */
+
+kSlider.addEventListener(
+    "input",
+    function() {
+
+        kValue.textContent =
+            kSlider.value;
+
+        resetLab();
+
+    }
+);
+
+
+/* =========================================
+   INITIAL DRAW
+   ========================================= */
+
+drawInitialData();
+
+
+/* =========================================
+   QUESTIONS
+   ========================================= */
+
+let score = 0;
+
+const answered = {
+
+    1: false,
+    2: false,
+    3: false,
+    4: false
+
+};
+
+
+function answer(
+    button,
+    correct,
+    questionNumber
+) {
+
+    if (
+        answered[
+            questionNumber
+        ]
+    ) {
+
+        return;
+
+    }
+
+
+    answered[
+        questionNumber
+    ] = true;
+
+
+    const feedback =
+        document.getElementById(
+            "feedback"
+            +
+            questionNumber
+        );
+
+
+    const buttons =
+        button
+        .parentElement
+        .querySelectorAll(
+            ".option"
+        );
+
+
+    buttons.forEach(
+        function(b) {
+
+            b.disabled = true;
+
+        }
+    );
+
+
+    if (correct) {
+
+        button.classList.add(
+            "correct"
+        );
+
+
+        feedback.innerHTML =
+            "✅ Correct! Your understanding of clustering is improving.";
+
+
+        feedback.style.background =
+            "#e8f5ed";
+
+
+        score++;
+
+
+        document.getElementById(
+            "scoreNumber"
+        ).textContent =
+            score;
+
+    }
+
+    else {
+
+        button.classList.add(
+            "incorrect"
+        );
+
+
+        feedback.innerHTML =
+            "❌ Not quite. Think about what the algorithm knows—and what it does not know.";
+
+
+        feedback.style.background =
+            "#f9eaea";
+
+    }
+
+
+    feedback.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================
+   COMPLETE MISSION
+   ========================================= */
+
+function finishMission() {
+
+    const reflection =
+        document.getElementById(
+            "reflection"
+        );
+
+
+    reflection.style.display =
+        "block";
+
+
+    reflection.scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "center"
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
