@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Uncertainty Quest – Mission 1</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fa;
+        color: #2c3e50;
+    }
+
+    .game {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    /* Header */
+
+    .game-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 4px 10px 4px;
+        border-bottom: 1px solid #d8e0e7;
+        margin-bottom: 18px;
+    }
+
+    .game-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #244e73;
+    }
+
+    .mission-number {
+        font-size: 14px;
+        color: #6b7c8d;
+    }
+
+    .progress-container {
+        height: 8px;
+        background: #dfe6eb;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 25px;
+    }
+
+    .progress {
+        width: 20%;
+        height: 100%;
+        background: #2c587d;
+        border-radius: 10px;
+    }
+
+    /* Main card */
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 38px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .intro {
+        text-align: center;
+    }
+
+    .icon {
+        font-size: 55px;
+        margin-bottom: 10px;
+    }
+
+    h1 {
+        font-size: 34px;
+        color: #244e73;
+        margin: 5px 0 10px 0;
+    }
+
+    h2 {
+        font-size: 24px;
+        color: #244e73;
+        margin-top: 0;
+    }
+
+    h3 {
+        color: #2c587d;
+    }
+
+    .subtitle {
+        font-size: 20px;
+        color: #637789;
+        margin-bottom: 25px;
+    }
+
+    .intro-text {
+        max-width: 720px;
+        margin: auto;
+        font-size: 17px;
+        line-height: 1.65;
+    }
+
+    /* Buttons */
+
+    button {
+        border: none;
+        border-radius: 7px;
+        padding: 13px 22px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        background: #2c587d;
+        color: white;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #1f4565;
+        transform: translateY(-1px);
+    }
+
+    .secondary-button {
+        background: #e8eef3;
+        color: #2c587d;
+    }
+
+    .secondary-button:hover {
+        background: #dce5ec;
+    }
+
+    .button-row {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 25px;
+        flex-wrap: wrap;
+    }
+
+    /* Mission sections */
+
+    .mission {
+        display: none;
+    }
+
+    .mission.active {
+        display: block;
+    }
+
+    .question {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 25px 0 18px 0;
+    }
+
+    .explanation {
+        background: #f1f6fa;
+        border-left: 4px solid #2c587d;
+        padding: 16px 18px;
+        margin: 20px 0;
+        line-height: 1.6;
+        border-radius: 4px;
+    }
+
+    /* Probability display */
+
+    .probability-display {
+        text-align: center;
+        font-size: 42px;
+        font-weight: bold;
+        color: #2c587d;
+        margin: 25px 0;
+    }
+
+    .probability-label {
+        text-align: center;
+        color: #6b7c8d;
+        font-size: 15px;
+    }
+
+    /* Sliders */
+
+    .slider-box {
+        margin: 25px auto;
+        max-width: 650px;
+    }
+
+    .slider-row {
+        margin-bottom: 25px;
+    }
+
+    .slider-row label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        accent-color: #2c587d;
+    }
+
+    /* Formula */
+
+    .formula {
+        background: #fafafa;
+        border: 1px solid #dfe5ea;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        font-size: 21px;
+        margin: 25px auto;
+        max-width: 700px;
+        font-family: Georgia, serif;
+    }
+
+    /* Choice buttons */
+
+    .choices {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .choice {
+        padding: 18px;
+        border: 2px solid #d9e1e7;
+        border-radius: 9px;
+        background: white;
+        color: #2c3e50;
+        font-weight: normal;
+        text-align: left;
+    }
+
+    .choice:hover {
+        border-color: #2c587d;
+        background: #f4f8fb;
+        transform: none;
+    }
+
+    .choice.correct {
+        border-color: #4d8b63;
+        background: #edf7f0;
+    }
+
+    .choice.incorrect {
+        border-color: #b85b5b;
+        background: #fbefef;
+    }
+
+    /* Feedback */
+
+    .feedback {
+        display: none;
+        margin-top: 20px;
+        padding: 17px;
+        border-radius: 8px;
+        line-height: 1.55;
+    }
+
+    .feedback.show {
+        display: block;
+    }
+
+    .feedback.success {
+        background: #edf7f0;
+        border-left: 4px solid #4d8b63;
+    }
+
+    .feedback.warning {
+        background: #fff7e5;
+        border-left: 4px solid #e1a72f;
+    }
+
+    /* Challenge */
+
+    .challenge-box {
+        background: #f7f9fb;
+        border: 1px solid #dbe3e9;
+        border-radius: 10px;
+        padding: 25px;
+        margin-top: 20px;
+    }
+
+    .answer-input {
+        width: 100%;
+        max-width: 300px;
+        padding: 12px;
+        font-size: 18px;
+        border: 1px solid #c8d2da;
+        border-radius: 6px;
+        margin-top: 10px;
+    }
+
+    /* Final */
+
+    .success-screen {
+        text-align: center;
+        display: none;
+    }
+
+    .success-screen.show {
+        display: block;
+    }
+
+    .badge {
+        font-size: 65px;
+        margin-bottom: 10px;
+    }
+
+    .key-lesson {
+        background: #eef5fa;
+        border-radius: 9px;
+        padding: 20px;
+        text-align: left;
+        margin-top: 25px;
+        line-height: 1.6;
+    }
+
+    .next-mission {
+        margin-top: 25px;
+        font-size: 14px;
+        color: #6b7c8d;
+    }
+
+    @media (max-width: 700px) {
+        .card {
+            padding: 24px;
+        }
+
+        h1 {
+            font-size: 28px;
+        }
+
+        .game-header {
+            align-items: flex-start;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <!-- HEADER -->
+    <div class="game-header">
+        <div class="game-title">🎲 UNCERTAINTY QUEST</div>
+        <div class="mission-number">Mission 1 / 5</div>
+    </div>
+
+    <div class="progress-container">
+        <div class="progress"></div>
+    </div>
+
+
+    <!-- INTRO -->
+    <div class="card mission active" id="intro">
+
+        <div class="intro">
+
+            <div class="icon">🎲</div>
+
+            <h1>The Uncertainty Engine</h1>
+
+            <div class="subtitle">
+                Mission 1: Teaching an AI to reason with uncertainty
+            </div>
+
+            <div class="intro-text">
+
+                <p>
+                    Your AI agent has already learned how to work with
+                    <strong>knowledge, logic, and planning</strong>.
+                </p>
+
+                <p>
+                    But there is a problem.
+                </p>
+
+                <p>
+                    The real world is rarely completely certain.
+                    Sensors can be noisy. Information can be incomplete.
+                    Events can have different probabilities.
+                </p>
+
+                <p>
+                    Your first task is to activate the agent's
+                    <strong>Uncertainty Engine</strong>.
+                </p>
+
+                <p>
+                    You will learn to distinguish between what an agent
+                    believes <strong>before</strong> receiving evidence
+                    and what it believes <strong>after</strong> receiving evidence.
+                </p>
+
+            </div>
+
+            <div class="button-row">
+                <button onclick="showMission('mission1')">
+                    START MISSION →
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- MISSION 1 -->
+    <div class="card mission" id="mission1">
+
+        <h2>🧠 Stage 1 — What does probability mean?</h2>
+
+        <p>
+            Your agent encounters an event whose outcome is uncertain.
+            Instead of saying simply <strong>true</strong> or
+            <strong>false</strong>, it assigns a probability between
+            0 and 1.
+        </p>
+
+        <div class="explanation">
+
+            <strong>Think of probability as the agent's degree of belief
+            about an uncertain event.</strong>
+
+            <br><br>
+
+            A probability of 0 means the event is considered impossible,
+            while a probability of 1 means it is considered certain.
+
+        </div>
+
+        <div class="question">
+            Your agent observes a fair coin. What is the probability
+            that the next flip will be Heads?
+        </div>
+
+        <div class="choices">
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'coinFeedback')">
+                0
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, true, 'coinFeedback')">
+                0.5
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'coinFeedback')">
+                0.75
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'coinFeedback')">
+                1
+            </button>
+
+        </div>
+
+        <div id="coinFeedback" class="feedback"></div>
+
+        <div class="button-row">
+            <button onclick="showMission('mission2')">
+                CONTINUE →
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 2 -->
+    <div class="card mission" id="mission2">
+
+        <h2>🎯 Stage 2 — Prior probability</h2>
+
+        <p>
+            Before your agent receives new evidence, it already has
+            some belief about how likely an event is.
+        </p>
+
+        <p>
+            This is its <strong>prior probability</strong>.
+        </p>
+
+        <div class="formula">
+            P(Event)
+        </div>
+
+        <p>
+            Let's see how the agent's belief changes when we change
+            the assumptions about the world.
+        </p>
+
+        <div class="slider-box">
+
+            <div class="slider-row">
+
+                <label>
+                    <span>Probability of Rain</span>
+                    <span id="rainValue">50%</span>
+                </label>
+
+                <input
+                    type="range"
+                    id="rainSlider"
+                    min="0"
+                    max="100"
+                    value="50"
+                    oninput="updateRain()"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="probability-label">
+            Your agent's current belief that it will rain is:
+        </div>
+
+        <div class="probability-display" id="rainDisplay">
+            50%
+        </div>
+
+        <div class="question">
+            What happens to the agent's belief if we increase
+            the prior probability of rain?
+        </div>
+
+        <div class="choices">
+
+            <button class="choice"
+                    onclick="checkChoice(this, true, 'priorFeedback')">
+                The belief in rain increases
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'priorFeedback')">
+                The belief in rain decreases
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'priorFeedback')">
+                It must remain exactly 50%
+            </button>
+
+        </div>
+
+        <div id="priorFeedback" class="feedback"></div>
+
+        <div class="explanation">
+
+            <strong>Key idea:</strong>
+
+            The prior represents what the agent believes about an event
+            before considering new evidence.
+
+        </div>
+
+        <div class="button-row">
+            <button onclick="showMission('mission3')">
+                NEXT STAGE →
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 3 -->
+    <div class="card mission" id="mission3">
+
+        <h2>🔍 Stage 3 — Evidence changes beliefs</h2>
+
+        <p>
+            Now your agent receives evidence.
+        </p>
+
+        <p>
+            Suppose two fair coins are flipped. Before seeing anything,
+            what is the probability that <strong>both</strong> coins
+            will be Heads?
+        </p>
+
+        <div class="formula">
+            P(Two Heads)
+            =
+            P(Heads₁) × P(Heads₂)
+            =
+            0.5 × 0.5
+        </div>
+
+        <div class="question">
+            What is the probability of getting two Heads?
+        </div>
+
+        <div class="choices">
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'twoHeadsFeedback')">
+                0.10
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'twoHeadsFeedback')">
+                0.25
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, true, 'twoHeadsFeedback')">
+                0.50
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'twoHeadsFeedback')">
+                0.75
+            </button>
+
+        </div>
+
+        <div id="twoHeadsFeedback" class="feedback"></div>
+
+        <div class="button-row">
+            <button onclick="showMission('mission4')">
+                CONTINUE →
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- MISSION 4 -->
+    <div class="card mission" id="mission4">
+
+        <h2>🔎 Stage 4 — Conditional probability</h2>
+
+        <p>
+            Something important has changed.
+        </p>
+
+        <p>
+            Your agent has now observed that the <strong>first coin
+            landed Heads</strong>.
+        </p>
+
+        <p>
+            It no longer needs to reason about both coin flips.
+            It already has evidence about the first one.
+        </p>
+
+        <div class="explanation">
+
+            <strong>Conditional probability</strong> expresses the
+            probability of an event given some evidence.
+        </div>
+
+        <div class="formula">
+            P(A | B)
+        </div>
+
+        <div class="question">
+            Given that the first coin is Heads, what is the probability
+            that the second coin is also Heads?
+        </div>
+
+        <div class="choices">
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'conditionalFeedback')">
+                0
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, true, 'conditionalFeedback')">
+                0.5
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'conditionalFeedback')">
+                0.75
+            </button>
+
+            <button class="choice"
+                    onclick="checkChoice(this, false, 'conditionalFeedback')">
+                1
+            </button>
+
+        </div>
+
+        <div id="conditionalFeedback" class="feedback"></div>
+
+        <div class="explanation">
+
+            Notice the difference:
+
+            <br><br>
+
+            <strong>Before evidence:</strong>
+            probability of two Heads = 0.25
+
+            <br><br>
+
+            <strong>After observing the first Heads:</strong>
+            probability of another Heads = 0.5
+
+            <br><br>
+
+            The evidence changes the question the agent is answering.
+
+        </div>
+
+        <div class="button-row">
+            <button onclick="showMission('challenge')">
+                FINAL CHALLENGE →
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- FINAL CHALLENGE -->
+    <div class="card mission" id="challenge">
+
+        <h2>🚨 Final Challenge — Train the Agent</h2>
+
+        <p>
+            Your AI agent is monitoring the weather.
+        </p>
+
+        <div class="challenge-box">
+
+            <p>
+                Before receiving any evidence, the agent believes there is
+                a <strong>30%</strong> probability of rain.
+            </p>
+
+            <p>
+                It then receives evidence that makes rain more likely.
+            </p>
+
+            <p>
+                After considering the evidence, its belief becomes
+                <strong>70%</strong>.
+            </p>
+
+            <div class="question">
+                Which statement best describes what happened?
+            </div>
+
+            <div class="choices">
+
+                <button class="choice"
+                        onclick="finishChallenge(this, false)">
+                    The prior probability was 70%.
+                </button>
+
+                <button class="choice"
+                        onclick="finishChallenge(this, true)">
+                    Evidence changed the agent's belief from
+                    a prior of 30% to a posterior of 70%.
+                </button>
+
+                <button class="choice"
+                        onclick="finishChallenge(this, false)">
+                    Probability cannot change after receiving evidence.
+                </button>
+
+                <button class="choice"
+                        onclick="finishChallenge(this, false)">
+                    The agent became certain that it will rain.
+                </button>
+
+            </div>
+
+            <div id="challengeFeedback" class="feedback"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUCCESS SCREEN -->
+
+    <div class="card success-screen" id="success">
+
+        <div class="badge">🎲🧠</div>
+
+        <h1>Mission Complete!</h1>
+
+        <p class="subtitle">
+            Your Uncertainty Engine is online.
+        </p>
+
+        <p>
+            You have completed the first stage of
+            <strong>Uncertainty Quest</strong>.
+        </p>
+
+        <div class="key-lesson">
+
+            <h3>🧠 What you learned</h3>
+
+            <ul>
+                <li>
+                    Probability can represent uncertainty about an event.
+                </li>
+
+                <li>
+                    A <strong>prior probability</strong> represents a
+                    belief before new evidence is considered.
+                </li>
+
+                <li>
+                    <strong>Conditional probability</strong> represents
+                    beliefs given evidence.
+                </li>
+
+                <li>
+                    New evidence can change what an agent believes.
+                </li>
+            </ul>
+
+        </div>
+
+        <div class="key-lesson">
+
+            <h3>🔗 Your AI journey</h3>
+
+            <p>
+                In the previous lectures, your agents learned to:
+            </p>
+
+            <ul>
+                <li>perceive and act in environments,</li>
+                <li>represent knowledge,</li>
+                <li>reason using logic,</li>
+                <li>and plan actions.</li>
+            </ul>
+
+            <p>
+                Now they must deal with something much harder:
+                <strong>the world is uncertain.</strong>
+            </p>
+
+        </div>
+
+        <div class="next-mission">
+            Next mission: 🕵️ <strong>Bayes Detective</strong>
+            — your first probabilistic reasoning challenge.
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* --------------------------------
+       Navigation
+    -------------------------------- */
+
+    function showMission(id) {
+
+        document.querySelectorAll(".mission").forEach(function(section) {
+            section.classList.remove("active");
+        });
+
+        document.getElementById(id).classList.add("active");
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+
+    /* --------------------------------
+       Multiple-choice feedback
+    -------------------------------- */
+
+    function checkChoice(button, correct, feedbackId) {
+
+        const container = button.parentElement;
+
+        container.querySelectorAll(".choice").forEach(function(choice) {
+            choice.classList.remove("correct", "incorrect");
+        });
+
+        const feedback = document.getElementById(feedbackId);
+
+        if (correct) {
+
+            button.classList.add("correct");
+
+            feedback.className = "feedback show success";
+
+            feedback.innerHTML =
+                "<strong>✓ Correct!</strong><br>" +
+                "Your reasoning is on the right track.";
+
+        } else {
+
+            button.classList.add("incorrect");
+
+            feedback.className = "feedback show warning";
+
+            feedback.innerHTML =
+                "<strong>Not quite.</strong><br>" +
+                "Think about what the probability represents and try again.";
+
+        }
+    }
+
+
+    /* --------------------------------
+       Rain probability slider
+    -------------------------------- */
+
+    function updateRain() {
+
+        const value =
+            document.getElementById("rainSlider").value;
+
+        document.getElementById("rainValue").textContent =
+            value + "%";
+
+        document.getElementById("rainDisplay").textContent =
+            value + "%";
+    }
+
+
+    /* --------------------------------
+       Final challenge
+    -------------------------------- */
+
+    function finishChallenge(button, correct) {
+
+        const container = button.parentElement;
+
+        container.querySelectorAll(".choice").forEach(function(choice) {
+            choice.classList.remove("correct", "incorrect");
+        });
+
+        const feedback =
+            document.getElementById("challengeFeedback");
+
+        if (correct) {
+
+            button.classList.add("correct");
+
+            feedback.className = "feedback show success";
+
+            feedback.innerHTML =
+                "<strong>✓ Excellent!</strong><br>" +
+                "The agent started with a prior belief of 30%. " +
+                "After receiving evidence, its belief became 70%. " +
+                "That updated belief is a posterior probability.";
+
+            setTimeout(function() {
+
+                document.querySelectorAll(".mission").forEach(function(section) {
+                    section.classList.remove("active");
+                });
+
+                document.getElementById("success").classList.add("active");
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+
+            }, 1600);
+
+        } else {
+
+            button.classList.add("incorrect");
+
+            feedback.className = "feedback show warning";
+
+            feedback.innerHTML =
+                "<strong>Not quite.</strong><br>" +
+                "Remember: the prior is the belief before evidence. " +
+                "The posterior is the updated belief after considering evidence.";
+        }
+    }
+
+</script>
+
+</body>
+</html>
