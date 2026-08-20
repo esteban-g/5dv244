@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Uncertainty Quest — Mission 5</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fa;
+    color: #294e70;
+}
+
+.game-container {
+    max-width: 1000px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+
+/* =========================
+   TOP BAR
+   ========================= */
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.brand {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.mission-count {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.progress {
+    height: 8px;
+    background: #dce5ec;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 28px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 100%;
+    background: #2b567a;
+}
+
+
+/* =========================
+   CARDS
+   ========================= */
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 38px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    margin-bottom: 25px;
+}
+
+.hero {
+    text-align: center;
+}
+
+.emoji {
+    font-size: 55px;
+    margin-bottom: 10px;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 10px 0;
+    color: #234d70;
+}
+
+h2 {
+    color: #234d70;
+    margin-top: 0;
+}
+
+h3 {
+    color: #315f84;
+}
+
+.subtitle {
+    font-size: 20px;
+    color: #66788a;
+    margin-bottom: 25px;
+}
+
+.story {
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 800px;
+    margin: auto;
+}
+
+
+/* =========================
+   BUTTON
+   ========================= */
+
+.button {
+    display: inline-block;
+    background: #2b567a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 13px 22px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.button:hover {
+    background: #1f4564;
+}
+
+
+/* =========================
+   QUESTIONS
+   ========================= */
+
+.question {
+    margin-top: 25px;
+    padding: 22px;
+    background: #f7f9fb;
+    border-left: 4px solid #2b567a;
+    border-radius: 6px;
+}
+
+.option {
+    display: block;
+    padding: 13px 15px;
+    margin: 10px 0;
+    background: white;
+    border: 1px solid #d5dde5;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.option:hover {
+    background: #eef4f8;
+}
+
+.feedback {
+    display: none;
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 7px;
+    line-height: 1.5;
+}
+
+.correct {
+    background: #e8f5e9;
+    border-left: 4px solid #43a047;
+}
+
+.incorrect {
+    background: #ffebee;
+    border-left: 4px solid #e53935;
+}
+
+
+/* =========================
+   FORMULA
+   ========================= */
+
+.formula {
+    background: #eef4f8;
+    padding: 22px;
+    border-radius: 10px;
+    text-align: center;
+    font-family: Georgia, serif;
+    font-size: 21px;
+    margin: 25px 0;
+}
+
+
+/* =========================
+   DECISION DIAGRAM
+   ========================= */
+
+.decision-diagram {
+    margin: 30px auto;
+    padding: 28px;
+    background: #f7f9fb;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.decision-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.decision-node {
+    background: white;
+    border: 2px solid #2b567a;
+    border-radius: 10px;
+    padding: 15px 22px;
+    min-width: 140px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+}
+
+.decision-node.action {
+    border-color: #d28b00;
+    background: #fff8e8;
+}
+
+.decision-node.outcome {
+    border-color: #4b7f5a;
+    background: #f1f8f3;
+}
+
+.arrow {
+    font-size: 25px;
+    color: #6b7280;
+}
+
+
+/* =========================
+   CODE LAB
+   ========================= */
+
+.code-lab {
+    background: #17202a;
+    color: #e8edf2;
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 20px;
+}
+
+.code-lab h2,
+.code-lab h3 {
+    color: white;
+}
+
+.code-lab p {
+    line-height: 1.6;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 25px;
+}
+
+.control-card {
+    background: #263746;
+    padding: 18px;
+    border-radius: 8px;
+}
+
+.control-card label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 9px;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    font-size: 16px;
+}
+
+
+/* =========================
+   RESULTS
+   ========================= */
+
+.result {
+    display: none;
+    margin-top: 25px;
+    padding: 22px;
+    background: #263746;
+    border-radius: 8px;
+    line-height: 1.7;
+}
+
+.utility-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 20px;
+}
+
+.utility-card {
+    background: #1d2b36;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.utility-card h3 {
+    color: white;
+}
+
+.utility-value {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.winner {
+    margin-top: 20px;
+    padding: 18px;
+    background: #17202a;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.calculation {
+    margin-top: 20px;
+    padding: 16px;
+    background: #111820;
+    border-radius: 7px;
+    font-family: monospace;
+    font-size: 14px;
+    line-height: 1.8;
+    overflow-x: auto;
+}
+
+
+/* =========================
+   REFLECTION
+   ========================= */
+
+.reflection {
+    background: #fff7df;
+    border-left: 5px solid #e5a900;
+}
+
+
+/* =========================
+   COMPLETION
+   ========================= */
+
+.completion {
+    text-align: center;
+    display: none;
+}
+
+.completion .emoji {
+    font-size: 70px;
+}
+
+
+/* =========================
+   MOBILE
+   ========================= */
+
+@media (max-width: 700px) {
+
+    .card {
+        padding: 25px;
+    }
+
+    h1 {
+        font-size: 30px;
+    }
+
+    .controls,
+    .utility-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .decision-row {
+        flex-direction: column;
+    }
+
+    .arrow {
+        transform: rotate(90deg);
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game-container">
+
+
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
+
+<div class="topbar">
+
+    <div class="brand">
+        🧭 UNCERTAINTY QUEST
+    </div>
+
+    <div class="mission-count">
+        Mission 5 / 5
+    </div>
+
+</div>
+
+
+<div class="progress">
+
+    <div class="progress-bar"></div>
+
+</div>
+
+
+
+<!-- =====================================================
+     INTRO
+===================================================== -->
+
+<div class="card hero" id="intro">
+
+    <div class="emoji">
+        🤖
+    </div>
+
+    <h1>
+        THE RATIONAL DECISION AGENT
+    </h1>
+
+    <div class="subtitle">
+        Mission 5: From uncertainty to action
+    </div>
+
+    <div class="story">
+
+        <p>
+            You have investigated probability, Bayesian reasoning,
+            Bayesian networks, and causal interventions.
+        </p>
+
+        <p>
+            But an intelligent agent ultimately needs to do something.
+        </p>
+
+        <p>
+            It must choose an action.
+        </p>
+
+        <p>
+            The final question of the Uncertainty Quest is:
+        </p>
+
+        <div class="formula">
+            <strong>
+                Given what I know, what should I do?
+            </strong>
+        </div>
+
+        <p>
+            Welcome to the final mission.
+        </p>
+
+        <p>
+            Your task is to build a small
+            <strong>rational decision agent</strong>.
+        </p>
+
+        <button class="button"
+                onclick="startMission()">
+
+            BEGIN FINAL MISSION →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     PART 1
+===================================================== -->
+
+<div class="card"
+     id="part1"
+     style="display:none;">
+
+    <h2>
+        🧠 Challenge 1 — Probability is not enough
+    </h2>
+
+    <p>
+        Imagine an industrial system that may fail.
+    </p>
+
+    <p>
+        An intelligent agent estimates:
+    </p>
+
+    <div class="formula">
+        P(Failure | Evidence) = 0.30
+    </div>
+
+    <p>
+        The agent now has two possible actions:
+    </p>
+
+    <ul>
+
+        <li>
+            🔧 <strong>Repair</strong> the system now.
+        </li>
+
+        <li>
+            ⏳ <strong>Do nothing</strong> and continue operating.
+        </li>
+
+    </ul>
+
+    <p>
+        Is the probability of failure alone enough to decide?
+    </p>
+
+
+    <div class="question">
+
+        <h3>
+            What else does the agent need?
+        </h3>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q1"
+                   value="a">
+
+            Utilities, costs, or preferences associated with
+            the possible outcomes.
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q1"
+                   value="b">
+
+            Another random probability.
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q1"
+                   value="c">
+
+            The probability must become 1 before acting.
+
+        </label>
+
+
+        <button class="button"
+                onclick="checkQ1()">
+
+            CHECK ANSWER
+
+        </button>
+
+
+        <div class="feedback"
+             id="feedback1">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     PART 2
+===================================================== -->
+
+<div class="card"
+     id="part2"
+     style="display:none;">
+
+    <h2>
+        ⚖️ Challenge 2 — Actions have consequences
+    </h2>
+
+    <p>
+        Decision theory combines uncertainty about the world
+        with preferences over possible outcomes.
+    </p>
+
+    <p>
+        Consider the following decision structure:
+    </p>
+
+
+    <div class="decision-diagram">
+
+        <div class="decision-row">
+
+            <div class="decision-node action">
+                🔧 Repair
+            </div>
+
+            <div class="arrow">
+                →
+            </div>
+
+            <div class="decision-node outcome">
+                😊 Avoid failure
+            </div>
+
+        </div>
+
+        <br>
+
+        <div class="decision-row">
+
+            <div class="decision-node action">
+                ⏳ Do nothing
+            </div>
+
+            <div class="arrow">
+                →
+            </div>
+
+            <div class="decision-node outcome">
+                ⚠️ Possible failure
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <p>
+        But the world itself is uncertain.
+    </p>
+
+    <p>
+        The system may fail or it may not.
+    </p>
+
+
+    <div class="question">
+
+        <h3>
+            What does expected utility allow the agent to do?
+        </h3>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q2"
+                   value="a">
+
+            Compare possible actions by considering both
+            their probabilities and their utilities.
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q2"
+                   value="b">
+
+            Always choose the action with the smallest probability.
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q2"
+                   value="c">
+
+            Eliminate uncertainty before making any decision.
+
+        </label>
+
+
+        <button class="button"
+                onclick="checkQ2()">
+
+            CHECK ANSWER
+
+        </button>
+
+
+        <div class="feedback"
+             id="feedback2">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     PART 3
+===================================================== -->
+
+<div class="card"
+     id="part3"
+     style="display:none;">
+
+    <h2>
+        📐 Challenge 3 — Maximum Expected Utility
+    </h2>
+
+    <p>
+        The expected utility of an action is calculated by
+        weighting the utility of each possible outcome by
+        its probability.
+    </p>
+
+
+    <div class="formula">
+
+        EU(a)
+        =
+        Σ P(s | e) × U(a,s)
+
+    </div>
+
+
+    <p>
+        A rational agent chooses the action with the
+        highest expected utility.
+    </p>
+
+
+    <div class="question">
+
+        <h3>
+            Suppose:
+        </h3>
+
+        <p>
+            Action A has expected utility <strong>72</strong>.
+        </p>
+
+        <p>
+            Action B has expected utility <strong>54</strong>.
+        </p>
+
+
+        <h3>
+            Which action does the MEU agent choose?
+        </h3>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q3"
+                   value="a">
+
+            Action A
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q3"
+                   value="b">
+
+            Action B
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q3"
+                   value="c">
+
+            The agent cannot choose because uncertainty exists.
+
+        </label>
+
+
+        <button class="button"
+                onclick="checkQ3()">
+
+            CHECK ANSWER
+
+        </button>
+
+
+        <div class="feedback"
+             id="feedback3">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     CODE LAB
+===================================================== -->
+
+<div class="card"
+     id="codelab"
+     style="display:none;">
+
+    <div class="code-lab">
+
+        <h2>
+            💻 FINAL CODE LAB — Build the Decision Agent
+        </h2>
+
+        <p>
+            Now it is your turn to build the decision engine.
+        </p>
+
+        <p>
+            The system has two possible states:
+        </p>
+
+        <ul>
+
+            <li>
+                ⚠️ Failure
+            </li>
+
+            <li>
+                ✅ No failure
+            </li>
+
+        </ul>
+
+        <p>
+            The agent can choose between:
+        </p>
+
+        <ul>
+
+            <li>
+                🔧 Repair
+            </li>
+
+            <li>
+                ⏳ Do nothing
+            </li>
+
+        </ul>
+
+        <p>
+            Adjust the probability of failure and the utilities.
+            The browser will calculate the expected utility of
+            both actions.
+        </p>
+
+
+        <div class="controls">
+
+
+            <div class="control-card">
+
+                <label for="failureProbability">
+
+                    ⚠️ Probability of failure
+
+                </label>
+
+                <input
+                    type="number"
+                    id="failureProbability"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value="0.30">
+
+            </div>
+
+
+            <div class="control-card">
+
+                <label for="repairSuccess">
+
+                    🔧 Utility: Repair + No failure
+
+                </label>
+
+                <input
+                    type="number"
+                    id="repairSuccess"
+                    value="70">
+
+            </div>
+
+
+            <div class="control-card">
+
+                <label for="repairFailure">
+
+                    🔧 Utility: Repair + Failure
+
+                </label>
+
+                <input
+                    type="number"
+                    id="repairFailure"
+                    value="40">
+
+            </div>
+
+
+            <div class="control-card">
+
+                <label for="nothingSuccess">
+
+                    ⏳ Utility: Do nothing + No failure
+
+                </label>
+
+                <input
+                    type="number"
+                    id="nothingSuccess"
+                    value="100">
+
+            </div>
+
+
+            <div class="control-card">
+
+                <label for="nothingFailure">
+
+                    ⏳ Utility: Do nothing + Failure
+
+                </label>
+
+                <input
+                    type="number"
+                    id="nothingFailure"
+                    value="-100">
+
+            </div>
+
+
+        </div>
+
+
+        <button class="button"
+                onclick="runDecisionAgent()">
+
+            RUN DECISION AGENT →
+
+        </button>
+
+
+        <div class="result"
+             id="decisionResult">
+
+
+            <h3>
+                📊 Agent's evaluation
+            </h3>
+
+
+            <div class="utility-grid">
+
+
+                <div class="utility-card">
+
+                    <h3>
+                        🔧 Repair
+                    </h3>
+
+                    <div class="utility-value"
+                         id="repairEU">
+
+                        --
+
+                    </div>
+
+                    <div>
+                        Expected Utility
+                    </div>
+
+                </div>
+
+
+                <div class="utility-card">
+
+                    <h3>
+                        ⏳ Do Nothing
+                    </h3>
+
+                    <div class="utility-value"
+                         id="nothingEU">
+
+                        --
+
+                    </div>
+
+                    <div>
+                        Expected Utility
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="winner"
+                 id="decisionWinner">
+
+            </div>
+
+
+            <div class="calculation"
+                 id="calculation">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     REFLECTION
+===================================================== -->
+
+<div class="card reflection"
+     id="reflection"
+     style="display:none;">
+
+    <h2>
+        🧩 Final Reflection — What makes an agent rational?
+    </h2>
+
+
+    <p>
+        Throughout this quest you have encountered several
+        different forms of reasoning.
+    </p>
+
+
+    <ul>
+
+        <li>
+            <strong>Probability</strong> represents uncertainty.
+        </li>
+
+        <li>
+            <strong>Bayes' rule</strong> updates beliefs using evidence.
+        </li>
+
+        <li>
+            <strong>Bayesian networks</strong> represent structured
+            probabilistic dependencies.
+        </li>
+
+        <li>
+            <strong>Causal reasoning</strong> allows agents to
+            reason about interventions.
+        </li>
+
+        <li>
+            <strong>Decision theory</strong> connects uncertainty
+            with action.
+        </li>
+
+    </ul>
+
+
+    <div class="formula">
+
+        <strong>
+            Beliefs + Preferences → Rational Action
+        </strong>
+
+    </div>
+
+
+    <div class="question">
+
+        <h3>
+            Final Challenge
+        </h3>
+
+
+        <p>
+            An agent has two possible actions.
+            It chooses the action with the highest expected utility.
+        </p>
+
+        <p>
+            Does this mean that the agent is guaranteed to obtain
+            the best possible outcome?
+        </p>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q4"
+                   value="a">
+
+            Yes. Maximum expected utility guarantees the
+            best outcome.
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q4"
+                   value="b">
+
+            No. The agent makes the best decision according
+            to its probabilities, utilities, and available
+            information, but uncertainty remains.
+
+        </label>
+
+
+        <label class="option">
+
+            <input type="radio"
+                   name="q4"
+                   value="c">
+
+            Yes. Rational agents eliminate uncertainty.
+
+        </label>
+
+
+        <button class="button"
+                onclick="finishMission()">
+
+            COMPLETE THE UNCERTAINTY QUEST →
+
+        </button>
+
+
+        <div class="feedback"
+             id="feedback4">
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     COMPLETION
+===================================================== -->
+
+<div class="card completion"
+     id="completion">
+
+
+    <div class="emoji">
+        🏆
+    </div>
+
+
+    <h1>
+        UNCERTAINTY QUEST COMPLETE!
+    </h1>
+
+
+    <p class="subtitle">
+        You have completed all five missions.
+    </p>
+
+
+    <p>
+        You started by representing uncertainty with
+        probability.
+    </p>
+
+
+    <p>
+        You learned how evidence changes beliefs using
+        Bayes' rule.
+    </p>
+
+
+    <p>
+        You built probabilistic reasoning over networks.
+    </p>
+
+
+    <p>
+        You experimented with causal interventions.
+    </p>
+
+
+    <p>
+        And finally, you built an agent that uses
+        <strong>expected utility</strong> to choose an action.
+    </p>
+
+
+    <div class="formula">
+
+        <strong>
+            Probability → Bayes → Networks
+            → Causality → Decisions
+        </strong>
+
+    </div>
+
+
+    <p>
+        One final question remains:
+    </p>
+
+
+    <p>
+        <strong>
+            Can an intelligent agent ever make a decision
+            without uncertainty?
+        </strong>
+    </p>
+
+
+    <p>
+        That is a question worth carrying into the next lecture.
+    </p>
+
+
+    <button class="button"
+            onclick="returnToLecture()">
+
+        RETURN TO LECTURE 4 →
+
+    </button>
+
+</div>
+
+
+</div>
+
+
+
+<script>
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function startMission() {
+
+    document.getElementById("intro").style.display = "none";
+
+    document.getElementById("part1").style.display = "block";
+
+}
+
+
+/* =====================================================
+   QUESTION 1
+===================================================== */
+
+function checkQ1() {
+
+    const answer =
+        document.querySelector(
+            'input[name="q1"]:checked'
+        );
+
+    const feedback =
+        document.getElementById("feedback1");
+
+
+    feedback.style.display = "block";
+
+
+    if (answer && answer.value === "a") {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! Probability describes uncertainty, but a decision also requires preferences or utilities that describe how desirable or undesirable different outcomes are.";
+
+        setTimeout(function() {
+
+            document.getElementById("part2")
+                .style.display = "block";
+
+        }, 700);
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "Not quite. Knowing the probability of an event does not tell the agent which action is preferable. It also needs utilities or preferences.";
+
+    }
+
+}
+
+
+/* =====================================================
+   QUESTION 2
+===================================================== */
+
+function checkQ2() {
+
+    const answer =
+        document.querySelector(
+            'input[name="q2"]:checked'
+        );
+
+    const feedback =
+        document.getElementById("feedback2");
+
+
+    feedback.style.display = "block";
+
+
+    if (answer && answer.value === "a") {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Exactly. Expected utility combines beliefs about possible states with the utilities associated with the resulting outcomes.";
+
+        setTimeout(function() {
+
+            document.getElementById("part3")
+                .style.display = "block";
+
+        }, 700);
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "Think about what expected utility combines: uncertainty about states of the world and preferences over outcomes.";
+
+    }
+
+}
+
+
+/* =====================================================
+   QUESTION 3
+===================================================== */
+
+function checkQ3() {
+
+    const answer =
+        document.querySelector(
+            'input[name="q3"]:checked'
+        );
+
+    const feedback =
+        document.getElementById("feedback3");
+
+
+    feedback.style.display = "block";
+
+
+    if (answer && answer.value === "a") {
+
+        feedback.className =
+            "feedback correct";
+
+        feedback.innerHTML =
+            "✓ Correct! Maximum Expected Utility selects the action with the highest expected utility.";
+
+        setTimeout(function() {
+
+            document.getElementById("codelab")
+                .style.display = "block";
+
+        }, 700);
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+        feedback.innerHTML =
+            "The MEU principle says to choose the action whose expected utility is highest.";
+
+    }
+
+}
+
+
+/* =====================================================
+   DECISION AGENT
+===================================================== */
+
+function runDecisionAgent() {
+
+
+    /*
+     * Read probability.
+     */
+
+    const failureProbability =
+        parseFloat(
+            document.getElementById(
+                "failureProbability"
+            ).value
+        );
+
+
+    /*
+     * Validate probability.
+     */
+
+    if (
+        isNaN(failureProbability) ||
+        failureProbability < 0 ||
+        failureProbability > 1
+    ) {
+
+        alert(
+            "Please enter a failure probability between 0 and 1."
+        );
+
+        return;
+
+    }
+
+
+    const noFailureProbability =
+        1 - failureProbability;
+
+
+    /*
+     * Read utilities.
+     */
+
+    const repairSuccess =
+        parseFloat(
+            document.getElementById(
+                "repairSuccess"
+            ).value
+        );
+
+
+    const repairFailure =
+        parseFloat(
+            document.getElementById(
+                "repairFailure"
+            ).value
+        );
+
+
+    const nothingSuccess =
+        parseFloat(
+            document.getElementById(
+                "nothingSuccess"
+            ).value
+        );
+
+
+    const nothingFailure =
+        parseFloat(
+            document.getElementById(
+                "nothingFailure"
+            ).value
+        );
+
+
+    /*
+     * Calculate expected utility.
+     *
+     * EU(a) =
+     * P(Failure) * U(a, Failure)
+     * +
+     * P(No Failure) * U(a, No Failure)
+     */
+
+    const repairEU =
+        failureProbability * repairFailure
+        +
+        noFailureProbability * repairSuccess;
+
+
+    const nothingEU =
+        failureProbability * nothingFailure
+        +
+        noFailureProbability * nothingSuccess;
+
+
+    /*
+     * Display results.
+     */
+
+    document.getElementById(
+        "decisionResult"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "repairEU"
+    ).innerHTML =
+        repairEU.toFixed(2);
+
+
+    document.getElementById(
+        "nothingEU"
+    ).innerHTML =
+        nothingEU.toFixed(2);
+
+
+    /*
+     * Determine MEU action.
+     */
+
+    const winner =
+        document.getElementById(
+            "decisionWinner"
+        );
+
+
+    if (repairEU > nothingEU) {
+
+        winner.innerHTML =
+            "🤖 MEU AGENT CHOOSES: 🔧 REPAIR";
+
+    }
+
+    else if (nothingEU > repairEU) {
+
+        winner.innerHTML =
+            "🤖 MEU AGENT CHOOSES: ⏳ DO NOTHING";
+
+    }
+
+    else {
+
+        winner.innerHTML =
+            "🤖 BOTH ACTIONS HAVE THE SAME EXPECTED UTILITY";
+
+    }
+
+
+    /*
+     * Show the actual calculation.
+     */
+
+    const calculation =
+        document.getElementById(
+            "calculation"
+        );
+
+
+    calculation.innerHTML =
+
+        "P(Failure) = " +
+        failureProbability.toFixed(2) +
+
+        "<br>" +
+
+        "P(No Failure) = " +
+        noFailureProbability.toFixed(2) +
+
+        "<br><br>" +
+
+        "EU(Repair) = " +
+
+        failureProbability.toFixed(2) +
+        " × " +
+        repairFailure +
+        " + " +
+
+        noFailureProbability.toFixed(2) +
+        " × " +
+        repairSuccess +
+
+        "<br>" +
+
+        "= " +
+        repairEU.toFixed(2) +
+
+        "<br><br>" +
+
+        "EU(Do Nothing) = " +
+
+        failureProbability.toFixed(2) +
+        " × " +
+        nothingFailure +
+        " + " +
+
+        noFailureProbability.toFixed(2) +
+        " × " +
+        nothingSuccess +
+
+        "<br>" +
+
+        "= " +
+        nothingEU.toFixed(2);
+
+    
+    /*
+     * Reveal reflection after running
+     * the decision engine.
+     */
+
+    document.getElementById(
+        "reflection"
+    ).style.display = "block";
+
+}
+
+
+/* =====================================================
+   FINAL QUESTION
+===================================================== */
+
+function finishMission() {
+
+
+    const answer =
+        document.querySelector(
+            'input[name="q4"]:checked'
+        );
+
+
+    const feedback =
+        document.getElementById(
+            "feedback4"
+        );
+
+
+    feedback.style.display = "block";
+
+
+    if (answer && answer.value === "b") {
+
+        feedback.className =
+            "feedback correct";
+
+
+        feedback.innerHTML =
+            "✓ Exactly. Rational decision-making does not eliminate uncertainty. It selects the action with the highest expected utility given the agent's beliefs, preferences, and available information.";
+
+
+        setTimeout(function() {
+
+            document.getElementById(
+                "reflection"
+            ).style.display = "none";
+
+
+            document.getElementById(
+                "completion"
+            ).style.display = "block";
+
+
+        }, 900);
+
+    }
+
+    else {
+
+        feedback.className =
+            "feedback incorrect";
+
+
+        feedback.innerHTML =
+            "Remember: expected utility provides a criterion for choosing under uncertainty. It does not guarantee that the world will produce the preferred outcome.";
+
+    }
+
+}
+
+
+/* =====================================================
+   RETURN TO LECTURE
+===================================================== */
+
+function returnToLecture() {
+
+    window.location.href =
+        "https://www.canvas.umu.se/courses/22669/pages/lecture-4-probabilistic-reasoning-and-reasoning-under-uncertainty";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
