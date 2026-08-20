@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ML Quest – Mission 5: The Representation Lab</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fa;
+    color: #29445f;
+}
+
+.game {
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 28px 22px 50px;
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: bold;
+    color: #234e73;
+}
+
+.mission {
+    font-size: 14px;
+    color: #607d98;
+}
+
+.progress {
+    height: 8px;
+    background: #dce5ec;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 26px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 100%;
+    background: #2d587d;
+}
+
+/* =========================
+   CARDS
+   ========================= */
+
+.card {
+    background: white;
+    border-radius: 16px;
+    padding: 34px;
+    box-shadow: 0 5px 18px rgba(30, 60, 90, 0.08);
+    margin-bottom: 22px;
+}
+
+h1 {
+    text-align: center;
+    color: #234e73;
+    font-size: 32px;
+    margin: 10px 0 6px;
+}
+
+h2 {
+    color: #234e73;
+    margin-top: 0;
+}
+
+h3 {
+    color: #315f83;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #607d98;
+    margin-bottom: 28px;
+}
+
+.intro {
+    text-align: center;
+    max-width: 800px;
+    margin: auto;
+    line-height: 1.6;
+}
+
+/* =========================
+   CONCEPT
+   ========================= */
+
+.concept {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 25px;
+}
+
+.concept-box {
+    background: #f7f9fb;
+    border: 1px solid #dce5ec;
+    border-radius: 12px;
+    padding: 22px;
+    line-height: 1.55;
+}
+
+.concept-box strong {
+    color: #234e73;
+}
+
+/* =========================
+   FORMULA
+   ========================= */
+
+.formula {
+    background: #eef4f8;
+    border-left: 5px solid #2d587d;
+    padding: 18px;
+    margin: 24px 0;
+    text-align: center;
+    font-size: 19px;
+    font-family: Georgia, serif;
+}
+
+.formula small {
+    display: block;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    margin-top: 10px;
+    color: #607d98;
+}
+
+/* =========================
+   LAB
+   ========================= */
+
+.lab {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 25px;
+    margin-top: 25px;
+}
+
+.panel {
+    background: #f7f9fb;
+    border: 1px solid #dce5ec;
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.control {
+    margin: 24px 0;
+}
+
+.control label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 9px;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #2d587d;
+}
+
+.value {
+    color: #2d587d;
+}
+
+canvas {
+    width: 100%;
+    background: white;
+    border: 1px solid #d5dfe7;
+    border-radius: 8px;
+    display: block;
+}
+
+.status {
+    text-align: center;
+    margin-top: 18px;
+    font-weight: bold;
+    color: #315f83;
+    min-height: 24px;
+}
+
+/* =========================
+   BUTTONS
+   ========================= */
+
+.button-area {
+    text-align: center;
+    margin-top: 22px;
+}
+
+button.primary {
+    background: #2d587d;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    padding: 13px 23px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button.primary:hover {
+    background: #234765;
+}
+
+button.secondary {
+    background: white;
+    color: #2d587d;
+    border: 1px solid #2d587d;
+    border-radius: 7px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 5px;
+}
+
+button.secondary:hover {
+    background: #eef4f8;
+}
+
+/* =========================
+   QUESTIONS
+   ========================= */
+
+.question {
+    background: #f7f9fb;
+    border: 1px solid #dce5ec;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 18px;
+}
+
+.question p {
+    line-height: 1.55;
+}
+
+.option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: white;
+    border: 1px solid #cbd8e2;
+    border-radius: 8px;
+    padding: 13px 15px;
+    margin: 9px 0;
+    cursor: pointer;
+    font-size: 15px;
+    color: #29445f;
+}
+
+.option:hover {
+    background: #eef4f8;
+    border-color: #2d587d;
+}
+
+.option.correct {
+    background: #e8f5ed;
+    border-color: #4b8b62;
+}
+
+.option.incorrect {
+    background: #f9eaea;
+    border-color: #b85c5c;
+}
+
+.feedback {
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 8px;
+    display: none;
+    line-height: 1.5;
+}
+
+.feedback.show {
+    display: block;
+}
+
+/* =========================
+   SCORE
+   ========================= */
+
+.score-box {
+    text-align: center;
+    background: #eef4f8;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
+}
+
+.score {
+    font-size: 28px;
+    font-weight: bold;
+    color: #234e73;
+}
+
+/* =========================
+   REFLECTION
+   ========================= */
+
+.reflection {
+    display: none;
+    margin-top: 25px;
+    background: #fff7dc;
+    border-left: 5px solid #e4ae27;
+    padding: 20px;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.final-badge {
+    text-align: center;
+    font-size: 45px;
+    margin: 10px 0;
+}
+
+@media (max-width: 800px) {
+
+    .lab,
+    .concept {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 22px;
+    }
+
+    h1 {
+        font-size: 27px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="game">
+
+    <!-- =========================
+         HEADER
+         ========================= -->
+
+    <div class="header">
+
+        <div class="brand">
+            🧠 ML QUEST
+        </div>
+
+        <div class="mission">
+            Mission 5 / 5
+        </div>
+
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+
+    <!-- =========================
+         INTRO
+         ========================= -->
+
+    <div class="card">
+
+        <h1>🧩 The Representation Lab</h1>
+
+        <div class="subtitle">
+            What if we could describe the same data with fewer dimensions?
+        </div>
+
+        <div class="intro">
+
+            <p>
+                You have reached the final mission of ML Quest.
+            </p>
+
+            <p>
+                During the previous missions you explored how machine learning
+                can <strong>predict values</strong>, <strong>predict classes</strong>,
+                and <strong>discover groups</strong>.
+            </p>
+
+            <p>
+                But datasets can contain many features. Sometimes we want to
+                represent the important structure of the data using fewer
+                dimensions.
+            </p>
+
+            <p>
+                Your final challenge is to explore the idea of
+                <strong>dimensionality reduction</strong>.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         CONCEPT
+         ========================= -->
+
+    <div class="card">
+
+        <h2>🧠 One dataset, different representations</h2>
+
+        <p>
+            Imagine that every observation in a dataset is described by
+            several features.
+        </p>
+
+        <div class="concept">
+
+            <div class="concept-box">
+
+                <strong>Original representation</strong>
+
+                <p>
+                    An observation might be represented by many variables:
+                </p>
+
+                <p>
+                    x = (x₁, x₂, x₃, ..., xₙ)
+                </p>
+
+                <p>
+                    This representation can contain useful information, but
+                    it can also be difficult to visualize and process.
+                </p>
+
+            </div>
+
+
+            <div class="concept-box">
+
+                <strong>Reduced representation</strong>
+
+                <p>
+                    A dimensionality-reduction method tries to represent the
+                    observations using fewer variables:
+                </p>
+
+                <p>
+                    z = (z₁, z₂, ..., zₖ)
+                </p>
+
+                <p>
+                    The goal is to preserve important structure while using
+                    fewer dimensions.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         PCA LAB
+         ========================= -->
+
+    <div class="card">
+
+        <h2>🔬 Dimensionality Reduction Lab</h2>
+
+        <p>
+            The visualization below represents a dataset with several
+            underlying dimensions. The slider controls how much of the
+            available variation is retained in the reduced representation.
+        </p>
+
+        <div class="formula">
+
+            Data → transformation → lower-dimensional representation
+
+            <small>
+                A useful representation can make complex data easier to
+                visualize and analyze.
+            </small>
+
+        </div>
+
+
+        <div class="lab">
+
+            <!-- CONTROLS -->
+
+            <div class="panel">
+
+                <h3>⚙️ Representation</h3>
+
+                <div class="control">
+
+                    <label>
+
+                        Components retained
+
+                        <span
+                            class="value"
+                            id="componentValue">
+
+                            2
+
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="range"
+                        id="componentSlider"
+                        min="1"
+                        max="5"
+                        step="1"
+                        value="2">
+
+                </div>
+
+
+                <div class="control">
+
+                    <label>
+
+                        Data complexity
+
+                        <span
+                            class="value"
+                            id="complexityValue">
+
+                            3
+
+                        </span>
+
+                    </label>
+
+                    <input
+                        type="range"
+                        id="complexitySlider"
+                        min="1"
+                        max="5"
+                        step="1"
+                        value="3">
+
+                </div>
+
+
+                <div class="status"
+                     id="representationStatus">
+
+                    Two components retained.
+
+                </div>
+
+
+                <div class="algorithm">
+
+                    <strong>
+                        Think like a data scientist:
+                    </strong>
+
+                    <p>
+                        Reducing dimensions can make data easier to visualize,
+                        but reducing too aggressively can remove information.
+                    </p>
+
+                </div>
+
+
+                <div class="button-area">
+
+                    <button
+                        class="primary"
+                        onclick="applyReduction()">
+
+                        ▶ APPLY REPRESENTATION
+
+                    </button>
+
+                    <button
+                        class="secondary"
+                        onclick="resetLab()">
+
+                        ↺ RESET
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- VISUALIZATION -->
+
+            <div class="panel">
+
+                <h3>
+                    📊 Data representation
+                </h3>
+
+                <canvas
+                    id="representationCanvas"
+                    width="650"
+                    height="420">
+                </canvas>
+
+                <p
+                    style="
+                    font-size:14px;
+                    color:#607d98;
+                    margin-top:12px;">
+
+                    The visible structure represents how much of the original
+                    data variation is retained in the reduced representation.
+
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         FINAL CHALLENGE
+         ========================= -->
+
+    <div class="card">
+
+        <h2>🏁 Final ML Quest Challenge</h2>
+
+        <p>
+            You have now explored several fundamental machine-learning ideas.
+            Test your understanding before completing the quest.
+        </p>
+
+
+        <!-- QUESTION 1 -->
+
+        <div class="question">
+
+            <strong>
+                Question 1
+            </strong>
+
+            <p>
+                What is one important motivation for dimensionality reduction?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 1)">
+
+                A. To represent data using fewer dimensions while preserving
+                important structure.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 1)">
+
+                B. To guarantee that no information is ever lost.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 1)">
+
+                C. To turn every unsupervised problem into a supervised one.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 1)">
+
+                D. To increase the number of features automatically.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback1">
+            </div>
+
+        </div>
+
+
+        <!-- QUESTION 2 -->
+
+        <div class="question">
+
+            <strong>
+                Question 2
+            </strong>
+
+            <p>
+                What is a possible disadvantage of reducing the number of
+                dimensions too aggressively?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 2)">
+
+                A. Important information or structure may be lost.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 2)">
+
+                B. The dataset automatically becomes labeled.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 2)">
+
+                C. The model will always become more accurate.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 2)">
+
+                D. The number of observations becomes zero.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback2">
+            </div>
+
+        </div>
+
+
+        <!-- QUESTION 3 -->
+
+        <div class="question">
+
+            <strong>
+                Question 3
+            </strong>
+
+            <p>
+                Which of the following best describes the relationship between
+                the original and reduced representations?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 3)">
+
+                A. They must always contain exactly the same number of
+                dimensions.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 3)">
+
+                B. The reduced representation uses fewer dimensions to capture
+                important structure in the original data.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 3)">
+
+                C. The reduced representation always contains more information.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 3)">
+
+                D. Dimensionality reduction removes the need for data.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback3">
+            </div>
+
+        </div>
+
+
+        <!-- QUESTION 4 -->
+
+        <div class="question">
+
+            <strong>
+                Question 4
+            </strong>
+
+            <p>
+                Which statement best summarizes the difference between
+                supervised and unsupervised learning?
+            </p>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 4)">
+
+                A. Supervised learning never uses data.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, true, 4)">
+
+                B. Supervised learning uses target information, while
+                unsupervised learning searches for structure without predefined
+                target labels.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 4)">
+
+                C. Unsupervised learning can only be used for images.
+
+            </button>
+
+            <button
+                class="option"
+                onclick="answer(this, false, 4)">
+
+                D. Supervised and unsupervised learning are exactly the same.
+
+            </button>
+
+            <div
+                class="feedback"
+                id="feedback4">
+            </div>
+
+        </div>
+
+
+        <!-- SCORE -->
+
+        <div class="score-box">
+
+            <div>
+                Your final ML Quest score
+            </div>
+
+            <div class="score">
+
+                <span id="scoreNumber">
+                    0
+                </span>
+
+                / 4
+
+            </div>
+
+        </div>
+
+
+        <div class="button-area">
+
+            <button
+                class="primary"
+                onclick="finishMission()">
+
+                🏆 COMPLETE ML QUEST
+
+            </button>
+
+        </div>
+
+
+        <!-- =========================
+             FINAL REFLECTION
+             ========================= -->
+
+        <div
+            class="reflection"
+            id="reflection">
+
+            <div class="final-badge">
+                🏆
+            </div>
+
+            <h3 style="text-align:center;">
+                ML QUEST COMPLETE!
+            </h3>
+
+            <p>
+                Congratulations. You have completed all five missions.
+            </p>
+
+            <p>
+                You started by asking what machine learning is and then
+                explored several different ways that a machine-learning system
+                can learn from data.
+            </p>
+
+            <p>
+                You worked with:
+            </p>
+
+            <ul>
+
+                <li>
+                    <strong>Supervised learning</strong> — learning from
+                    examples with target information.
+                </li>
+
+                <li>
+                    <strong>Regression</strong> — predicting continuous values.
+                </li>
+
+                <li>
+                    <strong>Classification</strong> — predicting classes or
+                    class probabilities.
+                </li>
+
+                <li>
+                    <strong>Unsupervised learning</strong> — discovering
+                    structure without predefined labels.
+                </li>
+
+                <li>
+                    <strong>Clustering</strong> — grouping observations based
+                    on similarity.
+                </li>
+
+                <li>
+                    <strong>Dimensionality reduction</strong> — finding a more
+                    compact representation of data.
+                </li>
+
+            </ul>
+
+            <p>
+                But there is one final idea to remember:
+                <strong>machine learning does not automatically tell us what
+                the data mean.</strong>
+            </p>
+
+            <p>
+                A model can discover patterns, make predictions, or construct
+                representations. Understanding whether those patterns are
+                useful, meaningful, or appropriate requires us to connect the
+                model to the problem we are trying to solve.
+            </p>
+
+            <p>
+                <strong>
+                    Next stop: Neural Networks and Deep Learning.
+                </strong>
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   REPRESENTATION LAB
+   ========================================= */
+
+const canvas =
+    document.getElementById(
+        "representationCanvas"
+    );
+
+const ctx =
+    canvas.getContext("2d");
+
+
+const componentSlider =
+    document.getElementById(
+        "componentSlider"
+    );
+
+const complexitySlider =
+    document.getElementById(
+        "complexitySlider"
+    );
+
+
+const componentValue =
+    document.getElementById(
+        "componentValue"
+    );
+
+const complexityValue =
+    document.getElementById(
+        "complexityValue"
+    );
+
+
+const status =
+    document.getElementById(
+        "representationStatus"
+    );
+
+
+/* =========================================
+   DRAW REPRESENTATION
+   ========================================= */
+
+function drawRepresentation() {
+
+    const components =
+        parseInt(
+            componentSlider.value
+        );
+
+    const complexity =
+        parseInt(
+            complexitySlider.value
+        );
+
+
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    /*
+     * Background coordinate system
+     */
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+        55,
+        370
+    );
+
+    ctx.lineTo(
+        610,
+        370
+    );
+
+    ctx.moveTo(
+        55,
+        370
+    );
+
+    ctx.lineTo(
+        55,
+        40
+    );
+
+    ctx.strokeStyle =
+        "#9aabb8";
+
+    ctx.lineWidth = 1;
+
+    ctx.stroke();
+
+
+    /*
+     * Generate an abstract dataset.
+     *
+     * More components retained =
+     * more of the original structure
+     * becomes visible.
+     */
+
+    const information =
+        components / 5;
+
+
+    const spread =
+        35 +
+        information * 70;
+
+
+    const noise =
+        (1 - information) * 35
+        +
+        complexity * 4;
+
+
+    /*
+     * Main data structure
+     */
+
+    for (
+        let i = 0;
+        i < 100;
+        i++
+    ) {
+
+        const angle =
+            i * 0.18;
+
+        const radius =
+            70
+            +
+            Math.sin(
+                i * 0.35
+            ) * spread
+            +
+            (Math.random() - 0.5)
+            * noise;
+
+
+        const x =
+            330
+            +
+            Math.cos(angle)
+            * radius;
+
+
+        const y =
+            205
+            +
+            Math.sin(angle)
+            * radius
+            * 0.55;
+
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            3.5,
+            0,
+            Math.PI * 2
+        );
+
+        ctx.fillStyle =
+            "#2d587d";
+
+        ctx.fill();
+
+    }
+
+
+    /*
+     * Add a second structure when
+     * more components are retained.
+     */
+
+    if (
+        components >= 3
+    ) {
+
+        for (
+            let i = 0;
+            i < 45;
+            i++
+        ) {
+
+            const x =
+                180
+                +
+                Math.random()
+                * 300;
+
+            const y =
+                100
+                +
+                Math.random()
+                * 190;
+
+            ctx.beginPath();
+
+            ctx.arc(
+                x,
+                y,
+                3,
+                0,
+                Math.PI * 2
+            );
+
+            ctx.fillStyle =
+                "#6d8293";
+
+            ctx.fill();
+
+        }
+
+    }
+
+
+    /*
+     * Information indicator
+     */
+
+    const retained =
+        Math.round(
+            information * 100
+        );
+
+
+    ctx.fillStyle =
+        "#29445f";
+
+    ctx.font =
+        "15px Arial";
+
+
+    ctx.fillText(
+        "Approximate structure retained: "
+        +
+        retained
+        +
+        "%",
+        75,
+        35
+    );
+
+
+    /*
+     * Labels
+     */
+
+    ctx.fillStyle =
+        "#607d98";
+
+    ctx.font =
+        "13px Arial";
+
+
+    ctx.fillText(
+        "Reduced dimension 1",
+        260,
+        405
+    );
+
+
+    ctx.save();
+
+    ctx.translate(
+        20,
+        245
+    );
+
+    ctx.rotate(
+        -Math.PI / 2
+    );
+
+    ctx.fillText(
+        "Reduced dimension 2",
+        0,
+        0
+    );
+
+    ctx.restore();
+
+}
+
+
+/* =========================================
+   APPLY REDUCTION
+   ========================================= */
+
+function applyReduction() {
+
+    const components =
+        parseInt(
+            componentSlider.value
+        );
+
+
+    if (
+        components === 1
+    ) {
+
+        status.textContent =
+            "Very compact representation: much of the original variation may be lost.";
+
+    }
+
+    else if (
+        components === 2
+    ) {
+
+        status.textContent =
+            "Two components: a compact representation suitable for visualization.";
+
+    }
+
+    else if (
+        components === 3
+    ) {
+
+        status.textContent =
+            "Three components: more structure is retained, but the representation is less compact.";
+
+    }
+
+    else if (
+        components === 4
+    ) {
+
+        status.textContent =
+            "Four components: most of the structure is retained.";
+
+    }
+
+    else {
+
+        status.textContent =
+            "Five components: very little dimensional reduction has occurred.";
+
+    }
+
+
+    drawRepresentation();
+
+}
+
+
+/* =========================================
+   RESET
+   ========================================= */
+
+function resetLab() {
+
+    componentSlider.value =
+        2;
+
+    complexitySlider.value =
+        3;
+
+
+    componentValue.textContent =
+        "2";
+
+    complexityValue.textContent =
+        "3";
+
+
+    status.textContent =
+        "Two components retained.";
+
+
+    drawRepresentation();
+
+}
+
+
+/* =========================================
+   SLIDERS
+   ========================================= */
+
+componentSlider.addEventListener(
+    "input",
+    function() {
+
+        componentValue.textContent =
+            componentSlider.value;
+
+        drawRepresentation();
+
+    }
+);
+
+
+complexitySlider.addEventListener(
+    "input",
+    function() {
+
+        complexityValue.textContent =
+            complexitySlider.value;
+
+        drawRepresentation();
+
+    }
+);
+
+
+/* =========================================
+   INITIAL DRAW
+   ========================================= */
+
+drawRepresentation();
+
+
+/* =========================================
+   QUESTIONS
+   ========================================= */
+
+let score = 0;
+
+
+const answered = {
+
+    1: false,
+    2: false,
+    3: false,
+    4: false
+
+};
+
+
+function answer(
+    button,
+    correct,
+    questionNumber
+) {
+
+    if (
+        answered[
+            questionNumber
+        ]
+    ) {
+
+        return;
+
+    }
+
+
+    answered[
+        questionNumber
+    ] = true;
+
+
+    const feedback =
+        document.getElementById(
+            "feedback"
+            +
+            questionNumber
+        );
+
+
+    const buttons =
+        button
+        .parentElement
+        .querySelectorAll(
+            ".option"
+        );
+
+
+    buttons.forEach(
+        function(b) {
+
+            b.disabled = true;
+
+        }
+    );
+
+
+    if (correct) {
+
+        button.classList.add(
+            "correct"
+        );
+
+
+        feedback.innerHTML =
+            "✅ Correct! You have identified the key idea.";
+
+
+        feedback.style.background =
+            "#e8f5ed";
+
+
+        score++;
+
+
+        document.getElementById(
+            "scoreNumber"
+        ).textContent =
+            score;
+
+    }
+
+    else {
+
+        button.classList.add(
+            "incorrect"
+        );
+
+
+        feedback.innerHTML =
+            "❌ Not quite. Think about what dimensionality reduction is trying to preserve.";
+
+        feedback.style.background =
+            "#f9eaea";
+
+    }
+
+
+    feedback.classList.add(
+        "show"
+    );
+
+}
+
+
+/* =========================================
+   COMPLETE ML QUEST
+   ========================================= */
+
+function finishMission() {
+
+    const reflection =
+        document.getElementById(
+            "reflection"
+        );
+
+
+    reflection.style.display =
+        "block";
+
+
+    reflection.scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "center"
+
+    });
+
+}
+
+</script>
+
+</body>
+</html>
