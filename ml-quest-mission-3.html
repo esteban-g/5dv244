@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML Quest – Mission 3: The Classification Lab</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fa;
+        color: #29445f;
+    }
+
+    .game {
+        max-width: 1050px;
+        margin: 0 auto;
+        padding: 28px 22px 50px;
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+
+    .brand {
+        font-size: 20px;
+        font-weight: bold;
+        color: #234e73;
+    }
+
+    .mission {
+        font-size: 14px;
+        color: #607d98;
+    }
+
+    .progress {
+        height: 8px;
+        background: #dce5ec;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 26px;
+    }
+
+    .progress-bar {
+        width: 60%;
+        height: 100%;
+        background: #2d587d;
+    }
+
+    /* Main card */
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 34px;
+        box-shadow: 0 5px 18px rgba(30, 60, 90, 0.08);
+        margin-bottom: 22px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #234e73;
+        font-size: 32px;
+        margin: 10px 0 6px;
+    }
+
+    h2 {
+        color: #234e73;
+        margin-top: 0;
+    }
+
+    h3 {
+        color: #315f83;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        color: #607d98;
+        margin-bottom: 28px;
+    }
+
+    .intro {
+        text-align: center;
+        max-width: 800px;
+        margin: auto;
+        line-height: 1.6;
+    }
+
+    /* Formula */
+    .formula {
+        background: #eef4f8;
+        border-left: 5px solid #2d587d;
+        padding: 18px;
+        margin: 24px 0;
+        text-align: center;
+        font-size: 20px;
+        font-family: Georgia, serif;
+    }
+
+    .formula small {
+        display: block;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        margin-top: 8px;
+        color: #607d98;
+    }
+
+    /* Lab layout */
+    .lab {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 25px;
+        margin-top: 25px;
+    }
+
+    .panel {
+        background: #f7f9fb;
+        border: 1px solid #dce5ec;
+        border-radius: 12px;
+        padding: 22px;
+    }
+
+    .control {
+        margin: 22px 0;
+    }
+
+    .control label {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 8px;
+    }
+
+    input[type="range"] {
+        width: 100%;
+        accent-color: #2d587d;
+    }
+
+    .value {
+        color: #2d587d;
+    }
+
+    canvas {
+        width: 100%;
+        max-width: 100%;
+        background: white;
+        border: 1px solid #d5dfe7;
+        border-radius: 8px;
+        display: block;
+    }
+
+    .prediction {
+        margin-top: 20px;
+        background: #eaf3f9;
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .probability {
+        font-size: 32px;
+        font-weight: bold;
+        color: #234e73;
+        margin: 8px 0;
+    }
+
+    .decision {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    /* Challenge */
+    .question {
+        background: #f7f9fb;
+        border: 1px solid #dce5ec;
+        border-radius: 12px;
+        padding: 22px;
+        margin-top: 18px;
+    }
+
+    .question p {
+        line-height: 1.55;
+    }
+
+    .option {
+        display: block;
+        width: 100%;
+        text-align: left;
+        background: white;
+        border: 1px solid #cbd8e2;
+        border-radius: 8px;
+        padding: 13px 15px;
+        margin: 9px 0;
+        cursor: pointer;
+        font-size: 15px;
+        color: #29445f;
+        transition: 0.2s;
+    }
+
+    .option:hover {
+        background: #eef4f8;
+        border-color: #2d587d;
+    }
+
+    .option.correct {
+        background: #e8f5ed;
+        border-color: #4b8b62;
+    }
+
+    .option.incorrect {
+        background: #f9eaea;
+        border-color: #b85c5c;
+    }
+
+    .feedback {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 8px;
+        display: none;
+        line-height: 1.5;
+    }
+
+    .feedback.show {
+        display: block;
+    }
+
+    /* Score */
+    .score-box {
+        text-align: center;
+        background: #eef4f8;
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 25px;
+    }
+
+    .score {
+        font-size: 28px;
+        font-weight: bold;
+        color: #234e73;
+    }
+
+    /* Buttons */
+    .button-area {
+        text-align: center;
+        margin-top: 28px;
+    }
+
+    button.primary {
+        background: #2d587d;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 13px 23px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button.primary:hover {
+        background: #234765;
+    }
+
+    .reflection {
+        display: none;
+        margin-top: 25px;
+        background: #fff7dc;
+        border-left: 5px solid #e4ae27;
+        padding: 20px;
+        border-radius: 8px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 750px) {
+        .lab {
+            grid-template-columns: 1fr;
+        }
+
+        .card {
+            padding: 22px;
+        }
+
+        h1 {
+            font-size: 27px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="game">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="brand">🧠 ML QUEST</div>
+        <div class="mission">Mission 3 / 5</div>
+    </div>
+
+    <div class="progress">
+        <div class="progress-bar"></div>
+    </div>
+
+    <!-- INTRO -->
+    <div class="card">
+
+        <h1>🎯 The Classification Lab</h1>
+
+        <div class="subtitle">
+            Turn model outputs into decisions.
+        </div>
+
+        <div class="intro">
+
+            <p>
+                You have moved from predicting <strong>continuous values</strong>
+                to making decisions about <strong>classes</strong>.
+            </p>
+
+            <p>
+                Your task in this mission is to explore how a classifier can
+                transform an input into a probability and then into a decision.
+            </p>
+
+            <p>
+                Before answering the questions, experiment with the classifier
+                below. Change its parameters and observe how the probability
+                and decision boundary change.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- CODE-LIKE INTERACTIVE LAB -->
+    <div class="card">
+
+        <h2>🔬 Classification Lab</h2>
+
+        <p>
+            Consider a binary classification problem. The classifier first
+            computes a score:
+        </p>
+
+        <div class="formula">
+            z = wx + b
+            <br><br>
+            p(y = 1 | x) = σ(z)
+            <br>
+            σ(z) = 1 / (1 + e<sup>−z</sup>)
+            <small>
+                The sigmoid function converts the model output into a value between 0 and 1.
+            </small>
+        </div>
+
+        <div class="lab">
+
+            <!-- CONTROLS -->
+            <div class="panel">
+
+                <h3>⚙️ Model parameters</h3>
+
+                <div class="control">
+                    <label>
+                        Weight (w)
+                        <span class="value" id="weightValue">1.0</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="weight"
+                        min="-5"
+                        max="5"
+                        step="0.1"
+                        value="1">
+                </div>
+
+                <div class="control">
+                    <label>
+                        Bias (b)
+                        <span class="value" id="biasValue">0.0</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="bias"
+                        min="-5"
+                        max="5"
+                        step="0.1"
+                        value="0">
+                </div>
+
+                <div class="control">
+                    <label>
+                        Input x
+                        <span class="value" id="inputValue">1.0</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="input"
+                        min="-5"
+                        max="5"
+                        step="0.1"
+                        value="1">
+                </div>
+
+                <div class="control">
+                    <label>
+                        Decision threshold
+                        <span class="value" id="thresholdValue">0.50</span>
+                    </label>
+
+                    <input
+                        type="range"
+                        id="threshold"
+                        min="0.1"
+                        max="0.9"
+                        step="0.05"
+                        value="0.5">
+                </div>
+
+                <div class="prediction">
+
+                    <div>Model score</div>
+
+                    <div class="probability" id="score">
+                        0.73
+                    </div>
+
+                    <div>
+                        p(y = 1 | x)
+                    </div>
+
+                    <hr>
+
+                    <div class="decision" id="decision">
+                        Class 1
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- VISUALIZATION -->
+            <div class="panel">
+
+                <h3>📈 Sigmoid function</h3>
+
+                <canvas id="graph" width="450" height="300"></canvas>
+
+                <p style="font-size:14px; color:#607d98; margin-top:12px;">
+                    The horizontal axis represents the model score z.
+                    The vertical axis represents the probability of class 1.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUESTIONS -->
+    <div class="card">
+
+        <h2>🧩 Classification Challenge</h2>
+
+        <p>
+            Now that you have experimented with the classifier, test your
+            understanding.
+        </p>
+
+
+        <!-- QUESTION 1 -->
+        <div class="question">
+
+            <strong>Question 1</strong>
+
+            <p>
+                Why is the sigmoid function useful for binary classification?
+            </p>
+
+            <button class="option" onclick="answer(this, true, 1)">
+                A. It converts the model score into a value between 0 and 1.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 1)">
+                B. It guarantees that every prediction is correct.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 1)">
+                C. It removes the need for training data.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 1)">
+                D. It automatically creates new features.
+            </button>
+
+            <div class="feedback" id="feedback1"></div>
+
+        </div>
+
+
+        <!-- QUESTION 2 -->
+        <div class="question">
+
+            <strong>Question 2</strong>
+
+            <p>
+                Suppose the classifier produces
+                <strong>p(y = 1 | x) = 0.82</strong>.
+                With a decision threshold of 0.5, what class would normally
+                be selected?
+            </p>
+
+            <button class="option" onclick="answer(this, true, 2)">
+                A. Class 1
+            </button>
+
+            <button class="option" onclick="answer(this, false, 2)">
+                B. Class 0
+            </button>
+
+            <button class="option" onclick="answer(this, false, 2)">
+                C. Both classes equally
+            </button>
+
+            <button class="option" onclick="answer(this, false, 2)">
+                D. No prediction can be made
+            </button>
+
+            <div class="feedback" id="feedback2"></div>
+
+        </div>
+
+
+        <!-- QUESTION 3 -->
+        <div class="question">
+
+            <strong>Question 3</strong>
+
+            <p>
+                You increase the decision threshold from 0.5 to 0.8.
+                What happens to a prediction with probability 0.7?
+            </p>
+
+            <button class="option" onclick="answer(this, true, 3)">
+                A. It changes from Class 1 to Class 0.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 3)">
+                B. It changes from Class 0 to Class 1.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 3)">
+                C. The probability automatically becomes 0.8.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 3)">
+                D. The sigmoid function stops working.
+            </button>
+
+            <div class="feedback" id="feedback3"></div>
+
+        </div>
+
+
+        <!-- QUESTION 4 -->
+        <div class="question">
+
+            <strong>Question 4</strong>
+
+            <p>
+                Which statement best describes the difference between the
+                model's probability and the final class decision?
+            </p>
+
+            <button class="option" onclick="answer(this, false, 4)">
+                A. They are always exactly the same thing.
+            </button>
+
+            <button class="option" onclick="answer(this, true, 4)">
+                B. The probability is a continuous output, while the decision
+                can be obtained by applying a threshold.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 4)">
+                C. The probability is only used for regression.
+            </button>
+
+            <button class="option" onclick="answer(this, false, 4)">
+                D. The threshold changes the training data.
+            </button>
+
+            <div class="feedback" id="feedback4"></div>
+
+        </div>
+
+
+        <div class="score-box">
+
+            <div>Your classification score</div>
+
+            <div class="score">
+                <span id="scoreNumber">0</span> / 4
+            </div>
+
+        </div>
+
+
+        <div class="button-area">
+
+            <button class="primary" onclick="finishMission()">
+                COMPLETE MISSION →
+            </button>
+
+        </div>
+
+
+        <div class="reflection" id="reflection">
+
+            <h3>🎓 Mission Complete</h3>
+
+            <p>
+                A classifier does not simply produce a class label.
+                In the logistic model explored here, the model first produces
+                a numerical score, which the sigmoid transforms into a
+                probability. A decision rule can then use a threshold to
+                convert that probability into a class.
+            </p>
+
+            <p>
+                This distinction becomes important when we evaluate models:
+                changing the threshold can change the decisions even when the
+                underlying model and probabilities remain unchanged.
+            </p>
+
+            <p>
+                <strong>Think about this:</strong>
+                If the cost of a false positive and a false negative were very
+                different, would 0.5 necessarily be the best threshold?
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* ============================
+       CLASSIFICATION LAB
+       ============================ */
+
+    const weight = document.getElementById("weight");
+    const bias = document.getElementById("bias");
+    const input = document.getElementById("input");
+    const threshold = document.getElementById("threshold");
+
+    const weightValue = document.getElementById("weightValue");
+    const biasValue = document.getElementById("biasValue");
+    const inputValue = document.getElementById("inputValue");
+    const thresholdValue = document.getElementById("thresholdValue");
+
+    const scoreDisplay = document.getElementById("score");
+    const decisionDisplay = document.getElementById("decision");
+
+    const canvas = document.getElementById("graph");
+    const ctx = canvas.getContext("2d");
+
+
+    function sigmoid(z) {
+        return 1 / (1 + Math.exp(-z));
+    }
+
+
+    function updateModel() {
+
+        const w = parseFloat(weight.value);
+        const b = parseFloat(bias.value);
+        const x = parseFloat(input.value);
+        const t = parseFloat(threshold.value);
+
+        const z = w * x + b;
+        const p = sigmoid(z);
+
+        weightValue.textContent = w.toFixed(1);
+        biasValue.textContent = b.toFixed(1);
+        inputValue.textContent = x.toFixed(1);
+        thresholdValue.textContent = t.toFixed(2);
+
+        scoreDisplay.textContent = p.toFixed(2);
+
+        if (p >= t) {
+            decisionDisplay.textContent = "Class 1";
+        } else {
+            decisionDisplay.textContent = "Class 0";
+        }
+
+        drawGraph(z, t);
+
+    }
+
+
+    /* ============================
+       DRAW SIGMOID GRAPH
+       ============================ */
+
+    function drawGraph(currentZ, thresholdValue) {
+
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const padding = 45;
+
+        /* Axes */
+
+        ctx.beginPath();
+        ctx.moveTo(padding, height - padding);
+        ctx.lineTo(width - padding, height - padding);
+        ctx.strokeStyle = "#78909c";
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(padding, height - padding);
+        ctx.lineTo(padding, padding);
+        ctx.stroke();
+
+        /* Labels */
+
+        ctx.fillStyle = "#607d98";
+        ctx.font = "12px Arial";
+
+        ctx.fillText("-5", padding - 5, height - padding + 20);
+        ctx.fillText("0", width / 2 - 5, height - padding + 20);
+        ctx.fillText("5", width - padding - 5, height - padding + 20);
+
+        ctx.fillText("0", padding - 25, height - padding + 4);
+        ctx.fillText("0.5", padding - 30, height / 2 + 4);
+        ctx.fillText("1", padding - 18, padding + 4);
+
+        /* Sigmoid curve */
+
+        ctx.beginPath();
+
+        for (let i = 0; i <= 200; i++) {
+
+            const z = -5 + (10 * i / 200);
+            const p = sigmoid(z);
+
+            const px =
+                padding +
+                ((z + 5) / 10) *
+                (width - 2 * padding);
+
+            const py =
+                height -
+                padding -
+                p *
+                (height - 2 * padding);
+
+            if (i === 0) {
+                ctx.moveTo(px, py);
+            } else {
+                ctx.lineTo(px, py);
+            }
+        }
+
+        ctx.strokeStyle = "#2d587d";
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        /* Threshold line */
+
+        const thresholdY =
+            height -
+            padding -
+            thresholdValue *
+            (height - 2 * padding);
+
+        ctx.beginPath();
+        ctx.moveTo(padding, thresholdY);
+        ctx.lineTo(width - padding, thresholdY);
+
+        ctx.strokeStyle = "#e4ae27";
+        ctx.setLineDash([6, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        /* Current point */
+
+        const clampedZ = Math.max(-5, Math.min(5, currentZ));
+
+        const pointX =
+            padding +
+            ((clampedZ + 5) / 10) *
+            (width - 2 * padding);
+
+        const pointP = sigmoid(currentZ);
+
+        const pointY =
+            height -
+            padding -
+            pointP *
+            (height - 2 * padding);
+
+        ctx.beginPath();
+        ctx.arc(pointX, pointY, 7, 0, Math.PI * 2);
+
+        ctx.fillStyle = "#d94c8a";
+        ctx.fill();
+
+        ctx.fillStyle = "#29445f";
+        ctx.font = "13px Arial";
+
+        ctx.fillText(
+            "current prediction",
+            Math.min(pointX + 10, width - 135),
+            Math.max(pointY - 10, 20)
+        );
+
+    }
+
+
+    weight.addEventListener("input", updateModel);
+    bias.addEventListener("input", updateModel);
+    input.addEventListener("input", updateModel);
+    threshold.addEventListener("input", updateModel);
+
+
+    updateModel();
+
+
+    /* ============================
+       QUESTIONS
+       ============================ */
+
+    let score = 0;
+
+    const answered = {
+        1: false,
+        2: false,
+        3: false,
+        4: false
+    };
+
+
+    function answer(button, correct, questionNumber) {
+
+        if (answered[questionNumber]) {
+            return;
+        }
+
+        answered[questionNumber] = true;
+
+        const feedback =
+            document.getElementById(
+                "feedback" + questionNumber
+            );
+
+        const buttons =
+            button.parentElement.querySelectorAll(".option");
+
+        buttons.forEach(function(b) {
+            b.disabled = true;
+        });
+
+
+        if (correct) {
+
+            button.classList.add("correct");
+
+            feedback.innerHTML =
+                "✅ Correct! Good reasoning.";
+
+            feedback.style.background = "#e8f5ed";
+
+            score++;
+
+            document.getElementById(
+                "scoreNumber"
+            ).textContent = score;
+
+        } else {
+
+            button.classList.add("incorrect");
+
+            feedback.innerHTML =
+                "❌ Not quite. Think about how probabilities, thresholds, and class decisions are related.";
+
+            feedback.style.background = "#f9eaea";
+
+        }
+
+        feedback.classList.add("show");
+
+    }
+
+
+    /* ============================
+       COMPLETE
+       ============================ */
+
+    function finishMission() {
+
+        const reflection =
+            document.getElementById("reflection");
+
+        reflection.style.display = "block";
+
+        reflection.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    }
+
+</script>
+
+</body>
+</html>
