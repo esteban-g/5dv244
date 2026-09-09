@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Reasoning Quest - Mission 1</title>
 
 <style>
+
     * {
         box-sizing: border-box;
     }
@@ -24,7 +27,9 @@
         padding: 28px 24px 50px;
     }
 
-    /* Header */
+    /* ==================================================
+       HEADER
+    ================================================== */
 
     .game-header {
         display: flex;
@@ -59,7 +64,10 @@
         border-radius: 10px;
     }
 
-    /* Main card */
+
+    /* ==================================================
+       MAIN CARD
+    ================================================== */
 
     .mission-card {
         background: white;
@@ -95,7 +103,10 @@
         margin-bottom: 30px;
     }
 
-    /* Sections */
+
+    /* ==================================================
+       SECTIONS
+    ================================================== */
 
     .challenge {
         background: #f7f9fb;
@@ -117,7 +128,10 @@
         margin-bottom: 18px;
     }
 
-    /* Answers */
+
+    /* ==================================================
+       ANSWERS
+    ================================================== */
 
     .answers {
         display: grid;
@@ -149,7 +163,10 @@
         border-color: #d9534f;
     }
 
-    /* Code */
+
+    /* ==================================================
+       CODE
+    ================================================== */
 
     .code-block {
         background: #1f2933;
@@ -171,7 +188,10 @@
         color: #8fa3b5;
     }
 
-    /* Feedback */
+
+    /* ==================================================
+       FEEDBACK
+    ================================================== */
 
     .feedback {
         display: none;
@@ -195,7 +215,10 @@
         color: #7a3030;
     }
 
-    /* Button */
+
+    /* ==================================================
+       BUTTONS
+    ================================================== */
 
     .button-container {
         text-align: center;
@@ -222,7 +245,31 @@
         cursor: default;
     }
 
-    /* Completion */
+
+    /* ==================================================
+       NEXT MISSION BUTTON
+    ================================================== */
+
+    .next-mission-button {
+        display: inline-block;
+        border-radius: 8px;
+        background: #2b587d;
+        color: white;
+        padding: 14px 26px;
+        font-size: 16px;
+        font-weight: bold;
+        text-decoration: none;
+        margin-left: 10px;
+    }
+
+    .next-mission-button:hover {
+        background: #1f4568;
+    }
+
+
+    /* ==================================================
+       COMPLETION
+    ================================================== */
 
     .completion {
         display: none;
@@ -255,21 +302,22 @@
         margin-top: 20px;
     }
 
-   .next-mission-button {
-    display: inline-block;
-    border-radius: 8px;
-    background: #2b587d;
-    color: white;
-    padding: 14px 26px;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
-    margin-left: 10px;
-}
 
-.next-mission-button:hover {
-    background: #1f4568;
-}
+    /* ==================================================
+       SESSION INFORMATION
+    ================================================== */
+
+    .session-note {
+        margin-top: 18px;
+        font-size: 13px;
+        color: #718394;
+        text-align: center;
+    }
+
+
+    /* ==================================================
+       MOBILE
+    ================================================== */
 
     @media (max-width: 650px) {
 
@@ -290,58 +338,103 @@
             align-items: flex-start;
             gap: 5px;
         }
+
+        .next-mission-button {
+            margin-left: 0;
+            margin-top: 12px;
+            display: block;
+        }
+
+        .button-container button,
+        .next-mission-button {
+            width: 100%;
+        }
+
     }
+
 </style>
+
 </head>
+
 
 <body>
 
 <div class="game-container">
 
-    <!-- Header -->
+
+    <!-- ==================================================
+         HEADER
+    ================================================== -->
 
     <div class="game-header">
-        <div class="game-title">⚙️ REASONING QUEST</div>
-        <div class="mission-counter">Mission 1 / 5</div>
+
+        <div class="game-title">
+            ⚙️ REASONING QUEST
+        </div>
+
+        <div class="mission-counter">
+            Mission 1 / 5
+        </div>
+
     </div>
+
 
     <div class="progress-container">
+
         <div class="progress-bar"></div>
+
     </div>
 
 
-    <!-- Mission -->
+    <!-- ==================================================
+         MISSION
+    ================================================== -->
 
     <div class="mission-card">
 
-        <div class="mission-icon">🧠</div>
 
-        <h1>The Logic Gate</h1>
+        <div class="mission-icon">
+            🧠
+        </div>
+
+
+        <h1>
+            The Logic Gate
+        </h1>
+
 
         <div class="subtitle">
             Declarative reasoning begins here
         </div>
 
+
         <div class="intro">
 
             Before an agent can reason about the world,
-            we need to understand <strong>how the problem is described</strong>.
+            we need to understand
+            <strong>how the problem is described</strong>.
 
             <br><br>
 
             In this mission you will distinguish between
-            <strong>procedural</strong> and <strong>declarative</strong>
+            <strong>procedural</strong> and
+            <strong>declarative</strong>
             approaches — and take your first step into
             <strong>Answer Set Programming (ASP)</strong>.
 
         </div>
 
 
-        <!-- Challenge 1 -->
+        <!-- ==================================================
+             CHALLENGE 1
+        ================================================== -->
 
         <div class="challenge">
 
-            <h2>Challenge 1 — How should we describe the problem?</h2>
+            <h2>
+                Challenge 1 — How should we describe the problem?
+            </h2>
+
 
             <div class="question">
 
@@ -352,38 +445,53 @@
 
             </div>
 
+
             <div class="answers">
 
                 <div class="answer"
                      onclick="answerQuestion(1, false, this)">
+
                     A. Write a sequence of instructions telling the agent
                     exactly how to determine whether an animal flies.
+
                 </div>
+
 
                 <div class="answer"
                      onclick="answerQuestion(1, true, this)">
+
                     B. Describe facts and rules about animals and let a
                     reasoning mechanism determine the consequences.
+
                 </div>
+
 
                 <div class="answer"
                      onclick="answerQuestion(1, false, this)">
+
                     C. Write a loop that checks every animal and manually
                     calculates the result.
+
                 </div>
 
             </div>
+
 
             <div id="feedback1" class="feedback"></div>
 
         </div>
 
 
-        <!-- Challenge 2 -->
+        <!-- ==================================================
+             CHALLENGE 2
+        ================================================== -->
 
         <div class="challenge">
 
-            <h2>Challenge 2 — Find the facts</h2>
+            <h2>
+                Challenge 2 — Find the facts
+            </h2>
+
 
             <div class="question">
 
@@ -391,11 +499,15 @@
 
             </div>
 
+
             <div class="code-block">
-bird(tux).<br>
-bird(eddy).<br>
-penguin(eddy).
+
+                bird(tux).<br>
+                bird(eddy).<br>
+                penguin(eddy).
+
             </div>
+
 
             <div class="question">
 
@@ -404,35 +516,50 @@ penguin(eddy).
 
             </div>
 
+
             <div class="answers">
 
                 <div class="answer"
                      onclick="answerQuestion(2, true, this)">
+
                     A. bird(tux), bird(eddy), and penguin(eddy)
+
                 </div>
+
 
                 <div class="answer"
                      onclick="answerQuestion(2, false, this)">
+
                     B. Only bird(tux)
+
                 </div>
+
 
                 <div class="answer"
                      onclick="answerQuestion(2, false, this)">
+
                     C. Whether Tux can fly
+
                 </div>
 
             </div>
+
 
             <div id="feedback2" class="feedback"></div>
 
         </div>
 
 
-        <!-- Challenge 3 -->
+        <!-- ==================================================
+             CHALLENGE 3
+        ================================================== -->
 
         <div class="challenge">
 
-            <h2>Challenge 3 — What does the rule say?</h2>
+            <h2>
+                Challenge 3 — What does the rule say?
+            </h2>
+
 
             <div class="question">
 
@@ -440,9 +567,13 @@ penguin(eddy).
 
             </div>
 
+
             <div class="code-block">
-flies(X) :- bird(X), not penguin(X).
+
+                flies(X) :- bird(X), not penguin(X).
+
             </div>
+
 
             <div class="question">
 
@@ -450,50 +581,73 @@ flies(X) :- bird(X), not penguin(X).
 
             </div>
 
+
             <div class="answers">
 
                 <div class="answer"
                      onclick="answerQuestion(3, false, this)">
+
                     A. Every bird is a penguin.
+
                 </div>
+
 
                 <div class="answer"
                      onclick="answerQuestion(3, true, this)">
+
                     B. An entity can be concluded to fly when it is a bird
                     and it is not known to be a penguin.
+
                 </div>
+
 
                 <div class="answer"
                      onclick="answerQuestion(3, false, this)">
+
                     C. Every penguin must fly.
+
                 </div>
 
             </div>
+
 
             <div id="feedback3" class="feedback"></div>
 
         </div>
 
 
-        <!-- Completion -->
+        <!-- ==================================================
+             COMPLETION
+        ================================================== -->
 
         <div id="completion" class="completion">
 
-            <div class="completion-icon">⚙️</div>
 
-            <h2>Mission Complete!</h2>
+            <div class="completion-icon">
+                ⚙️
+            </div>
+
+
+            <h2>
+                Mission Complete!
+            </h2>
+
 
             <p>
                 You have passed through the Logic Gate.
             </p>
 
+
             <div class="xp">
                 +100 XP
             </div>
 
+
             <div class="mission-note">
 
-                <strong>Key idea to remember:</strong><br><br>
+                <strong>Key idea to remember:</strong>
+
+                <br><br>
 
                 In a <strong>procedural approach</strong>, the designer
                 specifies how the computation should be performed.
@@ -508,25 +662,44 @@ flies(X) :- bird(X), not penguin(X).
 
                 In ASP, problems are described using facts and rules, while
                 solutions are represented as <strong>answer sets</strong>.
+
             </div>
 
-<div class="button-container">
 
-    <button onclick="window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
-    })">
-        ↻ REVIEW MISSION
-    </button>
+            <div class="button-container">
 
-    <a class="next-mission-button"
-       href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-2-enter-the-answer-set">
-        NEXT MISSION →
-    </a>
 
-</div>
+                <button onclick="window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                })">
+
+                    ↻ REVIEW MISSION
+
+                </button>
+
+
+                <a
+                    class="next-mission-button"
+                    href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-2-enter-the-answer-set"
+                >
+
+                    NEXT MISSION →
+
+                </a>
+
+            </div>
+
+
+            <div class="session-note">
+
+                Your progress is stored anonymously in this browser.
+
+            </div>
+
 
         </div>
+
 
     </div>
 
@@ -535,34 +708,278 @@ flies(X) :- bird(X), not penguin(X).
 
 <script>
 
+/* ==================================================
+   REASONING QUEST — SHARED SESSION
+================================================== */
+
+const QUEST_STORAGE_KEY = "reasoningQuestSession";
+
+const MISSION_NUMBER = 1;
+
+const MISSION_XP = 100;
+
+const TOTAL_MISSIONS = 5;
+
+
+/* ==================================================
+   CREATE / LOAD SESSION
+================================================== */
+
+function createNewSession() {
+
+    return {
+
+        sessionId: crypto.randomUUID(),
+
+        startedAt: new Date().toISOString(),
+
+        lastUpdatedAt: new Date().toISOString(),
+
+        totalXP: 0,
+
+        completed: false,
+
+        missions: {
+
+            1: {
+                startedAt: new Date().toISOString(),
+                completedAt: null,
+                completed: false,
+                correct: 0,
+                attempts: 0,
+                totalQuestions: 3,
+                xp: 0
+            },
+
+            2: {
+                startedAt: null,
+                completedAt: null,
+                completed: false,
+                correct: 0,
+                attempts: 0,
+                totalQuestions: 4,
+                xp: 0
+            },
+
+            3: {
+                startedAt: null,
+                completedAt: null,
+                completed: false,
+                correct: 0,
+                attempts: 0,
+                totalQuestions: 5,
+                xp: 0
+            },
+
+            4: {
+                startedAt: null,
+                completedAt: null,
+                completed: false,
+                correct: 0,
+                attempts: 0,
+                totalQuestions: 4,
+                xp: 0
+            },
+
+            5: {
+                startedAt: null,
+                completedAt: null,
+                completed: false,
+                correct: 0,
+                attempts: 0,
+                totalQuestions: 5,
+                xp: 0,
+                reflections: {}
+            }
+
+        }
+
+    };
+
+}
+
+
+/* ==================================================
+   LOAD OR INITIALIZE SESSION
+================================================== */
+
+function loadQuestSession() {
+
+    let stored = localStorage.getItem(QUEST_STORAGE_KEY);
+
+    if (!stored) {
+
+        const newSession = createNewSession();
+
+        localStorage.setItem(
+            QUEST_STORAGE_KEY,
+            JSON.stringify(newSession)
+        );
+
+        return newSession;
+    }
+
+
+    try {
+
+        const session = JSON.parse(stored);
+
+        /*
+         * Make sure Mission 1 exists.
+         * This also makes the code more tolerant of
+         * older versions of the game.
+         */
+
+        if (!session.missions) {
+            session.missions = {};
+        }
+
+        if (!session.missions[1]) {
+
+            session.missions[1] = {
+                startedAt: new Date().toISOString(),
+                completedAt: null,
+                completed: false,
+                correct: 0,
+                attempts: 0,
+                totalQuestions: 3,
+                xp: 0
+            };
+
+        }
+
+        if (!session.missions[1].startedAt) {
+
+            session.missions[1].startedAt =
+                new Date().toISOString();
+
+        }
+
+        session.lastUpdatedAt =
+            new Date().toISOString();
+
+
+        localStorage.setItem(
+            QUEST_STORAGE_KEY,
+            JSON.stringify(session)
+        );
+
+
+        return session;
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "Could not read Reasoning Quest session. Starting a new session."
+        );
+
+        const newSession = createNewSession();
+
+        localStorage.setItem(
+            QUEST_STORAGE_KEY,
+            JSON.stringify(newSession)
+        );
+
+        return newSession;
+
+    }
+
+}
+
+
+/* ==================================================
+   SAVE SESSION
+================================================== */
+
+function saveQuestSession() {
+
+    questSession.lastUpdatedAt =
+        new Date().toISOString();
+
+    localStorage.setItem(
+        QUEST_STORAGE_KEY,
+        JSON.stringify(questSession)
+    );
+
+}
+
+
+/* ==================================================
+   CURRENT SESSION
+================================================== */
+
+let questSession = loadQuestSession();
+
+
+/* ==================================================
+   CURRENT MISSION STATE
+================================================== */
+
 let completed = {
+
     q1: false,
     q2: false,
     q3: false
+
 };
 
 
+/* ==================================================
+   ANSWER QUESTION
+================================================== */
+
 function answerQuestion(question, correct, element) {
 
-    // Prevent changing an already answered question
-    const challenge = element.closest(".challenge");
 
-    if (challenge.dataset.answered === "true") {
+    /*
+     * Prevent answering the same question twice
+     * during the current page visit.
+     */
+
+    const challenge =
+        element.closest(".challenge");
+
+
+    if (
+        challenge.dataset.answered === "true"
+    ) {
+
         return;
+
     }
+
 
     challenge.dataset.answered = "true";
 
-    if (correct) {
 
-        element.classList.add("correct");
+    /*
+     * Register the attempt.
+     */
 
-        const feedback = document.getElementById(
+    questSession.missions[MISSION_NUMBER].attempts += 1;
+
+
+    const feedback =
+        document.getElementById(
             "feedback" + question
         );
 
+
+    /* ==================================================
+       CORRECT
+    ================================================== */
+
+    if (correct) {
+
+
+        element.classList.add("correct");
+
+
         feedback.className =
             "feedback show correct-feedback";
+
 
         if (question === 1) {
 
@@ -576,6 +993,7 @@ function answerQuestion(question, correct, element) {
 
         }
 
+
         if (question === 2) {
 
             feedback.innerHTML =
@@ -586,6 +1004,7 @@ function answerQuestion(question, correct, element) {
             completed.q2 = true;
 
         }
+
 
         if (question === 3) {
 
@@ -598,40 +1017,107 @@ function answerQuestion(question, correct, element) {
 
         }
 
-    } else {
+
+        questSession.missions[MISSION_NUMBER].correct += 1;
+
+    }
+
+
+    /* ==================================================
+       INCORRECT
+    ================================================== */
+
+    else {
+
 
         element.classList.add("incorrect");
 
-        const feedback = document.getElementById(
-            "feedback" + question
-        );
 
         feedback.className =
             "feedback show incorrect-feedback";
 
+
         feedback.innerHTML =
             "<strong>✗ Not quite.</strong> " +
             "Think about the difference between describing " +
-            "how to perform a computation and describing the " +
-            "knowledge from which a reasoning mechanism can derive conclusions.";
+            "how to perform a computation and describing " +
+            "the knowledge from which a reasoning mechanism " +
+            "can derive conclusions.";
 
     }
 
+
+    saveQuestSession();
+
+
     checkCompletion();
+
 }
 
 
+/* ==================================================
+   CHECK MISSION COMPLETION
+================================================== */
+
 function checkCompletion() {
 
+
     if (
+
         completed.q1 &&
         completed.q2 &&
         completed.q3
+
     ) {
+
+
+        /*
+         * Avoid awarding XP more than once.
+         */
+
+        if (
+            !questSession.missions[MISSION_NUMBER].completed
+        ) {
+
+
+            questSession.missions[MISSION_NUMBER].completed =
+                true;
+
+
+            questSession.missions[MISSION_NUMBER].completedAt =
+                new Date().toISOString();
+
+
+            questSession.missions[MISSION_NUMBER].xp =
+                MISSION_XP;
+
+
+            /*
+             * Add Mission 1 XP to total.
+             */
+
+            questSession.totalXP =
+                (questSession.totalXP || 0) +
+                MISSION_XP;
+
+
+            saveQuestSession();
+
+        }
+
+
+        /*
+         * Display completion panel.
+         */
 
         document
             .getElementById("completion")
             .classList.add("show");
+
+
+        /*
+         * Scroll to completion message.
+         */
 
         setTimeout(function() {
 
@@ -647,7 +1133,69 @@ function checkCompletion() {
 
 }
 
+
+/* ==================================================
+   RESTORE PREVIOUS COMPLETION
+================================================== */
+
+function restoreMissionState() {
+
+
+    const mission =
+        questSession.missions[MISSION_NUMBER];
+
+
+    /*
+     * If this mission was already completed during
+     * an earlier visit, show the completion section.
+     */
+
+    if (mission && mission.completed) {
+
+
+        document
+            .getElementById("completion")
+            .classList.add("show");
+
+
+        /*
+         * We do not automatically mark individual
+         * questions as visually answered because the
+         * current page does not store which answer
+         * elements were selected.
+         *
+         * The persistent session nevertheless knows
+         * that this mission was completed.
+         */
+
+    }
+
+}
+
+
+/* ==================================================
+   INITIALIZE
+================================================== */
+
+restoreMissionState();
+
+
+/* ==================================================
+   SAVE SESSION WHEN LEAVING PAGE
+================================================== */
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        saveQuestSession();
+
+    }
+);
+
 </script>
 
+
 </body>
+
 </html>
