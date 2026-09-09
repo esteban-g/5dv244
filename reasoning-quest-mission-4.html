@@ -160,6 +160,44 @@
         background: #214861;
     }
 
+    button:focus-visible,
+    a:focus-visible {
+        outline: 3px solid #ffcf66;
+        outline-offset: 3px;
+    }
+
+    .completion {
+        display: none;
+        background: #e8f5e9;
+        border-left: 5px solid #4caf50;
+        padding: 24px;
+        border-radius: 8px;
+        margin-top: 20px;
+        line-height: 1.6;
+    }
+
+    .completion h2 {
+        margin-top: 0;
+    }
+
+    .next-mission {
+        display: inline-block;
+        background: #2b5876;
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 15px;
+        font-weight: bold;
+        margin-top: 12px;
+    }
+
+    .privacy-note {
+        margin-top: 15px;
+        font-size: 13px;
+        color: #657786;
+    }
+
     .option {
         display: block;
         width: 100%;
@@ -834,6 +872,35 @@ at(robot,B,T+1) :-<br>
     </div>
 
 
+    <!-- MISSION COMPLETION -->
+
+    <div id="missionCompletion" class="completion">
+        <h2>🎉 Mission 4 Complete!</h2>
+        <p>
+            Excellent work. You successfully connected actions,
+            state transitions, constraints, and goal satisfaction.
+        </p>
+        <p>
+            <strong>Mission score:</strong>
+            <span id="missionScore">0 / 4</span>
+            &nbsp; | &nbsp;
+            <strong>XP earned:</strong> +100 XP
+        </p>
+        <p>
+            Your progress has been saved locally in this browser.
+            You can now continue to the final mission.
+        </p>
+        <a class="next-mission"
+           href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-5-the-autonomous-agent">
+            CONTINUE TO MISSION 5 →
+        </a>
+        <div class="privacy-note">
+            Anonymous progress is stored only in this browser using localStorage.
+            No name or student identifier is collected by this game page.
+        </div>
+    </div>
+
+
     <!-- REFLECTION -->
 
     <div class="panel">
@@ -904,122 +971,373 @@ at(robot,B,T+1) :-<br>
 
     </div>
 
-   <a class="next-mission-button"
-   href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-5-the-autonomous-agent">
-    NEXT MISSION →
-</a>
-
 </div>
 
 
 <script>
 
-/* --------------------------------------------------
+/* =========================================================
+   REASONING QUEST — SHARED SESSION
+   Mission 4: Plan the Robot
+   ========================================================= */
+
+const QUEST_STORAGE_KEY = "reasoningQuestSession";
+
+const MISSION_NUMBER = 4;
+const MISSION_XP = 100;
+const TOTAL_MISSIONS = 5;
+const TOTAL_QUESTIONS = 4;
+
+const NEXT_MISSION_URL =
+    "https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-5-the-autonomous-agent";
+
+
+function createDefaultMission() {
+    return {
+        startedAt: null,
+        completedAt: null,
+        completed: false,
+        correct: 0,
+        attempts: 0,
+        totalQuestions: TOTAL_QUESTIONS,
+        xp: 0,
+        answers: {},
+        plan: [],
+        planAttempts: 0
+    };
+}
+
+
+function createNewSession() {
+    const now = new Date().toISOString();
+
+    return {
+        sessionId:
+            (window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : "rq-" + Date.now() + "-" +
+                  Math.random().toString(36).slice(2),
+
+        startedAt: now,
+        lastActivityAt: now,
+        completedAt: null,
+        totalXP: 0,
+
+        missions: {
+            "1": createDefaultMission(),
+            "2": createDefaultMission(),
+            "3": createDefaultMission(),
+            "4": createDefaultMission(),
+            "5": createDefaultMission()
+        }
+    };
+}
+
+
+function ensureMissionStructure(session) {
+
+    if (!session || typeof session !== "object") {
+        session = createNewSession();
+    }
+
+    if (!session.sessionId) {
+        session.sessionId =
+            (window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : "rq-" + Date.now() + "-" +
+                  Math.random().toString(36).slice(2);
+    }
+
+    if (!session.startedAt) {
+        session.startedAt = new Date().toISOString();
+    }
+
+    if (!session.missions) {
+        session.missions = {};
+    }
+
+    for (let i = 1; i <= TOTAL_MISSIONS; i++) {
+
+        const key = String(i);
+
+        if (!session.missions[key]) {
+            session.missions[key] = createDefaultMission();
+        }
+
+        const mission = session.missions[key];
+
+        if (!mission.answers) mission.answers = {};
+        if (!Array.isArray(mission.plan)) mission.plan = [];
+        if (typeof mission.attempts !== "number") mission.attempts = 0;
+        if (typeof mission.correct !== "number") mission.correct = 0;
+        if (typeof mission.xp !== "number") mission.xp = 0;
+        if (typeof mission.completed !== "boolean") mission.completed = false;
+        if (!mission.totalQuestions) {
+            mission.totalQuestions =
+                i === MISSION_NUMBER ? TOTAL_QUESTIONS : 0;
+        }
+    }
+
+    return session;
+}
+
+
+function loadQuestSession() {
+
+    try {
+        const raw =
+            localStorage.getItem(QUEST_STORAGE_KEY);
+
+        if (!raw) {
+            return ensureMissionStructure(
+                createNewSession()
+            );
+        }
+
+        return ensureMissionStructure(
+            JSON.parse(raw)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Reasoning Quest session could not be loaded.",
+            error
+        );
+
+        return ensureMissionStructure(
+            createNewSession()
+        );
+    }
+}
+
+
+function calculateTotalXP(session) {
+
+    let total = 0;
+
+    Object.values(session.missions).forEach(function(mission) {
+
+        if (mission.completed) {
+            total += Number(mission.xp) || 0;
+        }
+
+    });
+
+    return total;
+}
+
+
+function saveQuestSession() {
+
+    try {
+
+        questSession.lastActivityAt =
+            new Date().toISOString();
+
+        questSession.totalXP =
+            calculateTotalXP(questSession);
+
+        localStorage.setItem(
+            QUEST_STORAGE_KEY,
+            JSON.stringify(questSession)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Reasoning Quest session could not be saved.",
+            error
+        );
+    }
+}
+
+
+let questSession = loadQuestSession();
+
+const mission =
+    questSession.missions[String(MISSION_NUMBER)];
+
+
+if (!mission.startedAt) {
+
+    mission.startedAt =
+        new Date().toISOString();
+
+    saveQuestSession();
+}
+
+
+/* =========================================================
+   MISSION STATE
+   ========================================================= */
+
+const questionState = {
+    q1: Boolean(mission.answers.q1_correct),
+    q2: Boolean(mission.answers.q2_correct),
+    q3: Boolean(mission.answers.q3_correct),
+    plan: Boolean(mission.answers.plan_correct)
+};
+
+
+function countCorrect() {
+
+    return Object.values(questionState)
+        .filter(Boolean)
+        .length;
+}
+
+
+function recordAnswer(question, answer, correct) {
+
+    mission.attempts++;
+
+    mission.answers[question] = answer;
+    mission.answers[question + "_correct"] = correct;
+
+    if (correct) {
+        questionState[question] = true;
+    }
+
+    mission.correct = countCorrect();
+
+    saveQuestSession();
+
+    checkMissionCompletion();
+}
+
+
+function showFeedback(id, message, correct) {
+
+    const feedback =
+        document.getElementById(id);
+
+    feedback.style.display = "block";
+
+    if (correct) {
+        feedback.className =
+            "feedback correct";
+    } else {
+        feedback.className =
+            "feedback incorrect";
+    }
+
+    feedback.innerHTML = message;
+}
+
+
+/* =========================================================
    QUESTION 1
--------------------------------------------------- */
+   ========================================================= */
 
 function checkAnswer1(answer) {
 
-    const feedback = document.getElementById("feedback1");
+    const correct = answer === 2;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 2) {
-
-        feedback.className = "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! A plan is a sequence of actions designed to transform an initial state into a state satisfying the goal.";
+        showFeedback(
+            "feedback1",
+            "✅ Correct! A plan is a sequence of actions designed to transform an initial state into a state satisfying the goal.",
+            true
+        );
 
     } else {
 
-        feedback.className = "feedback incorrect";
-
-        feedback.innerHTML =
-            "❌ Not quite. Planning is not simply describing the current world. It concerns finding actions that can achieve a desired goal.";
-
+        showFeedback(
+            "feedback1",
+            "❌ Not quite. Planning is not simply describing the current world. It concerns finding actions that can achieve a desired goal.",
+            false
+        );
     }
 
+    recordAnswer("q1", answer, correct);
 }
 
 
-/* --------------------------------------------------
+/* =========================================================
    QUESTION 2
--------------------------------------------------- */
+   ========================================================= */
 
 function checkAnswer2(answer) {
 
-    const feedback = document.getElementById("feedback2");
+    const correct = answer === 2;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 2) {
-
-        feedback.className = "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! If the robot moves from A to B, its new state places it at B. The important idea is that actions cause state transitions.";
+        showFeedback(
+            "feedback2",
+            "✅ Correct! If the robot moves from A to B, its new state places it at B. The important idea is that actions cause state transitions.",
+            true
+        );
 
     } else {
 
-        feedback.className = "feedback incorrect";
-
-        feedback.innerHTML =
-            "❌ Think about what an action does. A movement changes the state of the world.";
-
+        showFeedback(
+            "feedback2",
+            "❌ Think about what an action does. A movement changes the state of the world.",
+            false
+        );
     }
 
+    recordAnswer("q2", answer, correct);
 }
 
 
-/* --------------------------------------------------
+/* =========================================================
    QUESTION 3
--------------------------------------------------- */
+   ========================================================= */
 
 function checkAnswer3(answer) {
 
-    const feedback = document.getElementById("feedback3");
+    const correct = answer === 2;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 2) {
-
-        feedback.className = "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! This is a constraint. Any candidate solution in which at(robot,D) cannot be established is rejected.";
+        showFeedback(
+            "feedback3",
+            "✅ Correct! This is a constraint. Any candidate solution in which at(robot,D) cannot be established is rejected.",
+            true
+        );
 
     } else {
 
-        feedback.className = "feedback incorrect";
-
-        feedback.innerHTML =
-            "❌ Look carefully at the ASP syntax. The constraint does not itself perform an action. It eliminates answer sets that fail to satisfy the goal.";
-
+        showFeedback(
+            "feedback3",
+            "❌ Look carefully at the ASP syntax. The constraint does not itself perform an action. It eliminates answer sets that fail to satisfy the goal.",
+            false
+        );
     }
 
+    recordAnswer("q3", answer, correct);
 }
 
 
-/* --------------------------------------------------
+/* =========================================================
    PLAN BUILDER
--------------------------------------------------- */
+   ========================================================= */
 
-let plan = [];
+let plan = Array.isArray(mission.plan)
+    ? mission.plan.slice()
+    : [];
 
 
 function addAction(action) {
 
     plan.push(action);
 
+    mission.plan = plan.slice();
+
     renderPlan();
 
+    saveQuestSession();
 }
 
 
 function renderPlan() {
 
-    const planBox = document.getElementById("plan");
+    const planBox =
+        document.getElementById("plan");
 
     if (plan.length === 0) {
 
@@ -1027,30 +1345,35 @@ function renderPlan() {
             "Choose actions above...";
 
         return;
-
     }
 
     planBox.innerHTML = "";
 
     plan.forEach(function(action, index) {
 
-        const step = document.createElement("span");
+        const step =
+            document.createElement("span");
 
-        step.className = "plan-step";
+        step.className =
+            "plan-step";
 
         step.textContent =
             (index + 1) + ". " + action;
 
         planBox.appendChild(step);
-
     });
-
 }
 
 
 function resetPlan() {
 
     plan = [];
+
+    mission.plan = [];
+
+    questionState.plan = false;
+
+    mission.answers.plan_correct = false;
 
     renderPlan();
 
@@ -1059,6 +1382,9 @@ function resetPlan() {
 
     feedback.style.display = "none";
 
+    mission.correct = countCorrect();
+
+    saveQuestSession();
 }
 
 
@@ -1069,6 +1395,10 @@ function checkPlan() {
 
     feedback.style.display = "block";
 
+    mission.planAttempts =
+        (mission.planAttempts || 0) + 1;
+
+    mission.attempts++;
 
     /*
      * We intentionally validate the plan as a small
@@ -1080,7 +1410,6 @@ function checkPlan() {
      */
 
     let position = "A";
-
     let valid = true;
 
 
@@ -1088,31 +1417,46 @@ function checkPlan() {
 
         const action = plan[i];
 
-        if (action === "move(A,B)" && position === "A") {
+        if (
+            action === "move(A,B)" &&
+            position === "A"
+        ) {
 
             position = "B";
 
         }
 
-        else if (action === "move(A,C)" && position === "A") {
+        else if (
+            action === "move(A,C)" &&
+            position === "A"
+        ) {
 
             position = "C";
 
         }
 
-        else if (action === "move(B,C)" && position === "B") {
+        else if (
+            action === "move(B,C)" &&
+            position === "B"
+        ) {
 
             position = "C";
 
         }
 
-        else if (action === "move(B,D)" && position === "B") {
+        else if (
+            action === "move(B,D)" &&
+            position === "B"
+        ) {
 
             position = "D";
 
         }
 
-        else if (action === "move(C,D)" && position === "C") {
+        else if (
+            action === "move(C,D)" &&
+            position === "C"
+        ) {
 
             position = "D";
 
@@ -1122,19 +1466,26 @@ function checkPlan() {
 
             valid = false;
             break;
-
         }
-
     }
 
 
-    if (valid && position === "D") {
+    const correct =
+        valid && position === "D";
+
+
+    if (correct) {
 
         feedback.className =
             "feedback correct";
 
         feedback.innerHTML =
             "🎉 Excellent! Your sequence is a valid plan. The robot starts at A, follows the actions you selected, and reaches the goal D.";
+
+        questionState.plan = true;
+
+        mission.answers.plan_correct = true;
+        mission.answers.plan = plan.slice();
 
     }
 
@@ -1146,6 +1497,11 @@ function checkPlan() {
         feedback.innerHTML =
             "🟡 Your actions are valid so far, but the robot has not reached the goal D yet. A plan is successful only when the goal is satisfied.";
 
+        questionState.plan = false;
+
+        mission.answers.plan_correct = false;
+        mission.answers.plan = plan.slice();
+
     }
 
     else {
@@ -1156,9 +1512,117 @@ function checkPlan() {
         feedback.innerHTML =
             "❌ Invalid plan. At least one action cannot be executed from the robot's current state. Remember: actions have preconditions.";
 
+        questionState.plan = false;
+
+        mission.answers.plan_correct = false;
+        mission.answers.plan = plan.slice();
     }
 
+
+    mission.correct =
+        countCorrect();
+
+    saveQuestSession();
+
+    checkMissionCompletion();
 }
+
+
+/* =========================================================
+   MISSION COMPLETION
+   ========================================================= */
+
+function checkMissionCompletion() {
+
+    const allComplete =
+        questionState.q1 &&
+        questionState.q2 &&
+        questionState.q3 &&
+        questionState.plan;
+
+    if (!allComplete) {
+        return;
+    }
+
+    if (!mission.completed) {
+
+        mission.completed = true;
+
+        mission.completedAt =
+            new Date().toISOString();
+
+        mission.correct = TOTAL_QUESTIONS;
+
+        mission.totalQuestions =
+            TOTAL_QUESTIONS;
+
+        mission.xp = MISSION_XP;
+
+        questSession.totalXP =
+            calculateTotalXP(questSession);
+
+        questSession.lastActivityAt =
+            new Date().toISOString();
+
+        saveQuestSession();
+    }
+
+    showCompletion();
+}
+
+
+function showCompletion() {
+
+    const panel =
+        document.getElementById(
+            "missionCompletion"
+        );
+
+    const score =
+        document.getElementById(
+            "missionScore"
+        );
+
+    if (!panel) {
+        return;
+    }
+
+    score.textContent =
+        TOTAL_QUESTIONS +
+        " / " +
+        TOTAL_QUESTIONS;
+
+    panel.style.display = "block";
+}
+
+
+/* =========================================================
+   RESTORE STATE WHEN REVISITING
+   ========================================================= */
+
+function restoreMissionState() {
+
+    renderPlan();
+
+    /*
+     * We deliberately restore the plan itself, but not
+     * all feedback messages. This keeps the page clean
+     * while preserving the actual learning state.
+     */
+
+    if (mission.completed) {
+
+        questionState.q1 = true;
+        questionState.q2 = true;
+        questionState.q3 = true;
+        questionState.plan = true;
+
+        showCompletion();
+    }
+}
+
+
+restoreMissionState();
 
 </script>
 
