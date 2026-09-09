@@ -171,6 +171,204 @@ button:hover {
     background: #214861;
 }
 
+button:focus-visible,
+a:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #ffcf66;
+    outline-offset: 3px;
+}
+
+/* GAMEFUL FINAL MISSION */
+.quest-dashboard {
+    display: none;
+    background: #f7f9fa;
+    border: 1px solid #d9e2e7;
+    border-radius: 12px;
+    padding: 22px;
+    margin-top: 22px;
+    text-align: left;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.metric {
+    background: #ffffff;
+    border: 1px solid #d9e2e7;
+    border-radius: 9px;
+    padding: 14px;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 23px;
+    font-weight: bold;
+    color: #2b5876;
+}
+
+.metric-label {
+    font-size: 12px;
+    color: #657786;
+    margin-top: 5px;
+}
+
+.mission-bars {
+    margin-top: 18px;
+}
+
+.mission-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 55px;
+    gap: 10px;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 13px;
+}
+
+.bar {
+    height: 10px;
+    background: #dce5ea;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    width: 0%;
+    background: #2b5876;
+    transition: width 0.7s ease;
+}
+
+.lesson-note {
+    margin-top: 18px;
+    padding: 15px;
+    background: #eef5fa;
+    border-left: 4px solid #2b5876;
+    border-radius: 8px;
+    line-height: 1.5;
+}
+
+.game-status {
+    display: none;
+    margin-top: 18px;
+    padding: 18px;
+    border-radius: 10px;
+    background: #202b33;
+    color: #ffffff;
+    font-family: Consolas, Monaco, monospace;
+    line-height: 1.6;
+}
+
+.pulse {
+    animation: pulse 0.7s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.035); }
+    100% { transform: scale(1); }
+}
+
+.agent-animation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 90px;
+    margin: 20px 0;
+    font-size: 34px;
+}
+
+.agent-track {
+    width: 260px;
+    height: 8px;
+    background: #dce5ea;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.agent-dot {
+    position: absolute;
+    left: 0;
+    top: -11px;
+    font-size: 28px;
+    transition: left 1s ease;
+}
+
+.agent-message {
+    min-height: 25px;
+    text-align: center;
+    font-size: 14px;
+    color: #657786;
+}
+
+.completion-panel {
+    display: none;
+    background: #e8f5e9;
+    border-left: 5px solid #4caf50;
+    padding: 24px;
+    border-radius: 8px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.completion-panel h2 {
+    margin-top: 0;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.result-card {
+    background: #ffffff;
+    border-radius: 9px;
+    padding: 15px;
+    text-align: center;
+}
+
+.next-mission {
+    display: inline-block;
+    background: #2b5876;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+.privacy-note {
+    margin-top: 15px;
+    font-size: 13px;
+    color: #657786;
+}
+
+.reflection-save {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+@media (max-width: 700px) {
+    .dashboard-grid,
+    .result-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .mission-row {
+        grid-template-columns: 65px 1fr 45px;
+    }
+}
+
 .option {
     display: block;
     width: 100%;
@@ -420,6 +618,51 @@ textarea {
                 Can you design the reasoning process?
             </strong>
         </p>
+
+        <div id="questDashboard" class="quest-dashboard">
+            <h3 style="margin-top:0;">📊 Your Reasoning Quest So Far</h3>
+
+            <p>
+                Before the final challenge, take a moment to inspect
+                your own learning trail. <strong>These results are not
+                grades.</strong> They are evidence for reflection.
+            </p>
+
+            <div class="dashboard-grid">
+                <div class="metric">
+                    <div id="dashCompleted" class="metric-value">0 / 4</div>
+                    <div class="metric-label">missions completed before today</div>
+                </div>
+                <div class="metric">
+                    <div id="dashCorrect" class="metric-value">0</div>
+                    <div class="metric-label">correct answers</div>
+                </div>
+                <div class="metric">
+                    <div id="dashAttempts" class="metric-value">0</div>
+                    <div class="metric-label">attempts</div>
+                </div>
+                <div class="metric">
+                    <div id="dashXP" class="metric-value">0</div>
+                    <div class="metric-label">XP so far</div>
+                </div>
+            </div>
+
+            <div class="mission-bars">
+                <strong>Learning trail</strong>
+                <div id="missionBars"></div>
+            </div>
+
+            <div class="lesson-note">
+                <strong>🔬 Why show this?</strong><br>
+                In this academic game, a wrong answer is useful data.
+                An attempt can reveal a misconception, uncertainty,
+                or a concept that needs another look. <strong>Do not
+                hide negative results or try to make your score look
+                better.</strong> Your answers and attempts are important
+                precisely because they help us understand how people
+                reason about AI concepts.
+            </div>
+        </div>
 
     </div>
 
@@ -706,6 +949,17 @@ move(room2,room1).
 
     <h2>⚔️ Final Challenge — Design the Agent</h2>
 
+    <div class="agent-animation" aria-label="Animated autonomous agent">
+        <span>📚</span>
+        <div class="agent-track">
+            <div id="agentDot" class="agent-dot">🤖</div>
+        </div>
+        <span>🎯</span>
+    </div>
+    <div id="agentMessage" class="agent-message">
+        Agent boot sequence ready...
+    </div>
+
     <div class="challenge">
 
         <div class="challenge-title">
@@ -848,6 +1102,51 @@ move(room1,pharmacy).<br>
 </div>
 
 
+
+<div id="gameStatus" class="game-status">
+    <div id="gameStatusText">SYSTEM READY</div>
+</div>
+
+<div id="finalCompletion" class="completion-panel">
+    <h2>🏆 Reasoning Quest Complete!</h2>
+
+    <p>
+        You have completed the five-mission game. But the most important
+        result is not the XP: it is the reasoning process you just went through.
+    </p>
+
+    <div class="result-grid">
+        <div class="result-card">
+            <strong id="finalScore">0 / 5</strong><br>
+            Final mission
+        </div>
+        <div class="result-card">
+            <strong id="finalAttempts">0</strong><br>
+            Final-mission attempts
+        </div>
+        <div class="result-card">
+            <strong id="finalXP">0</strong><br>
+            Total XP
+        </div>
+    </div>
+
+    <p>
+        <strong>Academic note:</strong> this is a game for academic purposes.
+        Both positive and negative results are valuable. A wrong answer is not
+        a failure of the study; it is information about how a learner approached
+        the problem. Please answer honestly rather than optimizing the score.
+    </p>
+
+    <a class="next-mission"
+       href="https://www.canvas.umu.se/courses/22669/modules">
+        RETURN TO THE COURSE →
+    </a>
+
+    <div class="privacy-note">
+        Your game record is stored locally and anonymously in this browser.
+        The page does not ask for your name or student identifier.
+    </div>
+</div>
 
 <!-- ==================================================
      AGENT ARCHITECTURE
@@ -1023,7 +1322,7 @@ move(room1,pharmacy).<br>
                 and planning?
             </strong>
 
-            <textarea
+            <textarea id="reflection1"
                 placeholder="Write your answer here...">
             </textarea>
 
@@ -1037,7 +1336,7 @@ move(room1,pharmacy).<br>
                 is planning actions?
             </strong>
 
-            <textarea
+            <textarea id="reflection2"
                 placeholder="Write your answer here...">
             </textarea>
 
@@ -1051,7 +1350,7 @@ move(room1,pharmacy).<br>
                 representation provide to an intelligent agent?
             </strong>
 
-            <textarea
+            <textarea id="reflection3"
                 placeholder="Write your answer here...">
             </textarea>
 
@@ -1065,11 +1364,16 @@ move(room1,pharmacy).<br>
                 to an intelligent agent?
             </strong>
 
-            <textarea
+            <textarea id="reflection4"
                 placeholder="Write your answer here...">
             </textarea>
 
         </div>
+
+        <button class="reflection-save" onclick="saveReflections()">
+            SAVE REFLECTIONS LOCALLY
+        </button>
+        <div id="reflectionStatus" class="feedback" style="display:none;"></div>
 
     </div>
 
@@ -1116,169 +1420,906 @@ move(room1,pharmacy).<br>
 
 <script>
 
-/* ==================================================
-   QUESTION 1
-================================================== */
+/* =========================================================
+   REASONING QUEST — SHARED SESSION
+   Mission 5: The Autonomous Agent
+
+   Important pedagogical principle:
+   This mission uses previous attempts/results as formative
+   evidence. It does NOT shame low scores or hide mistakes.
+   ========================================================= */
+
+const QUEST_STORAGE_KEY = "reasoningQuestSession";
+
+const MISSION_NUMBER = 5;
+const MISSION_XP = 200;
+const TOTAL_MISSIONS = 5;
+const TOTAL_QUESTIONS = 5;
+
+const RETURN_TO_COURSE_URL =
+    "https://www.canvas.umu.se/courses/22669/modules";
+
+
+function createDefaultMission() {
+
+    return {
+        startedAt: null,
+        completedAt: null,
+        completed: false,
+        correct: 0,
+        attempts: 0,
+        totalQuestions: TOTAL_QUESTIONS,
+        xp: 0,
+        answers: {},
+        reflection: {}
+    };
+}
+
+
+function createNewSession() {
+
+    const now = new Date().toISOString();
+
+    return {
+        sessionId:
+            (window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : "rq-" + Date.now() + "-" +
+                  Math.random().toString(36).slice(2),
+
+        startedAt: now,
+        lastActivityAt: now,
+        completedAt: null,
+        totalXP: 0,
+
+        missions: {
+            "1": createDefaultMission(),
+            "2": createDefaultMission(),
+            "3": createDefaultMission(),
+            "4": createDefaultMission(),
+            "5": createDefaultMission()
+        }
+    };
+}
+
+
+function ensureMissionStructure(session) {
+
+    if (!session || typeof session !== "object") {
+        session = createNewSession();
+    }
+
+    if (!session.sessionId) {
+        session.sessionId =
+            (window.crypto && crypto.randomUUID)
+                ? crypto.randomUUID()
+                : "rq-" + Date.now() + "-" +
+                  Math.random().toString(36).slice(2);
+    }
+
+    if (!session.startedAt) {
+        session.startedAt =
+            new Date().toISOString();
+    }
+
+    if (!session.missions) {
+        session.missions = {};
+    }
+
+    for (let i = 1; i <= TOTAL_MISSIONS; i++) {
+
+        const key = String(i);
+
+        if (!session.missions[key]) {
+            session.missions[key] =
+                createDefaultMission();
+        }
+
+        const m = session.missions[key];
+
+        if (!m.answers) m.answers = {};
+        if (!m.reflection) m.reflection = {};
+        if (typeof m.attempts !== "number") m.attempts = 0;
+        if (typeof m.correct !== "number") m.correct = 0;
+        if (typeof m.xp !== "number") m.xp = 0;
+        if (typeof m.completed !== "boolean") m.completed = false;
+    }
+
+    return session;
+}
+
+
+function loadQuestSession() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                QUEST_STORAGE_KEY
+            );
+
+        if (!raw) {
+            return ensureMissionStructure(
+                createNewSession()
+            );
+        }
+
+        return ensureMissionStructure(
+            JSON.parse(raw)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Reasoning Quest session could not be loaded.",
+            error
+        );
+
+        return ensureMissionStructure(
+            createNewSession()
+        );
+    }
+}
+
+
+function calculateTotalXP(session) {
+
+    let total = 0;
+
+    Object.values(session.missions)
+        .forEach(function(mission) {
+
+            if (mission.completed) {
+                total += Number(mission.xp) || 0;
+            }
+
+        });
+
+    return total;
+}
+
+
+function saveQuestSession() {
+
+    try {
+
+        questSession.lastActivityAt =
+            new Date().toISOString();
+
+        questSession.totalXP =
+            calculateTotalXP(questSession);
+
+        localStorage.setItem(
+            QUEST_STORAGE_KEY,
+            JSON.stringify(questSession)
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "Reasoning Quest session could not be saved.",
+            error
+        );
+    }
+}
+
+
+let questSession =
+    loadQuestSession();
+
+const mission =
+    questSession.missions[String(MISSION_NUMBER)];
+
+if (!mission.startedAt) {
+
+    mission.startedAt =
+        new Date().toISOString();
+
+    saveQuestSession();
+}
+
+
+/* =========================================================
+   PREVIOUS PERFORMANCE — FORMATIVE, NOT GRADING
+   ========================================================= */
+
+function getPreviousMissions() {
+
+    return [1, 2, 3, 4].map(function(number) {
+        return questSession.missions[String(number)];
+    });
+}
+
+
+function showPreviousPerformance() {
+
+    const dashboard =
+        document.getElementById(
+            "questDashboard"
+        );
+
+    if (!dashboard) return;
+
+    const previous =
+        getPreviousMissions();
+
+    const completed =
+        previous.filter(function(m) {
+            return m.completed;
+        }).length;
+
+    const correct =
+        previous.reduce(function(total, m) {
+            return total + (Number(m.correct) || 0);
+        }, 0);
+
+    const attempts =
+        previous.reduce(function(total, m) {
+            return total + (Number(m.attempts) || 0);
+        }, 0);
+
+    const xp =
+        questSession.totalXP || 0;
+
+    document.getElementById(
+        "dashCompleted"
+    ).textContent =
+        completed + " / 4";
+
+    document.getElementById(
+        "dashCorrect"
+    ).textContent =
+        correct;
+
+    document.getElementById(
+        "dashAttempts"
+    ).textContent =
+        attempts;
+
+    document.getElementById(
+        "dashXP"
+    ).textContent =
+        xp;
+
+    const bars =
+        document.getElementById(
+            "missionBars"
+        );
+
+    bars.innerHTML = "";
+
+    previous.forEach(function(m, index) {
+
+        const missionNumber =
+            index + 1;
+
+        const total =
+            Number(m.totalQuestions) || 0;
+
+        const correctAnswers =
+            Number(m.correct) || 0;
+
+        const percentage =
+            total > 0
+                ? Math.min(
+                    100,
+                    Math.round(
+                        100 * correctAnswers / total
+                    )
+                )
+                : (m.completed ? 100 : 0);
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "mission-row";
+
+        const label =
+            document.createElement("span");
+
+        label.textContent =
+            "Mission " + missionNumber;
+
+        const bar =
+            document.createElement("div");
+
+        bar.className =
+            "bar";
+
+        const fill =
+            document.createElement("div");
+
+        fill.className =
+            "bar-fill";
+
+        fill.style.width =
+            percentage + "%";
+
+        bar.appendChild(fill);
+
+        const score =
+            document.createElement("span");
+
+        score.textContent =
+            total > 0
+                ? correctAnswers + "/" + total
+                : (m.completed ? "✓" : "—");
+
+        row.appendChild(label);
+        row.appendChild(bar);
+        row.appendChild(score);
+
+        bars.appendChild(row);
+    });
+
+    dashboard.style.display =
+        "block";
+}
+
+
+/* =========================================================
+   GAMEFUL AGENT ANIMATION
+   ========================================================= */
+
+function setAgentMessage(message) {
+
+    const element =
+        document.getElementById(
+            "agentMessage"
+        );
+
+    if (element) {
+        element.textContent =
+            message;
+    }
+}
+
+
+function moveAgent(position, message) {
+
+    const dot =
+        document.getElementById(
+            "agentDot"
+        );
+
+    if (!dot) return;
+
+    dot.style.left =
+        position + "%";
+
+    setAgentMessage(message);
+
+    dot.classList.remove("pulse");
+
+    void dot.offsetWidth;
+
+    dot.classList.add("pulse");
+}
+
+
+function bootAgent() {
+
+    moveAgent(
+        0,
+        "Perceiving the environment..."
+    );
+
+    setTimeout(function() {
+
+        moveAgent(
+            24,
+            "Acquiring knowledge..."
+        );
+
+    }, 700);
+
+    setTimeout(function() {
+
+        moveAgent(
+            48,
+            "Reasoning about the current state..."
+        );
+
+    }, 1400);
+
+    setTimeout(function() {
+
+        moveAgent(
+            72,
+            "Generating and checking possible actions..."
+        );
+
+    }, 2100);
+
+    setTimeout(function() {
+
+        moveAgent(
+            92,
+            "Ready for your final decision."
+        );
+
+    }, 2800);
+}
+
+
+/* =========================================================
+   QUESTION STATE
+   ========================================================= */
+
+const questionState = {
+
+    q1: Boolean(mission.answers.q1_correct),
+    q2: Boolean(mission.answers.q2_correct),
+    q3: Boolean(mission.answers.q3_correct),
+    q4: Boolean(mission.answers.q4_correct),
+    q5: Boolean(mission.answers.q5_correct)
+};
+
+
+function countCorrect() {
+
+    return Object.values(questionState)
+        .filter(Boolean)
+        .length;
+}
+
+
+function recordAnswer(
+    question,
+    answer,
+    correct
+) {
+
+    mission.attempts++;
+
+    mission.answers[question] =
+        answer;
+
+    mission.answers[question + "_correct"] =
+        correct;
+
+    if (correct) {
+        questionState[question] =
+            true;
+    }
+
+    mission.correct =
+        countCorrect();
+
+    saveQuestSession();
+
+    checkMissionCompletion();
+}
+
+
+function showFeedback(
+    id,
+    message,
+    correct
+) {
+
+    const feedback =
+        document.getElementById(id);
+
+    feedback.style.display =
+        "block";
+
+    feedback.className =
+        correct
+            ? "feedback correct"
+            : "feedback incorrect";
+
+    feedback.innerHTML =
+        message;
+}
+
+
+/* =========================================================
+   QUESTION 1 — KNOWLEDGE
+   ========================================================= */
 
 function checkAnswer1(answer) {
 
-    const feedback =
-        document.getElementById("feedback1");
+    const correct =
+        answer === 2;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 2) {
+        showFeedback(
+            "feedback1",
+            "✅ Correct! The knowledge base explicitly states that Alice is in room 1 and the aspirin is in the pharmacy. It does not explicitly state that Alice needs aspirin.",
+            true
+        );
 
-        feedback.className =
-            "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! The knowledge base explicitly states that Alice is in room 1 and the aspirin is in the pharmacy. It does not explicitly state that Alice needs aspirin.";
+        moveAgent(
+            18,
+            "Knowledge acquired: explicit facts identified."
+        );
 
     } else {
 
-        feedback.className =
-            "feedback incorrect";
+        showFeedback(
+            "feedback1",
+            "❌ Look only at the facts that are explicitly represented. Do not assume information that is not present.",
+            false
+        );
 
-        feedback.innerHTML =
-            "❌ Look only at the facts that are explicitly represented. Do not assume information that is not present.";
-
+        moveAgent(
+            8,
+            "Re-check the knowledge base: distinguish facts from assumptions."
+        );
     }
 
+    recordAnswer(
+        "q1",
+        answer,
+        correct
+    );
 }
 
 
-/* ==================================================
-   QUESTION 2
-================================================== */
+/* =========================================================
+   QUESTION 2 — REASONING
+   ========================================================= */
 
 function checkAnswer2(answer) {
 
-    const feedback =
-        document.getElementById("feedback2");
+    const correct =
+        answer === 1;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 1) {
+        showFeedback(
+            "feedback2",
+            "✅ Correct! aspirin is medicine, it is located in the pharmacy, and the robot is also at the pharmacy. Therefore ready_to_deliver(aspirin) can be derived.",
+            true
+        );
 
-        feedback.className =
-            "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! aspirin is medicine, it is located in the pharmacy, and the robot is also at the pharmacy. Therefore ready_to_deliver(aspirin) can be derived.";
+        moveAgent(
+            38,
+            "Reasoning succeeded: a new conclusion was derived."
+        );
 
     } else {
 
-        feedback.className =
-            "feedback incorrect";
+        showFeedback(
+            "feedback2",
+            "❌ Check all three conditions in the rule. They must hold for the same object X.",
+            false
+        );
 
-        feedback.innerHTML =
-            "❌ Check all three conditions in the rule. They must hold for the same object X.";
-
+        moveAgent(
+            28,
+            "Reasoning checkpoint: inspect every condition in the rule."
+        );
     }
 
+    recordAnswer(
+        "q2",
+        answer,
+        correct
+    );
 }
 
 
-/* ==================================================
-   QUESTION 3
-================================================== */
+/* =========================================================
+   QUESTION 3 — CONSTRAINTS
+   ========================================================= */
 
 function checkAnswer3(answer) {
 
-    const feedback =
-        document.getElementById("feedback3");
+    const correct =
+        answer === 2;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 2) {
+        showFeedback(
+            "feedback3",
+            "✅ Correct! The constraint eliminates candidate solutions in which robot_at(robot,room3) holds.",
+            true
+        );
 
-        feedback.className =
-            "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! The constraint eliminates candidate solutions in which robot_at(robot,room3) holds.";
+        moveAgent(
+            58,
+            "Constraint satisfied: unsafe candidate plans are eliminated."
+        );
 
     } else {
 
-        feedback.className =
-            "feedback incorrect";
+        showFeedback(
+            "feedback3",
+            "❌ Remember that an ASP constraint does not normally perform an action. It eliminates answer sets that violate the condition.",
+            false
+        );
 
-        feedback.innerHTML =
-            "❌ Remember that an ASP constraint does not normally perform an action. It eliminates answer sets that violate the condition.";
-
+        moveAgent(
+            46,
+            "Constraint checkpoint: eliminate invalid states rather than performing an action."
+        );
     }
 
+    recordAnswer(
+        "q3",
+        answer,
+        correct
+    );
 }
 
 
-/* ==================================================
-   QUESTION 4
-================================================== */
+/* =========================================================
+   QUESTION 4 — PLANNING
+   ========================================================= */
 
 function checkAnswer4(answer) {
 
-    const feedback =
-        document.getElementById("feedback4");
+    const correct =
+        answer === 2;
 
-    feedback.style.display = "block";
+    if (correct) {
 
-    if (answer === 2) {
+        showFeedback(
+            "feedback4",
+            "✅ Correct! The robot can move directly from the pharmacy to room 1, giving a valid plan that reaches the patient's room.",
+            true
+        );
 
-        feedback.className =
-            "feedback correct";
-
-        feedback.innerHTML =
-            "✅ Correct! The robot can move directly from the pharmacy to room 1, giving a valid plan that reaches the patient's room.";
+        moveAgent(
+            76,
+            "Plan found: the goal can be reached."
+        );
 
     } else {
 
-        feedback.className =
-            "feedback incorrect";
+        showFeedback(
+            "feedback4",
+            "❌ Start at the pharmacy and follow only the listed actions. Which sequence reaches room 1?",
+            false
+        );
 
-        feedback.innerHTML =
-            "❌ Start at the pharmacy and follow only the listed actions. Which sequence reaches room 1?";
-
+        moveAgent(
+            64,
+            "Planning checkpoint: start from the actual initial state."
+        );
     }
 
+    recordAnswer(
+        "q4",
+        answer,
+        correct
+    );
 }
 
 
-/* ==================================================
-   FINAL CHALLENGE
-================================================== */
+/* =========================================================
+   FINAL CHALLENGE — AGENT
+   ========================================================= */
 
 function finalAnswer(answer) {
 
-    const feedback =
-        document.getElementById("feedback5");
+    const correct =
+        answer === 2;
 
-    const success =
-        document.getElementById("missionSuccess");
+    if (correct) {
 
-    feedback.style.display = "block";
+        showFeedback(
+            "feedback5",
+            "🎉 Exactly! An intelligent agent must combine information about its environment with reasoning, goals, constraints, and actions. ASP provides a formal way to represent and solve parts of this problem.",
+            true
+        );
 
-    if (answer === 2) {
+        moveAgent(
+            100,
+            "MISSION COMPLETE: goal achieved."
+        );
 
-        feedback.className =
-            "feedback correct";
-
-        feedback.innerHTML =
-            "🎉 Exactly! An intelligent agent must combine information about its environment with reasoning, goals, constraints, and actions. ASP provides a formal way to represent and solve parts of this problem.";
-
-        success.style.display = "block";
+        recordAnswer(
+            "q5",
+            answer,
+            true
+        );
 
     } else {
 
-        feedback.className =
-            "feedback incorrect";
+        showFeedback(
+            "feedback5",
+            "❌ Think about the complete process. An autonomous agent needs more than stored facts: it needs to reason, consider possible actions, respect constraints, and pursue goals.",
+            false
+        );
 
-        feedback.innerHTML =
-            "❌ Think about the complete process. An autonomous agent needs more than stored facts: it needs to reason, consider possible actions, respect constraints, and pursue goals.";
+        moveAgent(
+            82,
+            "Final checkpoint: integrate knowledge, reasoning, constraints, and planning."
+        );
 
+        recordAnswer(
+            "q5",
+            answer,
+            false
+        );
+    }
+}
+
+
+/* =========================================================
+   COMPLETION
+   ========================================================= */
+
+function checkMissionCompletion() {
+
+    const allComplete =
+        questionState.q1 &&
+        questionState.q2 &&
+        questionState.q3 &&
+        questionState.q4 &&
+        questionState.q5;
+
+    if (!allComplete) {
+        return;
     }
 
+    if (!mission.completed) {
+
+        mission.completed =
+            true;
+
+        mission.completedAt =
+            new Date().toISOString();
+
+        mission.correct =
+            TOTAL_QUESTIONS;
+
+        mission.totalQuestions =
+            TOTAL_QUESTIONS;
+
+        mission.xp =
+            MISSION_XP;
+
+        questSession.completedAt =
+            new Date().toISOString();
+
+        saveQuestSession();
+    }
+
+    showFinalCompletion();
 }
+
+
+function showFinalCompletion() {
+
+    const completion =
+        document.getElementById(
+            "finalCompletion"
+        );
+
+    if (!completion) return;
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        mission.correct +
+        " / " +
+        TOTAL_QUESTIONS;
+
+    document.getElementById(
+        "finalAttempts"
+    ).textContent =
+        mission.attempts;
+
+    document.getElementById(
+        "finalXP"
+    ).textContent =
+        questSession.totalXP;
+
+    completion.style.display =
+        "block";
+
+    completion.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+    });
+}
+
+
+/* =========================================================
+   REFLECTIONS
+   ========================================================= */
+
+function saveReflections() {
+
+    const ids = [
+        "reflection1",
+        "reflection2",
+        "reflection3",
+        "reflection4"
+    ];
+
+    ids.forEach(function(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (element) {
+            mission.reflection[id] =
+                element.value;
+        }
+
+    });
+
+    saveQuestSession();
+
+    const status =
+        document.getElementById(
+            "reflectionStatus"
+        );
+
+    status.style.display =
+        "block";
+
+    status.className =
+        "feedback correct";
+
+    status.innerHTML =
+        "✓ Your reflections have been saved locally in this browser.";
+}
+
+
+function restoreReflections() {
+
+    const ids = [
+        "reflection1",
+        "reflection2",
+        "reflection3",
+        "reflection4"
+    ];
+
+    ids.forEach(function(id) {
+
+        const element =
+            document.getElementById(id);
+
+        if (
+            element &&
+            mission.reflection &&
+            typeof mission.reflection[id] === "string"
+        ) {
+            element.value =
+                mission.reflection[id];
+        }
+
+    });
+}
+
+
+/* =========================================================
+   RESTORE / INITIALISE
+   ========================================================= */
+
+function restoreMissionState() {
+
+    restoreReflections();
+
+    if (mission.completed) {
+
+        questionState.q1 = true;
+        questionState.q2 = true;
+        questionState.q3 = true;
+        questionState.q4 = true;
+        questionState.q5 = true;
+
+        showFinalCompletion();
+
+        moveAgent(
+            100,
+            "MISSION COMPLETE: goal achieved."
+        );
+    }
+}
+
+
+showPreviousPerformance();
+restoreMissionState();
+bootAgent();
 
 </script>
 
