@@ -255,6 +255,22 @@
         margin-top: 20px;
     }
 
+   .next-mission-button {
+    display: inline-block;
+    border-radius: 8px;
+    background: #2b587d;
+    color: white;
+    padding: 14px 26px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.next-mission-button:hover {
+    background: #1f4568;
+}
+
     @media (max-width: 650px) {
 
         .game-container {
@@ -494,16 +510,21 @@ flies(X) :- bird(X), not penguin(X).
                 solutions are represented as <strong>answer sets</strong>.
             </div>
 
-            <div class="button-container">
+<div class="button-container">
 
-                <button onclick="window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                })">
-                    ↻ REVIEW MISSION
-                </button>
+    <button onclick="window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    })">
+        ↻ REVIEW MISSION
+    </button>
 
-            </div>
+    <a class="next-mission-button"
+       href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-2-enter-the-answer-set">
+        NEXT MISSION →
+    </a>
+
+</div>
 
         </div>
 
