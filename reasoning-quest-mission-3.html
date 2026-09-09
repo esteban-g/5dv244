@@ -252,6 +252,17 @@
         display: none;
     }
 
+
+    .completion-panel { display:none; background:#e8f5e9; border-left:5px solid #4caf50; padding:24px; border-radius:10px; margin-top:20px; line-height:1.6; }
+    .completion-panel h2 { margin-top:0; }
+    .results-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0; }
+    .result-card { background:#fff; border:1px solid #d7e0e6; border-radius:10px; padding:14px; text-align:center; }
+    .result-value { display:block; font-size:24px; font-weight:bold; color:#2b5876; }
+    .next-mission { display:inline-block; background:#2b5876; color:#fff; text-decoration:none; border-radius:8px; padding:13px 22px; font-size:16px; font-weight:bold; margin-top:8px; }
+    .next-mission:hover { background:#214861; }
+    .next-mission:focus-visible { outline:3px solid #ffcf66; outline-offset:3px; }
+    @media (max-width:700px) { .results-grid { grid-template-columns:1fr; } }
+
     @media (max-width: 700px) {
         .hero,
         .panel {
@@ -775,163 +786,174 @@ can_escape(X) :- flies(X), small(X).
         </div>
 
     </div>
-   <a class="next-mission-button"
-   href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-4-plan-the-robot">
-    NEXT MISSION →
-</a>
+
+
+    <!-- MISSION COMPLETION -->
+    <div id="completionPanel" class="panel completion-panel" role="status" aria-live="polite">
+        <h2>🎉 Mission 3 Complete!</h2>
+        <p>You have successfully completed the Clingo Solver mission. You predicted stable-model consequences, interpreted negation as failure, and traced rules to determine what can be derived.</p>
+        <div class="results-grid">
+            <div class="result-card"><span class="result-value" id="missionScore">0 / 5</span>Correct</div>
+            <div class="result-card"><span class="result-value">+100 XP</span>Mission reward</div>
+            <div class="result-card"><span class="result-value" id="totalXP">0 XP</span>Total XP</div>
+        </div>
+        <p><strong>Next:</strong> move from static reasoning to planning actions over time.</p>
+        <a class="next-mission" href="https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-4-plan-the-robot">Continue to Mission 4 →</a>
+        <p style="font-size:14px; color:#657786; margin-top:18px;">Progress is stored locally in this browser using an anonymous session identifier. No name or Canvas identity is stored by this game page.</p>
+    </div>
 
 </div>
 
 
 <script>
 
-function showFeedback(id, message, correct) {
+const QUEST_STORAGE_KEY = "reasoningQuestSession";
+const MISSION_NUMBER = 3;
+const MISSION_XP = 100;
+const TOTAL_MISSIONS = 5;
+const TOTAL_QUESTIONS = 5;
+const NEXT_MISSION_URL = "https://www.canvas.umu.se/courses/22669/pages/reasoning-quest-mission-4-plan-the-robot";
 
-    const box = document.getElementById(id);
+const DEFAULT_ANSWERS = { q1:null, q2:null, q3:null, q4:null, q5:null };
 
-    box.style.display = "block";
+function newId() {
+    return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : "rq-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+}
 
-    box.innerHTML = message;
+function createDefaultMission() {
+    return { startedAt:null, completedAt:null, completed:false, correct:0, attempts:0, totalQuestions:TOTAL_QUESTIONS, xp:0, answers:{...DEFAULT_ANSWERS} };
+}
 
-    if (correct) {
-        box.className = "feedback correct";
-    } else {
-        box.className = "feedback incorrect";
+function createNewSession() {
+    const missions = {};
+    for (let i=1; i<=TOTAL_MISSIONS; i++) missions[i] = createDefaultMission();
+    return { sessionId:newId(), startedAt:new Date().toISOString(), lastActivityAt:new Date().toISOString(), completedAt:null, totalXP:0, missions };
+}
+
+function ensureMissionStructure(session) {
+    if (!session || typeof session !== "object") session=createNewSession();
+    if (!session.sessionId) session.sessionId=newId();
+    if (!session.startedAt) session.startedAt=new Date().toISOString();
+    if (!session.missions || typeof session.missions !== "object") session.missions={};
+    for (let i=1; i<=TOTAL_MISSIONS; i++) {
+        const existing=session.missions[i] || {};
+        const defaults=createDefaultMission();
+        session.missions[i]={...defaults,...existing,answers:{...DEFAULT_ANSWERS,...(existing.answers||{})}};
+        if (i===MISSION_NUMBER) session.missions[i].totalQuestions=TOTAL_QUESTIONS;
+    }
+    if (typeof session.totalXP !== "number") session.totalXP=0;
+    return session;
+}
+
+function loadQuestSession() {
+    try {
+        const raw=localStorage.getItem(QUEST_STORAGE_KEY);
+        return ensureMissionStructure(raw ? JSON.parse(raw) : createNewSession());
+    } catch (error) {
+        console.warn("Reasoning Quest session could not be loaded.", error);
+        return createNewSession();
     }
 }
 
+function calculateTotalXP(session) {
+    return Object.values(session.missions).reduce((sum,m) => sum + (m.completed ? (m.xp||0) : 0), 0);
+}
 
-/* QUESTION 1 */
+function saveQuestSession(session) {
+    try {
+        session.lastActivityAt=new Date().toISOString();
+        session.totalXP=calculateTotalXP(session);
+        localStorage.setItem(QUEST_STORAGE_KEY, JSON.stringify(session));
+    } catch (error) {
+        console.warn("Reasoning Quest session could not be saved.", error);
+    }
+}
+
+let questSession=loadQuestSession();
+let missionState=questSession.missions[MISSION_NUMBER];
+
+if (!missionState.startedAt) { missionState.startedAt=new Date().toISOString(); saveQuestSession(questSession); }
+
+function updateMissionProgress() {
+    missionState.correct=["q1","q2","q3","q4","q5"].filter(k => missionState.answers[k]==="correct").length;
+    saveQuestSession(questSession);
+}
+
+function showFeedback(id,message,correct) {
+    const box=document.getElementById(id);
+    box.style.display="block";
+    box.innerHTML=message;
+    box.className=correct ? "feedback correct" : "feedback incorrect";
+}
+
+function recordAnswer(questionKey,answer,correct,feedbackId,correctMessage,incorrectMessage) {
+    missionState.attempts+=1;
+    missionState.answers[questionKey]=correct ? "correct" : "incorrect";
+    missionState[questionKey+"Answer"]=answer;
+    showFeedback(feedbackId,correct ? correctMessage : incorrectMessage,correct);
+    updateMissionProgress();
+    if (correct) checkMissionCompletion();
+}
+
+function checkMissionCompletion() {
+    updateMissionProgress();
+    if (missionState.correct<TOTAL_QUESTIONS || missionState.completed) return;
+    missionState.completed=true;
+    missionState.completedAt=new Date().toISOString();
+    missionState.xp=MISSION_XP;
+    saveQuestSession(questSession);
+    document.getElementById("missionScore").textContent=missionState.correct+" / "+TOTAL_QUESTIONS;
+    document.getElementById("totalXP").textContent=questSession.totalXP+" XP";
+    const panel=document.getElementById("completionPanel");
+    panel.style.display="block";
+    panel.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function restoreCompletionState() {
+    if (!missionState.completed) return;
+    document.getElementById("missionScore").textContent=missionState.correct+" / "+TOTAL_QUESTIONS;
+    document.getElementById("totalXP").textContent=questSession.totalXP+" XP";
+    document.getElementById("completionPanel").style.display="block";
+}
 
 function checkAnswer(answer) {
-
-    if (answer === 1) {
-
-        showFeedback(
-            "feedback1",
-            "✅ Correct! Tweety is a bird and there is no evidence that Tweety is a penguin. Therefore the rule derives flies(tweety). Polly is explicitly a penguin, so flies(polly) cannot be derived.",
-            true
-        );
-
-    } else {
-
-        showFeedback(
-            "feedback1",
-            "❌ Not quite. Look carefully at the condition not penguin(X). Polly is explicitly known to be a penguin, while Tweety is not.",
-            false
-        );
-
-    }
-
+    recordAnswer("q1",answer,answer===1,"feedback1",
+        "✅ Correct! Tweety is a bird and there is no evidence that Tweety is a penguin. Therefore the rule derives flies(tweety). Polly is explicitly a penguin, so flies(polly) cannot be derived.",
+        "❌ Not quite. Look carefully at the condition not penguin(X). Polly is explicitly known to be a penguin, while Tweety is not.");
 }
-
-
-/* QUESTION 2 */
 
 function checkAnswer2(answer) {
-
-    if (answer === 2) {
-
-        showFeedback(
-            "feedback2",
-            "✅ Correct! In ASP, not penguin(X) is negation as failure: the solver cannot establish penguin(X) from the current knowledge. It should not simply be interpreted as classical logical negation.",
-            true
-        );
-
-    } else {
-
-        showFeedback(
-            "feedback2",
-            "❌ Think carefully about the meaning of not in ASP. It is not simply classical Boolean negation.",
-            false
-        );
-
-    }
-
+    recordAnswer("q2",answer,answer===2,"feedback2",
+        "✅ Correct! In ASP, not penguin(X) is negation as failure: the solver cannot establish penguin(X) from the current knowledge. It should not simply be interpreted as classical logical negation.",
+        "❌ Think carefully about the meaning of not in ASP. It is not simply classical Boolean negation.");
 }
-
-
-/* QUESTION 3 */
 
 function checkAnswer3(answer) {
-
-    if (answer === 2) {
-
-        showFeedback(
-            "feedback3",
-            "✅ Correct! Because penguin(tweety) is explicitly known, the condition not penguin(tweety) fails. Therefore flies(tweety) cannot be derived.",
-            true
-        );
-
-    } else {
-
-        showFeedback(
-            "feedback3",
-            "❌ Look at the complete rule. The bird condition is necessary, but it is not sufficient: not penguin(X) must also succeed.",
-            false
-        );
-
-    }
-
+    recordAnswer("q3",answer,answer===2,"feedback3",
+        "✅ Correct! Because penguin(tweety) is explicitly known, the condition not penguin(tweety) fails. Therefore flies(tweety) cannot be derived.",
+        "❌ Look at the complete rule. The bird condition is necessary, but it is not sufficient: not penguin(X) must also succeed.");
 }
-
-
-/* QUESTION 4 */
 
 function checkAnswer4(answer) {
-
-    if (answer === 1) {
-
-        showFeedback(
-            "feedback4",
-            "✅ Correct! Alice satisfies both conditions: student(alice) and studies(alice). Therefore prepared(alice) is derived. Bob is a student but there is no studies(bob) fact.",
-            true
-        );
-
-    } else {
-
-        showFeedback(
-            "feedback4",
-            "❌ Check the body of the rule. Both student(X) and studies(X) must hold for the same X.",
-            false
-        );
-
-    }
-
+    recordAnswer("q4",answer,answer===1,"feedback4",
+        "✅ Correct! Alice satisfies both conditions: student(alice) and studies(alice). Therefore prepared(alice) is derived. Bob is a student but there is no studies(bob) fact.",
+        "❌ Check the body of the rule. Both student(X) and studies(X) must hold for the same X.");
 }
-
-
-/* FINAL QUESTION */
 
 function finalAnswer(answer) {
-
-    if (answer === 1) {
-
-        showFeedback(
-            "feedback5",
-            "🎉 Excellent! Tweety is a bird and not a penguin, so flies(tweety) is derived. Tweety is also small, so can_escape(tweety) follows. Polly is a penguin, so she does not satisfy the flying rule.",
-            true
-        );
-
-    } else if (answer === 3) {
-
-        showFeedback(
-            "feedback5",
-            "🟡 Almost! flies(tweety) is indeed derived, but there is another rule: can_escape(X) :- flies(X), small(X). Since Tweety is small, can_escape(tweety) is also derived.",
-            false
-        );
-
+    const correct=answer===1;
+    let message;
+    if (answer===1) {
+        message="🎉 Excellent! Tweety is a bird and not a penguin, so flies(tweety) is derived. Tweety is also small, so can_escape(tweety) follows. Polly is a penguin, so she does not satisfy the flying rule.";
+    } else if (answer===3) {
+        message="🟡 Almost! flies(tweety) is indeed derived, but there is another rule: can_escape(X) :- flies(X), small(X). Since Tweety is small, can_escape(tweety) is also derived.";
     } else {
-
-        showFeedback(
-            "feedback5",
-            "❌ Trace the rules one by one. First determine who flies, then use that result together with small(X) to determine who can escape.",
-            false
-        );
-
+        message="❌ Trace the rules one by one. First determine who flies, then use that result together with small(X) to determine who can escape.";
     }
-
+    recordAnswer("q5",answer,correct,"feedback5",message,message);
 }
+
+restoreCompletionState();
 
 </script>
 
