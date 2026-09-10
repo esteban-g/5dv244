@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="responsive-embedded-sizing" content="true">
 
 <title>Reasoning Quest — Mission 5</title>
 
@@ -383,6 +384,17 @@ textarea:focus-visible {
     background: #eef4f7;
 }
 
+.question[data-question] .option.correct {
+    background: #e8f5e9;
+    border-color: #4caf50;
+    cursor: default;
+}
+
+.question[data-question] .option.incorrect {
+    background: #fff3e0;
+    border-color: #ff9800;
+}
+
 /* FEEDBACK */
 
 .feedback {
@@ -698,7 +710,7 @@ robot_at(robot,pharmacy).
         The robot needs to deliver the medicine to Alice.
     </p>
 
-    <div class="question">
+    <div class="question" data-question="q1">
 
         <div class="question-title">
 
@@ -769,7 +781,7 @@ ready_to_deliver(X) :-
         robot conclude?
     </p>
 
-    <div class="question">
+    <div class="question" data-question="q2">
 
         <button class="option"
             onclick="checkAnswer2(1)">
@@ -831,7 +843,7 @@ restricted(room3).<br>
         What does this constraint express?
     </p>
 
-    <div class="question">
+    <div class="question" data-question="q3">
 
         <button class="option"
             onclick="checkAnswer3(1)">
@@ -903,7 +915,7 @@ move(room2,room1).
         Which sequence achieves the goal?
     </p>
 
-    <div class="question">
+    <div class="question" data-question="q4">
 
         <button class="option"
             onclick="checkAnswer4(1)">
@@ -1024,7 +1036,7 @@ move(room1,pharmacy).<br>
     </div>
 
 
-    <div class="question">
+    <div class="question" data-question="q5">
 
         <div class="question-title">
 
@@ -1397,8 +1409,8 @@ move(room1,pharmacy).<br>
 
     <p style="text-align:center; line-height:1.6;">
 
-        You have completed all five missions.
-        You are now ready to move from
+        You have reached the final mission.
+        After completing it, you will be ready to move from
         <strong>reasoning about intelligent agents</strong>
         to exploring how these ideas can be implemented
         computationally.
@@ -1871,6 +1883,19 @@ function recordAnswer(
     correct
 ) {
 
+    const questionElement =
+        document.querySelector(
+            `[data-question="${question}"]`
+        );
+
+    // Correctly answered questions are locked; incorrect answers remain retryable.
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
     mission.attempts++;
 
     mission.answers[question] =
@@ -1879,9 +1904,12 @@ function recordAnswer(
     mission.answers[question + "_correct"] =
         correct;
 
-    if (correct) {
-        questionState[question] =
-            true;
+    questionState[question] =
+        Boolean(correct);
+
+    if (questionElement) {
+        questionElement.dataset.answered =
+            correct ? "true" : "false";
     }
 
     mission.correct =
@@ -1920,6 +1948,24 @@ function showFeedback(
    ========================================================= */
 
 function checkAnswer1(answer) {
+
+    const questionElement =
+        document.querySelector('[data-question="q1"]');
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
+    if (questionElement) {
+        questionElement.querySelectorAll(".option").forEach(function(option) {
+            option.classList.remove("incorrect", "correct");
+        });
+        const selected = questionElement.querySelectorAll(".option")[answer - 1];
+        if (selected) selected.classList.add(answer === { "q1":2, "q2":1, "q3":2, "q4":2 }["q1"] ? "correct" : "incorrect");
+    }
 
     const correct =
         answer === 2;
@@ -1965,6 +2011,24 @@ function checkAnswer1(answer) {
 
 function checkAnswer2(answer) {
 
+    const questionElement =
+        document.querySelector('[data-question="q2"]');
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
+    if (questionElement) {
+        questionElement.querySelectorAll(".option").forEach(function(option) {
+            option.classList.remove("incorrect", "correct");
+        });
+        const selected = questionElement.querySelectorAll(".option")[answer - 1];
+        if (selected) selected.classList.add(answer === { "q1":2, "q2":1, "q3":2, "q4":2 }["q2"] ? "correct" : "incorrect");
+    }
+
     const correct =
         answer === 1;
 
@@ -2008,6 +2072,24 @@ function checkAnswer2(answer) {
    ========================================================= */
 
 function checkAnswer3(answer) {
+
+    const questionElement =
+        document.querySelector('[data-question="q3"]');
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
+    if (questionElement) {
+        questionElement.querySelectorAll(".option").forEach(function(option) {
+            option.classList.remove("incorrect", "correct");
+        });
+        const selected = questionElement.querySelectorAll(".option")[answer - 1];
+        if (selected) selected.classList.add(answer === { "q1":2, "q2":1, "q3":2, "q4":2 }["q3"] ? "correct" : "incorrect");
+    }
 
     const correct =
         answer === 2;
@@ -2053,6 +2135,24 @@ function checkAnswer3(answer) {
 
 function checkAnswer4(answer) {
 
+    const questionElement =
+        document.querySelector('[data-question="q4"]');
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
+    if (questionElement) {
+        questionElement.querySelectorAll(".option").forEach(function(option) {
+            option.classList.remove("incorrect", "correct");
+        });
+        const selected = questionElement.querySelectorAll(".option")[answer - 1];
+        if (selected) selected.classList.add(answer === { "q1":2, "q2":1, "q3":2, "q4":2 }["q4"] ? "correct" : "incorrect");
+    }
+
     const correct =
         answer === 2;
 
@@ -2096,6 +2196,29 @@ function checkAnswer4(answer) {
    ========================================================= */
 
 function finalAnswer(answer) {
+
+    const questionElement =
+        document.querySelector('[data-question="q5"]');
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
+    if (questionElement) {
+        questionElement.querySelectorAll(".option").forEach(function(option) {
+            option.classList.remove("incorrect", "correct");
+        });
+        const selected =
+            questionElement.querySelectorAll(".option")[answer - 1];
+        if (selected) {
+            selected.classList.add(
+                answer === 2 ? "correct" : "incorrect"
+            );
+        }
+    }
 
     const correct =
         answer === 2;
@@ -2298,6 +2421,43 @@ function restoreReflections() {
 function restoreMissionState() {
 
     restoreReflections();
+
+    ["q1", "q2", "q3", "q4", "q5"].forEach(function(questionKey) {
+
+        const questionElement =
+            document.querySelector(
+                `[data-question="${questionKey}"]`
+            );
+
+        if (!questionElement) return;
+
+        const correct =
+            Boolean(
+                mission.answers[
+                    questionKey + "_correct"
+                ]
+            );
+
+        questionState[questionKey] = correct;
+        questionElement.dataset.answered =
+            correct ? "true" : "false";
+
+        if (correct) {
+            const storedAnswer =
+                Number(mission.answers[questionKey]);
+
+            const selected =
+                questionElement.querySelectorAll(
+                    ".option"
+                )[storedAnswer - 1];
+
+            if (selected) {
+                selected.classList.add("correct");
+            }
+        }
+    });
+
+    mission.correct = countCorrect();
 
     if (mission.completed) {
 
