@@ -5,6 +5,7 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="responsive-embedded-sizing">
 
 <title>Reasoning Quest - Mission 1</title>
 
@@ -951,11 +952,12 @@ function answerQuestion(question, correct, element) {
     }
 
 
-    challenge.dataset.answered = "true";
-
-
     /*
      * Register the attempt.
+     *
+     * IMPORTANT: a wrong answer must remain retryable.
+     * The challenge is locked only after the student answers
+     * correctly.
      */
 
     questSession.missions[MISSION_NUMBER].attempts += 1;
@@ -973,6 +975,8 @@ function answerQuestion(question, correct, element) {
 
     if (correct) {
 
+        /* Lock the challenge only after a correct answer. */
+        challenge.dataset.answered = "true";
 
         element.classList.add("correct");
 
@@ -1029,6 +1033,14 @@ function answerQuestion(question, correct, element) {
 
     else {
 
+        /*
+         * Keep the question open so the student can try again.
+         * Remove the previous visual error state before showing
+         * feedback for the current attempt.
+         */
+        challenge.querySelectorAll(".answer.incorrect").forEach(function(answer) {
+            answer.classList.remove("incorrect");
+        });
 
         element.classList.add("incorrect");
 
