@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="responsive-embedded-sizing" content="true">
 
 <title>Reasoning Quest — Mission 4</title>
 
@@ -210,6 +211,17 @@
 
     .option:hover {
         background: #eef4f7;
+    }
+
+    .question[data-question] .option.correct {
+        background: #e8f5e9;
+        border-color: #4caf50;
+        cursor: default;
+    }
+
+    .question[data-question] .option.incorrect {
+        background: #fff3e0;
+        border-color: #ff9800;
     }
 
     .feedback {
@@ -541,7 +553,7 @@ goal(D).
 
         </ul>
 
-        <div class="question">
+        <div class="question" data-question="q1">
 
             <div class="question-title">
                 What is the purpose of a plan?
@@ -603,7 +615,7 @@ move(A,B).
             After executing the action, what should hold?
         </p>
 
-        <div class="question">
+        <div class="question" data-question="q2">
 
             <button class="option"
                 onclick="checkAnswer2(1)">
@@ -746,7 +758,7 @@ move(B,D).
             What does this constraint mean?
         </p>
 
-        <div class="question">
+        <div class="question" data-question="q3">
 
             <button class="option"
                 onclick="checkAnswer3(1)">
@@ -1190,13 +1202,36 @@ function countCorrect() {
 
 function recordAnswer(question, answer, correct) {
 
+    const questionElement =
+        document.querySelector(
+            `[data-question="${question}"]`
+        );
+
+    /*
+     * Once a question is answered correctly, lock it.
+     * Incorrect answers remain retryable.
+     */
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
     mission.attempts++;
 
     mission.answers[question] = answer;
     mission.answers[question + "_correct"] = correct;
 
+    if (questionElement) {
+        questionElement.dataset.answered =
+            correct ? "true" : "false";
+    }
+
     if (correct) {
         questionState[question] = true;
+    } else {
+        questionState[question] = false;
     }
 
     mission.correct = countCorrect();
@@ -1232,7 +1267,37 @@ function showFeedback(id, message, correct) {
 
 function checkAnswer1(answer) {
 
+    const questionElement =
+        document.querySelector(
+            `[data-question="q1"]`
+        );
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
     const correct = answer === 2;
+
+    // Remove previous attempt styling before marking this attempt.
+    if (questionElement) {
+        questionElement
+            .querySelectorAll(".option")
+            .forEach(function(option) {
+                option.classList.remove("incorrect", "correct");
+            });
+
+        const selected =
+            questionElement.querySelectorAll(".option")[answer - 1];
+
+        if (selected) {
+            selected.classList.add(
+                correct ? "correct" : "incorrect"
+            );
+        }
+    }
 
     if (correct) {
 
@@ -1261,7 +1326,37 @@ function checkAnswer1(answer) {
 
 function checkAnswer2(answer) {
 
+    const questionElement =
+        document.querySelector(
+            `[data-question="q2"]`
+        );
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
     const correct = answer === 2;
+
+    // Remove previous attempt styling before marking this attempt.
+    if (questionElement) {
+        questionElement
+            .querySelectorAll(".option")
+            .forEach(function(option) {
+                option.classList.remove("incorrect", "correct");
+            });
+
+        const selected =
+            questionElement.querySelectorAll(".option")[answer - 1];
+
+        if (selected) {
+            selected.classList.add(
+                correct ? "correct" : "incorrect"
+            );
+        }
+    }
 
     if (correct) {
 
@@ -1290,7 +1385,37 @@ function checkAnswer2(answer) {
 
 function checkAnswer3(answer) {
 
+    const questionElement =
+        document.querySelector(
+            `[data-question="q3"]`
+        );
+
+    if (
+        questionElement &&
+        questionElement.dataset.answered === "true"
+    ) {
+        return;
+    }
+
     const correct = answer === 2;
+
+    // Remove previous attempt styling before marking this attempt.
+    if (questionElement) {
+        questionElement
+            .querySelectorAll(".option")
+            .forEach(function(option) {
+                option.classList.remove("incorrect", "correct");
+            });
+
+        const selected =
+            questionElement.querySelectorAll(".option")[answer - 1];
+
+        if (selected) {
+            selected.classList.add(
+                correct ? "correct" : "incorrect"
+            );
+        }
+    }
 
     if (correct) {
 
@@ -1367,11 +1492,17 @@ function renderPlan() {
 
 function resetPlan() {
 
+    /*
+     * A correct plan is a completed question.
+     * Do not allow RESET to erase that achievement.
+     */
+    if (questionState.plan) {
+        return;
+    }
+
     plan = [];
 
     mission.plan = [];
-
-    questionState.plan = false;
 
     mission.answers.plan_correct = false;
 
@@ -1392,6 +1523,14 @@ function checkPlan() {
 
     const feedback =
         document.getElementById("planFeedback");
+
+    /*
+     * Once the plan is correct, treat it as answered and lock it.
+     * Before that, students can freely revise and retry.
+     */
+    if (questionState.plan) {
+        return;
+    }
 
     feedback.style.display = "block";
 
@@ -1605,10 +1744,59 @@ function restoreMissionState() {
     renderPlan();
 
     /*
-     * We deliberately restore the plan itself, but not
-     * all feedback messages. This keeps the page clean
-     * while preserving the actual learning state.
+     * Restore the learning state of each question.
+     * Correct answers remain locked after reload.
+     * Incorrect answers remain retryable.
      */
+    ["q1", "q2", "q3"].forEach(function(questionKey) {
+
+        const questionElement =
+            document.querySelector(
+                `[data-question="${questionKey}"]`
+            );
+
+        if (!questionElement) {
+            return;
+        }
+
+        const correct =
+            Boolean(
+                mission.answers[
+                    questionKey + "_correct"
+                ]
+            );
+
+        questionElement.dataset.answered =
+            correct ? "true" : "false";
+
+        questionState[questionKey] = correct;
+
+        if (correct) {
+
+            const storedAnswer =
+                Number(
+                    mission.answers[questionKey]
+                );
+
+            const selected =
+                questionElement.querySelectorAll(
+                    ".option"
+                )[storedAnswer - 1];
+
+            if (selected) {
+                selected.classList.add("correct");
+            }
+        }
+    });
+
+    /*
+     * The plan itself is restored by renderPlan().
+     * A previously correct plan remains completed/locked.
+     */
+    questionState.plan =
+        Boolean(mission.answers.plan_correct);
+
+    mission.correct = countCorrect();
 
     if (mission.completed) {
 
