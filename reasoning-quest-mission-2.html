@@ -1721,7 +1721,13 @@ function answerQuestion(
 
 
     /*
-       Prevent changing an already answered question.
+       Prevent changing an already answered question
+       AFTER it has been answered correctly.
+
+       IMPORTANT:
+       Wrong answers remain retryable. This is intentional:
+       the game is formative, so a wrong answer should provide
+       feedback rather than permanently lock the challenge.
     */
 
     if (
@@ -1731,10 +1737,6 @@ function answerQuestion(
         return;
 
     }
-
-
-    challenge.dataset.answered =
-        "true";
 
 
     const feedback =
@@ -1752,6 +1754,9 @@ function answerQuestion(
 
     /*
        Record the selected answer.
+
+       We keep the latest attempt in the session. The total
+       number of attempts is retained separately above.
     */
 
     missionState.answers[
@@ -1769,6 +1774,27 @@ function answerQuestion(
 
 
     if (correct) {
+
+        /*
+           Lock the question ONLY after the correct answer.
+        */
+
+        challenge.dataset.answered =
+            "true";
+
+
+        /*
+           Remove any previous incorrect visual state
+           from earlier attempts.
+        */
+
+        challenge
+            .querySelectorAll(".answer.incorrect")
+            .forEach(function(answer) {
+
+                answer.classList.remove("incorrect");
+
+            });
 
 
         element.classList.add(
@@ -1808,6 +1834,10 @@ function answerQuestion(
 
     } else {
 
+        /*
+           Wrong answers remain clickable so that the student
+           can reconsider and try again.
+        */
 
         element.classList.add(
             "incorrect"
@@ -2250,8 +2280,17 @@ function restoreProgress() {
         }
 
 
-        challenge.dataset.answered =
-            "true";
+        /*
+           Only previously correct answers lock the question.
+           A previously incorrect answer remains retryable.
+        */
+
+        if (answerData.correct) {
+
+            challenge.dataset.answered =
+                "true";
+
+        }
 
 
         const answers =
