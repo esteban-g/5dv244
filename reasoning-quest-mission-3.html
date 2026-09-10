@@ -886,13 +886,143 @@ function showFeedback(id,message,correct) {
     box.className=correct ? "feedback correct" : "feedback incorrect";
 }
 
-function recordAnswer(questionKey,answer,correct,feedbackId,correctMessage,incorrectMessage) {
-    missionState.attempts+=1;
-    missionState.answers[questionKey]=correct ? "correct" : "incorrect";
-    missionState[questionKey+"Answer"]=answer;
-    showFeedback(feedbackId,correct ? correctMessage : incorrectMessage,correct);
+function recordAnswer(
+    questionKey,
+    answer,
+    correct,
+    feedbackId,
+    correctMessage,
+    incorrectMessage
+) {
+
+    /*
+       A question is locked ONLY after a correct answer.
+
+       Wrong answers remain retryable because this is a
+       formative learning activity. The student should be
+       able to use the feedback and reconsider.
+    */
+
+    const feedback =
+        document.getElementById(feedbackId);
+
+    const question =
+        feedback.closest(".question");
+
+    if (
+        question &&
+        question.dataset.answered === "true"
+    ) {
+        return;
+    }
+
+
+    /*
+       Record every attempt.
+    */
+
+    missionState.attempts += 1;
+
+
+    /*
+       Store the latest answer and its correctness.
+    */
+
+    missionState.answers[questionKey] =
+        correct ? "correct" : "incorrect";
+
+    missionState[questionKey + "Answer"] =
+        answer;
+
+
+    /*
+       Remove the previous visual incorrect state
+       when the student tries again.
+    */
+
+    if (question) {
+
+        question
+            .querySelectorAll(".option.incorrect")
+            .forEach(function(option) {
+
+                option.classList.remove("incorrect");
+
+            });
+
+    }
+
+
+    if (correct) {
+
+        /*
+           Lock the question only now.
+        */
+
+        if (question) {
+            question.dataset.answered = "true";
+        }
+
+
+        /*
+           Mark the selected answer as correct.
+        */
+
+        if (question) {
+
+            const options =
+                question.querySelectorAll(".option");
+
+            if (options[answer - 1]) {
+                options[answer - 1]
+                    .classList.add("correct");
+            }
+
+        }
+
+
+        showFeedback(
+            feedbackId,
+            correctMessage,
+            true
+        );
+
+    } else {
+
+        /*
+           Wrong answer:
+           keep the question open for another attempt.
+        */
+
+        if (question) {
+
+            const options =
+                question.querySelectorAll(".option");
+
+            if (options[answer - 1]) {
+                options[answer - 1]
+                    .classList.add("incorrect");
+            }
+
+        }
+
+
+        showFeedback(
+            feedbackId,
+            incorrectMessage,
+            false
+        );
+
+    }
+
+
     updateMissionProgress();
-    if (correct) checkMissionCompletion();
+
+
+    if (correct) {
+        checkMissionCompletion();
+    }
+
 }
 
 function checkMissionCompletion() {
@@ -909,11 +1039,177 @@ function checkMissionCompletion() {
     panel.scrollIntoView({behavior:"smooth",block:"start"});
 }
 
+function restoreQuestionState(
+    questionKey,
+    feedbackId,
+    correctMessage,
+    incorrectMessage
+) {
+
+    const answerStatus =
+        missionState.answers[questionKey];
+
+    const answer =
+        missionState[questionKey + "Answer"];
+
+    if (
+        answerStatus !== "correct" &&
+        answerStatus !== "incorrect"
+    ) {
+        return;
+    }
+
+
+    const feedback =
+        document.getElementById(feedbackId);
+
+    const question =
+        feedback.closest(".question");
+
+    if (!question) {
+        return;
+    }
+
+
+    const options =
+        question.querySelectorAll(".option");
+
+    /*
+       Restore the visual state of the most recent answer.
+    */
+
+    if (
+        Number.isInteger(Number(answer)) &&
+        options[Number(answer) - 1]
+    ) {
+
+        if (answerStatus === "correct") {
+
+            options[Number(answer) - 1]
+                .classList.add("correct");
+
+        } else {
+
+            options[Number(answer) - 1]
+                .classList.add("incorrect");
+
+        }
+
+    }
+
+
+    if (answerStatus === "correct") {
+
+        /*
+           A previously correct answer is locked.
+        */
+
+        question.dataset.answered = "true";
+
+        showFeedback(
+            feedbackId,
+            correctMessage,
+            true
+        );
+
+    } else {
+
+        /*
+           A previously incorrect answer remains
+           retryable after a page reload.
+        */
+
+        showFeedback(
+            feedbackId,
+            incorrectMessage,
+            false
+        );
+
+    }
+
+}
+
+
 function restoreCompletionState() {
-    if (!missionState.completed) return;
-    document.getElementById("missionScore").textContent=missionState.correct+" / "+TOTAL_QUESTIONS;
-    document.getElementById("totalXP").textContent=questSession.totalXP+" XP";
-    document.getElementById("completionPanel").style.display="block";
+
+    /*
+       Restore the visual state of all five questions.
+    */
+
+    restoreQuestionState(
+        "q1",
+        "feedback1",
+        "✅ Correct! Tweety is a bird and there is no evidence that Tweety is a penguin. Therefore the rule derives flies(tweety). Polly is explicitly a penguin, so flies(polly) cannot be derived.",
+        "❌ Not quite. Look carefully at the condition not penguin(X). Polly is explicitly known to be a penguin, while Tweety is not."
+    );
+
+
+    restoreQuestionState(
+        "q2",
+        "feedback2",
+        "✅ Correct! In ASP, not penguin(X) is negation as failure: the solver cannot establish penguin(X) from the current knowledge. It should not simply be interpreted as classical logical negation.",
+        "❌ Think carefully about the meaning of not in ASP. It is not simply classical Boolean negation."
+    );
+
+
+    restoreQuestionState(
+        "q3",
+        "feedback3",
+        "✅ Correct! Because penguin(tweety) is explicitly known, the condition not penguin(tweety) fails. Therefore flies(tweety) cannot be derived.",
+        "❌ Look at the complete rule. The bird condition is necessary, but it is not sufficient: not penguin(X) must also succeed."
+    );
+
+
+    restoreQuestionState(
+        "q4",
+        "feedback4",
+        "✅ Correct! Alice satisfies both conditions: student(alice) and studies(alice). Therefore prepared(alice) is derived. Bob is a student but there is no studies(bob) fact.",
+        "❌ Check the body of the rule. Both student(X) and studies(X) must hold for the same X."
+    );
+
+
+    const q5Message =
+        missionState.q5Answer === 1
+            ? "🎉 Excellent! Tweety is a bird and not a penguin, so flies(tweety) is derived. Tweety is also small, so can_escape(tweety) follows. Polly is a penguin, so she does not satisfy the flying rule."
+            : missionState.q5Answer === 3
+                ? "🟡 Almost! flies(tweety) is indeed derived, but there is another rule: can_escape(X) :- flies(X), small(X). Since Tweety is small, can_escape(tweety) is also derived."
+                : "❌ Trace the rules one by one. First determine who flies, then use that result together with small(X) to determine who can escape.";
+
+
+    restoreQuestionState(
+        "q5",
+        "feedback5",
+        q5Message,
+        q5Message
+    );
+
+
+    /*
+       Restore the completion panel if the mission was
+       already completed.
+    */
+
+    if (missionState.completed) {
+
+        document
+            .getElementById("missionScore")
+            .textContent =
+                missionState.correct +
+                " / " +
+                TOTAL_QUESTIONS;
+
+        document
+            .getElementById("totalXP")
+            .textContent =
+                questSession.totalXP +
+                " XP";
+
+        document
+            .getElementById("completionPanel")
+            .style.display = "block";
+
+    }
+
 }
 
 function checkAnswer(answer) {
