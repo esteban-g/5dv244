@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Networks Quest — 5DV244</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#18202a;--muted:#5f6b7a;--accent:#315efb;--good:#168a4a;--bad:#c53b3b;--line:#dce1ea;--soft:#eef2ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+header{background:#18202a;color:white;padding:28px 20px}header .wrap,.wrap{max-width:1100px;margin:auto}
+h1{margin:0 0 6px;font-size:2rem}h2{margin-top:0}h3{margin-bottom:6px}.subtitle{opacity:.82}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}nav button,.btn{border:1px solid var(--line);background:white;padding:10px 14px;border-radius:9px;cursor:pointer;font-weight:650}nav button.active{background:var(--accent);color:white;border-color:var(--accent)}
+main{padding:24px 20px}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #0000000a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:16px}.two{grid-template-columns:1fr 1fr}.formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#f1f3f7;padding:12px;border-radius:9px;overflow:auto}
+label{display:block;font-weight:650;margin:10px 0 4px}input[type=range]{width:100%}input[type=number],select{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px}
+.value{font-family:ui-monospace,monospace;float:right;font-weight:700}.pill{display:inline-block;background:var(--soft);padding:4px 9px;border-radius:999px;font-size:.85rem;font-weight:700}
+.output{font-size:1.15rem;padding:14px;border-radius:10px;background:#f5f7fa;margin-top:12px}.good{border-left:5px solid var(--good);background:#eefaf3}.bad{border-left:5px solid var(--bad);background:#fff1f1}
+.feedback{min-height:28px;margin-top:10px;font-weight:650}.small{color:var(--muted);font-size:.92rem}.center{text-align:center}
+canvas{width:100%;height:300px;border:1px solid var(--line);border-radius:10px;background:white}
+.node{padding:12px;border:1px solid var(--line);border-radius:10px;text-align:center;background:#fafbfe}.arrow{text-align:center;font-size:1.5rem;color:var(--muted)}
+table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+.challenge{margin-top:14px;padding:15px;border:1px solid var(--line);border-radius:11px}.choice{display:block;width:100%;text-align:left;margin:7px 0;padding:10px;border:1px solid var(--line);background:white;border-radius:8px;cursor:pointer}.choice.correct{background:#e9f8ef;border-color:#78c995}.choice.wrong{background:#fff0f0;border-color:#e18b8b}.locked{opacity:.65;pointer-events:none}
+footer{padding:30px 20px;color:var(--muted);font-size:.9rem}
+@media(max-width:700px){.two{grid-template-columns:1fr}h1{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+<h1>Neural Networks Quest</h1>
+<div class="subtitle">5DV244 Human-Centered AI · Lecture 6 companion game</div>
+<div style="margin-top:12px"><span class="pill">THINK → BUILD → OBSERVE → EXPLAIN</span></div>
+</div></header>
+
+<main class="wrap">
+<div class="card">
+<strong>How to use this in class</strong>
+<p>Do not treat this as a race. Before changing a parameter, predict what will happen. Then change it, observe the real calculation, and explain why. The four core missions deliberately build the same chain used in the lecture:</p>
+<div class="formula">neuron → network → loss → gradient descent → backpropagation → deep learning</div>
+<p class="small">Progress is stored locally in this browser. No student identity is collected. Use “Export results” at the end if you want a local JSON file.</p>
+</div>
+
+<nav id="nav"></nav>
+<section id="app"></section>
+</main>
+<footer class="wrap">Built as a pedagogical companion to Lecture 6. The calculations are implemented directly in JavaScript; the companion Jupyter notebook verifies the key operations with NumPy and PyTorch autograd.</footer>
+
+<script>
+const state=JSON.parse(localStorage.getItem("nnQuestState")||'{"missions":{},"answers":{}}');
+function save(){localStorage.setItem("nnQuestState",JSON.stringify(state))}
+function esc(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function sigmoid(z){return 1/(1+Math.exp(-z))}
+function relu(z){return Math.max(0,z)}
+function tanh(z){return Math.tanh(z)}
+function activation(z,a){return a==="sigmoid"?sigmoid(z):a==="relu"?relu(z):tanh(z)}
+function fmt(x){return Number(x).toFixed(4)}
+function setMission(id){location.hash=id; render()}
+const missions=[
+["m1","1 · Neuron Forge"],["m2","2 · Forward Pass"],["m3","3 · Gradient Descent"],["m4","4 · Backpropagation"],["m5","5 · Deep Learning"]
+];
+function renderNav(){document.getElementById("nav").innerHTML=missions.map(([id,n])=>`<button data-id="${id}">${n}</button>`).join("")+`<button data-id="results">Results</button>`;
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>setMission(b.dataset.id))}
+function markAnswer(key,correct,feedback){
+ state.answers[key]=state.answers[key]||{attempts:0,correct:false}; state.answers[key].attempts++;
+ if(correct)state.answers[key].correct=true; save();
+ const el=document.getElementById(key+"-fb");
+ if(el){el.className="feedback "+(correct?"good":"bad");el.textContent=feedback}
+ if(correct && el){
+   const challenge=el.closest(".challenge");
+   if(challenge) challenge.querySelectorAll(".choice").forEach(btn=>btn.disabled=true);
+ }
+}
+function render(){renderNav();let id=location.hash.slice(1)||"m1";if(!missions.some(x=>x[0]===id)&&id!=="results")id="m1";document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.id===id));const app=document.getElementById("app");
+if(id==="m1")app.innerHTML=m1(); else if(id==="m2")app.innerHTML=m2(); else if(id==="m3")app.innerHTML=m3(); else if(id==="m4")app.innerHTML=m4(); else if(id==="m5")app.innerHTML=m5(); else app.innerHTML=results(); bind();}
+function check(key,correct,feedback){markAnswer(key,correct,feedback)}
+function m1(){return `<div class="card"><h2>Mission 1 — Neuron Forge</h2><p><strong>Lecture connection:</strong> pages 11–18. Start from the single-neuron equation and discover why an activation function changes what the model can represent.</p>
+<div class="grid two"><div><h3>Build the neuron</h3>
+<label>x₁ <span class="value" id="x1v">1.0</span></label><input id="x1" type="range" min="-2" max="2" step=".1" value="1">
+<label>x₂ <span class="value" id="x2v">2.0</span></label><input id="x2" type="range" min="-2" max="2" step=".1" value="2">
+<label>w₁ <span class="value" id="w1v">0.8</span></label><input id="w1" type="range" min="-2" max="2" step=".1" value=".8">
+<label>w₂ <span class="value" id="w2v">-0.4</span></label><input id="w2" type="range" min="-2" max="2" step=".1" value="-.4">
+<label>b <span class="value" id="bv">0.2</span></label><input id="b" type="range" min="-2" max="2" step=".1" value=".2">
+<label>Activation</label><select id="act"><option>sigmoid</option><option>relu</option><option>tanh</option></select></div>
+<div><div class="formula">z = w₁x₁ + w₂x₂ + b<br>ŷ = h(z)</div><div id="neuronOut" class="output"></div><canvas id="actCanvas" width="800" height="300"></canvas></div></div>
+<div class="challenge"><strong>Prediction:</strong> If you increase w₁ while x₁ is positive, what happens to z?<button class="choice" onclick="check('m1q1',true,'Correct. The contribution w₁x₁ increases, so z increases.')">It increases</button><button class="choice" onclick="check('m1q1',false,'Not quite. Look at the term w₁x₁ and remember x₁ is positive.')">It decreases</button><button class="choice" onclick="check('m1q1',false,'Not generally. The bias does not cancel the w₁x₁ contribution.')">Nothing changes</button><div id="m1q1-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Explain:</strong> Why is the activation function important? <button class="choice" onclick="check('m1q2',true,'Yes. A nonlinear activation lets the network represent nonlinear relationships.')">It can introduce nonlinearity</button><button class="choice" onclick="check('m1q2',false,'Weights are still learned from data; the activation function is not what stores the examples.')">It stores the training examples</button><div id="m1q2-fb" class="feedback"></div></div></div>`}
+function m2(){return `<div class="card"><h2>Mission 2 — Forward Pass Lab</h2><p><strong>Lecture connection:</strong> pages 15–18. Now connect several neurons. Every number below is computed by the forward-pass equations, not an animation pretending to be a network.</p>
+<div class="grid two"><div><h3>Two inputs → two hidden units → one output</h3>
+<label>x₁ <span class="value" id="fx1v">1</span></label><input id="fx1" type="range" min="-2" max="2" step=".1" value="1">
+<label>x₂ <span class="value" id="fx2v">2</span></label><input id="fx2" type="range" min="-2" max="2" step=".1" value="2">
+<label>Hidden w₁₁ <span class="value" id="fw11v">0.5</span></label><input id="fw11" type="range" min="-2" max="2" step=".1" value=".5">
+<label>Hidden w₁₂ <span class="value" id="fw12v">0.5</span></label><input id="fw12" type="range" min="-2" max="2" step=".1" value=".5">
+<label>Hidden w₂₁ <span class="value" id="fw21v">-0.5</span></label><input id="fw21" type="range" min="-2" max="2" step=".1" value="-.5">
+<label>Hidden w₂₂ <span class="value" id="fw22v">1</span></label><input id="fw22" type="range" min="-2" max="2" step=".1" value="1"></div>
+<div><div class="formula">q = h(W⁽¹⁾x + b⁽¹⁾)<br>ŷ = W⁽²⁾q + b⁽²⁾</div><div id="forwardOut" class="output"></div><div class="small">Activation: sigmoid in the hidden layer. Output layer is linear here, matching the lecture's matrix form.</div></div></div>
+<div class="challenge"><strong>Prediction:</strong> Which quantity is the output of a hidden neuron before it is passed onward?<button class="choice" onclick="check('m2q1',true,'Correct: q is the partial output of a hidden neuron in the lecture notation.')">q</button><button class="choice" onclick="check('m2q1',false,'Look back at the lecture notation: q denotes the partial output of a hidden neuron.')">W only</button><div id="m2q1-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Concept check:</strong> Why do we use matrix notation for a network with many weights?<button class="choice" onclick="check('m2q2',true,'Exactly. Matrix operations compactly represent many weighted connections.')">It makes the many weighted computations manageable</button><button class="choice" onclick="check('m2q2',false,'The matrix notation does not remove the weights; it organizes them.')">It removes the weights</button><div id="m2q2-fb" class="feedback"></div></div></div>`}
+function m3(){return `<div class="card"><h2>Mission 3 — Gradient Descent Mountain</h2><p><strong>Lecture connection:</strong> pages 27–29. The lecture turns learning into an optimization problem: minimize a loss. Here you control the learning rate and watch the actual update.</p>
+<div class="grid two"><div><h3>Find the minimum</h3><div class="formula">L(w) = (w − 2)²<br>∂L/∂w = 2(w − 2)<br>w<sub>new</sub> = w − η · ∂L/∂w</div>
+<label>Starting w <span class="value" id="gwv">-3</span></label><input id="gw" type="range" min="-5" max="7" step=".1" value="-3">
+<label>Learning rate η <span class="value" id="etav">0.2</span></label><input id="eta" type="range" min=".01" max="1" step=".01" value=".2">
+<button class="btn" id="stepGD">Take one gradient step</button> <button class="btn" id="resetGD">Reset</button></div>
+<div><canvas id="gdCanvas" width="800" height="300"></canvas><div id="gdOut" class="output"></div></div></div>
+<div class="challenge"><strong>Prediction:</strong> At w = -3, is the gradient positive or negative?<button class="choice" onclick="check('m3q1',true,'Correct. 2(w−2)=2(−5)=−10, so the gradient is negative.')">Negative</button><button class="choice" onclick="check('m3q1',false,'Calculate 2(w−2) at w=-3.')">Positive</button><div id="m3q1-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Explain:</strong> Why do we subtract the gradient?<button class="choice" onclick="check('m3q2',true,'Yes. The gradient points uphill; subtracting it moves downhill.')">To move in the direction of decreasing loss</button><button class="choice" onclick="check('m3q2',false,'The gradient points toward increasing values of the function locally.')">To move toward increasing loss</button><div id="m3q2-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Experiment:</strong> Set η very high. What can happen?</strong><button class="choice" onclick="check('m3q3',true,'Correct. Large steps can overshoot the minimum and may oscillate or diverge.')">Overshooting or unstable updates</button><button class="choice" onclick="check('m3q3',false,'The step size is controlled by η; a very high value can be too aggressive.')">The network must become perfect immediately</button><div id="m3q3-fb" class="feedback"></div></div></div>`}
+function m4(){return `<div class="card"><h2>Mission 4 — Backpropagation Detective</h2><p><strong>Lecture connection:</strong> pages 25–34 and 46. The challenge is to trace how an output error tells each weight how it should change. This is the key bridge between loss and gradient descent.</p>
+<div class="grid two"><div><h3>Tiny network</h3><div class="formula">x = 1<br>z = wx + b<br>y = sigmoid(z)<br>L = ½(y − t)²</div>
+<label>Weight w <span class="value" id="bwval">0.5</span></label><input id="bw" type="range" min="-3" max="3" step=".01" value=".5">
+<label>Bias b <span class="value" id="bbval">0</span></label><input id="bb" type="range" min="-3" max="3" step=".01" value="0">
+<label>Target t</label><select id="bt"><option value="1">1</option><option value="0">0</option></select></div>
+<div><div id="bpOut" class="output"></div><div class="formula">∂L/∂w = (y−t) · y(1−y) · x<br>∂L/∂b = (y−t) · y(1−y)</div><p class="small">These are the chain-rule gradients for this tiny network. Change w, b, and the target, then predict the sign before reading the result.</p></div></div>
+<div class="challenge"><strong>Order matters:</strong> What does backpropagation fundamentally compute?</strong><button class="choice" onclick="check('m4q1',true,'Exactly. Backpropagation efficiently computes gradients of the loss with respect to parameters using the chain rule.')">Gradients of the loss with respect to weights/parameters</button><button class="choice" onclick="check('m4q1',false,'Backpropagation is about derivatives/gradients, not choosing the final class directly.')">The final class label</button><div id="m4q1-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Trace the pipeline:</strong> Which sequence is closest to the learning loop?<button class="choice" onclick="check('m4q2',true,'Yes: forward pass → loss → backpropagation/gradients → parameter update.')">Forward pass → loss → gradients → update</button><button class="choice" onclick="check('m4q2',false,'The loss must be computed before its gradients can be used for the update.')">Update → loss → forward pass → gradients</button><div id="m4q2-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Human reasoning:</strong> If the prediction is below a target of 1, should the model generally move parameters in a direction that increases the prediction?</strong><button class="choice" onclick="check('m4q3',true,'That is the right intuition for this simple positive-input case; the gradient tells the optimizer which parameter direction reduces loss.')">Yes, for this setup</button><button class="choice" onclick="check('m4q3',false,'Check the error y−t and the sign of the gradient in the displayed formula.')">Always decrease the weights</button><div id="m4q3-fb" class="feedback"></div></div></div>`}
+function m5(){return `<div class="card"><h2>Mission 5 — Deep Learning Architect</h2><p><strong>Lecture connection:</strong> pages 37–43 and 47. The central idea in the lecture is that deep learning learns useful representations from data. Different architectures address different processing needs.</p>
+<div class="grid"><div class="node"><h3>Traditional deep learning</h3><p>More hidden layers → hierarchical representations</p></div><div class="node"><h3>Self-supervised</h3><p>Can useful representations be learned without labels?</p></div><div class="node"><h3>Efficient</h3><p>Can similar capabilities be obtained with less computation?</p></div><div class="node"><h3>Structured</h3><p>Can geometry, physics, graphs, or domain structure be incorporated?</p></div></div>
+<div class="challenge"><strong>Connect the idea:</strong> Why are hidden layers useful?</strong><button class="choice" onclick="check('m5q1',true,'Correct. They allow the model to build intermediate representations/features.')">They can learn intermediate representations</button><button class="choice" onclick="check('m5q1',false,'The lecture emphasizes learned representations and hierarchical feature extraction.')">They remove the need for data</button><div id="m5q1-fb" class="feedback"></div></div>
+<div class="challenge"><strong>Final synthesis:</strong> Which statement best connects this lecture to the previous ML lecture?</strong><button class="choice" onclick="check('m5q2',true,'Exactly: neural networks extend the weighted-sum model with learned nonlinear representations and are trained by minimizing loss.')">A neural network learns parameters from data, using loss and optimization</button><button class="choice" onclick="check('m5q2',false,'The network is not a rule list; it is a parameterized model learned from examples.')">A neural network is mainly a collection of hand-written rules</button><div id="m5q2-fb" class="feedback"></div></div>
+<div class="card"><h3>Exit ticket</h3><p>In one sentence: <strong>What is the relationship between backpropagation and gradient descent?</strong></p><textarea id="reflection" style="width:100%;min-height:110px;padding:10px;border:1px solid var(--line);border-radius:8px" placeholder="Backpropagation ... while gradient descent ..."></textarea><button class="btn" onclick="saveReflection()">Save reflection</button><div id="reflectionFb" class="feedback"></div></div></div>`}
+function results(){let rows=Object.entries(state.answers);let correct=rows.filter(x=>x[1].correct).length;return `<div class="card"><h2>Results</h2><p>${correct} of ${rows.length} answered challenges have been solved at least once.</p><table><tr><th>Challenge</th><th>Attempts</th><th>Correct</th></tr>${rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.attempts}</td><td>${v.correct?"✓":"—"}</td></tr>`).join("")}</table><p><button class="btn" onclick="exportResults()">Export results as JSON</button> <button class="btn" onclick="if(confirm('Reset local progress?')){localStorage.removeItem('nnQuestState');location.reload()}">Reset progress</button></p></div>`}
+function saveReflection(){state.reflection=document.getElementById("reflection").value;save();document.getElementById("reflectionFb").textContent="Saved locally in this browser.";document.getElementById("reflectionFb").className="feedback good"}
+function exportResults(){const blob=new Blob([JSON.stringify({...state,exported_at:new Date().toISOString()},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="neural-networks-quest-results.json";a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+function restoreAnswered(){
+ Object.entries(state.answers).forEach(([key,v])=>{
+   if(!v.correct) return;
+   const fb=document.getElementById(key+"-fb");
+   if(fb){const challenge=fb.closest(".challenge"); if(challenge) challenge.querySelectorAll(".choice").forEach(btn=>btn.disabled=true);}
+ });
+}
+function bind(){
+document.querySelectorAll("input[type=range],select").forEach(e=>e.addEventListener("input",update));
+if(document.getElementById("stepGD")){document.getElementById("stepGD").onclick=()=>{let w=+document.getElementById("gw").value,eta=+document.getElementById("eta").value;let g=2*(w-2);let wn=w-eta*g;document.getElementById("gw").value=wn;update()};document.getElementById("resetGD").onclick=()=>{document.getElementById("gw").value=-3;update()}}
+update();
+restoreAnswered();
+}
+function update(){
+const ids=["x1","x2","w1","w2","b","fx1","fx2","fw11","fw12","fw21","fw22","gw","eta","bw","bb"];
+ids.forEach(id=>{let e=document.getElementById(id),v=document.getElementById(id+"v");if(e&&v)v.textContent=e.value});
+if(document.getElementById("neuronOut")){let x1=+x1El().value,x2=+x2El().value,w1=+w1El().value,w2=+w2El().value,b=+bEl().value,a=document.getElementById("act").value,z=w1*x1+w2*x2+b,y=activation(z,a);document.getElementById("neuronOut").innerHTML=`<strong>z = ${fmt(z)}</strong><br>ŷ = ${fmt(y)}<br><span class="small">Changing a weight changes the pre-activation; changing h changes how z is transformed.</span>`;drawActivation(a)}
+if(document.getElementById("forwardOut")){
+ const x1v=+document.getElementById("fx1").value, x2v=+document.getElementById("fx2").value;
+ const w11=+document.getElementById("fw11").value, w12=+document.getElementById("fw12").value;
+ const w21=+document.getElementById("fw21").value, w22=+document.getElementById("fw22").value;
+ const q1=sigmoid(w11*x1v+w12*x2v), q2=sigmoid(w21*x1v+w22*x2v), y=q1-q2;
+ document.getElementById("forwardOut").innerHTML=`q₁ = ${fmt(q1)}<br>q₂ = ${fmt(q2)}<br><strong>ŷ = ${fmt(y)}</strong><br><span class="small">q is the hidden-layer output; ŷ is the final output.</span>`;
+}
+if(document.getElementById("gdOut")){
+ const w=+document.getElementById("gw").value,eta=+document.getElementById("eta").value,g=2*(w-2),L=(w-2)**2;
+ document.getElementById("gdOut").innerHTML=`w = <strong>${fmt(w)}</strong> · L(w) = <strong>${fmt(L)}</strong> · gradient = <strong>${fmt(g)}</strong><br>One step would give w<sub>new</sub> = ${fmt(w-eta*g)}`;
+ drawGD(w);
+}
+if(document.getElementById("bpOut")){
+ const w=+document.getElementById("bw").value,b=+document.getElementById("bb").value,t=+document.getElementById("bt").value;
+ const z=w+b,y=sigmoid(z),dLdy=y-t,dy=y*(1-y),gwv=dLdy*dy,gbv=dLdy*dy,L=.5*(y-t)**2;
+ document.getElementById("bpOut").innerHTML=`z = ${fmt(z)}<br>y = ${fmt(y)}<br>loss = ${fmt(L)}<br>∂L/∂w = <strong>${fmt(gwv)}</strong><br>∂L/∂b = <strong>${fmt(gbv)}</strong>`;
+}
+}
+function x1El(){return document.getElementById("x1")}function x2El(){return document.getElementById("x2")}function w1El(){return document.getElementById("w1")}function w2El(){return document.getElementById("w2")}function bEl(){return document.getElementById("b")}
+function drawGD(w){let c=document.getElementById("gdCanvas");if(!c)return;let ctx=c.getContext("2d"),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.beginPath();for(let px=0;px<W;px++){let x=-5+12*px/W,y=(x-2)**2,py=H-30-y*18;if(px===0)ctx.moveTo(px,py);else ctx.lineTo(px,py)}ctx.stroke();let px=(w+5)/12*W,py=H-30-(w-2)**2*18;ctx.beginPath();ctx.arc(px,py,8,0,Math.PI*2);ctx.fill();ctx.font="16px system-ui";ctx.fillText("minimum w=2",Math.min(W-140,(7/12)*W),H-10)}
+function drawActivation(a){let c=document.getElementById("actCanvas");if(!c)return;let ctx=c.getContext("2d"),W=c.width,H=c.height;ctx.clearRect(0,0,W,H);ctx.strokeStyle="#b8c0cc";ctx.beginPath();ctx.moveTo(W/2,10);ctx.lineTo(W/2,H-20);ctx.moveTo(10,H/2);ctx.lineTo(W-10,H/2);ctx.stroke();ctx.strokeStyle="#315efb";ctx.beginPath();for(let px=10;px<W-10;px++){let z=(px-W/2)/55,y=activation(z,a),py=H/2-y*100;if(px===10)ctx.moveTo(px,py);else ctx.lineTo(px,py)}ctx.stroke();ctx.font="15px system-ui";ctx.fillStyle="#18202a";ctx.fillText(a+" activation",15,24)}
+window.addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>
