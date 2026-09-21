@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Vision Quest — 5DV244</title>
+<style>
+  :root{
+    --ink:#243447; --muted:#667085; --blue:#20639b; --blue2:#eaf4ff;
+    --green:#3a8f5b; --green2:#eef8f3; --purple:#6b5ca5; --purple2:#f5f2ff;
+    --orange:#c98200; --orange2:#fff7e6; --red:#b42318; --bg:#f6f8fb;
+    --card:#fff; --border:#d9e1ea;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px}
+  header{background:linear-gradient(135deg,#173f5f,#20639b);color:#fff;border-radius:16px;padding:28px 30px;margin-bottom:20px}
+  header h1{margin:0 0 7px;font-size:30px}
+  header p{margin:0;opacity:.95;font-size:17px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin:16px 0;box-shadow:0 2px 8px rgba(20,40,60,.04)}
+  .mission{display:none}.mission.active{display:block}
+  .topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .progress{height:10px;background:#e8edf2;border-radius:99px;overflow:hidden;margin:12px 0}
+  .progress span{display:block;height:100%;background:var(--blue);width:0;transition:.3s}
+  .pill{display:inline-block;background:var(--blue2);color:var(--blue);padding:5px 10px;border-radius:99px;font-size:13px;font-weight:bold}
+  h2{margin-top:4px} h3{margin-bottom:8px}
+  .question{font-size:21px;font-weight:700;margin:14px 0}
+  .choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+  button{border:1px solid #cbd5df;background:#fff;color:var(--ink);padding:11px 15px;border-radius:9px;cursor:pointer;font-size:15px}
+  button:hover{border-color:var(--blue);background:#f7fbff}
+  button.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+  button.success{background:var(--green);border-color:var(--green);color:#fff}
+  button:disabled{opacity:.55;cursor:not-allowed}
+  .feedback{margin-top:14px;padding:13px;border-radius:9px;display:none}
+  .feedback.show{display:block}.feedback.ok{background:var(--green2);border-left:4px solid var(--green)}
+  .feedback.no{background:#fff0ef;border-left:4px solid var(--red)}
+  .visual{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:16px;margin:15px 0;text-align:center}
+  .grid{display:grid;grid-template-columns:repeat(5,42px);gap:3px;justify-content:center;margin:12px auto}
+  .cell{width:42px;height:42px;display:flex;align-items:center;justify-content:center;font-weight:bold;border-radius:4px;background:#dfe7ef}
+  .cell.edge{background:#34495e;color:#fff}
+  .cell.hot{background:#f3b43f;color:#222}
+  .filter{display:grid;grid-template-columns:repeat(3,45px);gap:3px;justify-content:center;margin:10px}
+  .filter div{height:45px;border:1px solid #aaa;display:flex;align-items:center;justify-content:center;font-weight:bold;background:#fff}
+  .compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+  .compare>div{background:#f8fafc;border:1px solid var(--border);padding:16px;border-radius:10px}
+  canvas{max-width:100%;border-radius:10px}
+  .upload{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  input[type=file]{max-width:100%}
+  #preview{max-width:100%;max-height:360px;display:none;margin:12px auto;border-radius:10px}
+  #visionCanvas{max-width:100%;display:none;margin:12px auto;border-radius:10px}
+  .status{font-size:14px;color:var(--muted);margin:8px 0}
+  .modelbox{background:#f8fafc;border:1px solid var(--border);border-radius:9px;padding:12px;font-size:14px}
+  .results{margin-top:12px;text-align:left}
+  .resultrow{display:flex;justify-content:space-between;gap:10px;padding:8px;border-bottom:1px solid #edf0f3}
+  .scorebar{height:8px;background:#e6ebf0;border-radius:99px;overflow:hidden;flex:1;margin-top:7px}
+  .scorebar span{display:block;height:100%;background:var(--blue);width:0}
+  .nav{display:flex;justify-content:space-between;gap:10px;margin-top:20px}
+  .small{font-size:13px;color:var(--muted)}
+  .takeaway{background:var(--orange2);border-left:5px solid #e0a11a;padding:14px 16px;border-radius:8px;margin-top:15px}
+  .score{font-size:18px;font-weight:bold}
+  .hidden{display:none}
+  .loader{display:inline-block;width:15px;height:15px;border:2px solid #ccd5df;border-top-color:var(--blue);border-radius:50%;animation:spin 1s linear infinite;vertical-align:middle}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @media(max-width:650px){.wrap{padding:12px}header{padding:22px}.grid{grid-template-columns:repeat(5,34px)}.cell{width:34px;height:34px}.filter{grid-template-columns:repeat(3,37px)}.filter div{height:37px}}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header>
+  <h1>🔎 Computer Vision Quest</h1>
+  <p>From Pixels → Convolution → Features → Classification → Detection → Segmentation</p>
+</header>
+
+<div class="card">
+  <div class="topbar">
+    <div><strong id="missionLabel">Mission 1 of 6</strong> <span class="pill" id="topicPill">Pixels</span></div>
+    <div class="score">Score: <span id="score">0</span></div>
+  </div>
+  <div class="progress"><span id="progressBar"></span></div>
+  <p class="small" id="progressText">Follow the same path as the lecture. First predict, then experiment, then explain.</p>
+</div>
+
+<!-- MISSION 1 -->
+<section class="mission active" id="m1">
+<div class="card">
+  <span class="pill">Mission 1 · What does a computer see?</span>
+  <h2>👁️ Humans see objects. Computers receive numbers.</h2>
+  <p class="question">Which representation preserves the spatial structure of an image?</p>
+  <div class="choices">
+    <button onclick="answerM1(this,false)">A long list of all pixel values</button>
+    <button onclick="answerM1(this,true)">A 2D/3D grid of pixel values</button>
+    <button onclick="answerM1(this,false)">Only the average pixel value</button>
+  </div>
+  <div class="visual">
+    <div class="grid">
+      <div class="cell">0</div><div class="cell">0</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">0</div>
+      <div class="cell">0</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">0</div>
+      <div class="cell">0</div><div class="cell edge">9</div><div class="cell">9</div><div class="cell edge">9</div><div class="cell">0</div>
+      <div class="cell">0</div><div class="cell">0</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">0</div>
+      <div class="cell">0</div><div class="cell">0</div><div class="cell">0</div><div class="cell">0</div><div class="cell">0</div>
+    </div>
+    <p class="small">The arrangement of values is part of the information.</p>
+  </div>
+  <div id="fb1" class="feedback"></div>
+  <div class="takeaway"><strong>Key idea:</strong> An image is numerical data, but its spatial arrangement matters.</div>
+</div>
+<div class="nav"><span></span><button class="primary" onclick="go(2)">Next: Why local regions? →</button></div>
+</section>
+
+<!-- MISSION 2 -->
+<section class="mission" id="m2">
+<div class="card">
+  <span class="pill">Mission 2 · Why spatial structure?</span>
+  <h2>🧩 Look locally</h2>
+  <p class="question">Imagine a tiny image patch. What could a neural network detect from only a small region?</p>
+  <div class="choices">
+    <button onclick="answerM2(this,true)">An edge or simple pattern</button>
+    <button onclick="answerM2(this,false)">The entire meaning of the image</button>
+    <button onclick="answerM2(this,false)">The exact object name every time</button>
+  </div>
+  <div class="visual">
+    <p><strong>A local receptive field</strong></p>
+    <div style="display:inline-block;border:4px solid #20639b;padding:10px;border-radius:8px">
+      <div class="grid" style="margin:0">
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell">1</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell">1</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell">1</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell">1</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell">1</div><div class="cell">1</div>
+      </div>
+    </div>
+    <p class="small">A small region can contain a useful visual pattern such as an edge.</p>
+  </div>
+  <div id="fb2" class="feedback"></div>
+  <div class="takeaway"><strong>Key idea:</strong> CNNs exploit local spatial structure rather than treating every pixel as unrelated.</div>
+</div>
+<div class="nav"><button onclick="go(1)">← Previous</button><button class="primary" onclick="go(3)">Next: Convolution →</button></div>
+</section>
+
+<!-- MISSION 3 -->
+<section class="mission" id="m3">
+<div class="card">
+  <span class="pill">Mission 3 · Convolution</span>
+  <h2>🧪 Predict the filter response</h2>
+  <p>Here is a simplified image containing a vertical edge. The filter below is designed to respond strongly to a vertical change.</p>
+
+  <div class="compare">
+    <div>
+      <h3>Image patch</h3>
+      <div class="grid">
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">1</div>
+        <div class="cell">1</div><div class="cell">1</div><div class="cell edge">9</div><div class="cell edge">9</div><div class="cell">1</div>
+      </div>
+    </div>
+    <div>
+      <h3>Filter</h3>
+      <div class="filter">
+        <div>-1</div><div>0</div><div>1</div>
+        <div>-1</div><div>0</div><div>1</div>
+        <div>-1</div><div>0</div><div>1</div>
+      </div>
+      <p class="small">A simple edge detector.</p>
+    </div>
+  </div>
+
+  <p class="question">Where should the strongest response appear?</p>
+  <div class="choices">
+    <button onclick="answerM3(this,false)">Far to the left</button>
+    <button onclick="answerM3(this,true)">Around the vertical edge</button>
+    <button onclick="answerM3(this,false)">Only at the bottom</button>
+  </div>
+  <div id="fb3" class="feedback"></div>
+
+  <div class="visual hidden" id="convReveal">
+    <h3>What convolution does</h3>
+    <p><strong>Patch → filter comparison → number → feature map</strong></p>
+    <div style="display:flex;justify-content:center;gap:10px;align-items:center;flex-wrap:wrap;font-size:22px;">
+      <span>🖼️</span><span>→</span><span>🔲</span><span>→</span><span>🔍</span><span>→</span><span>📊</span>
+    </div>
+  </div>
+
+  <div class="takeaway"><strong>Key idea:</strong> A convolutional filter scans local regions and responds to a visual pattern.</div>
+</div>
+<div class="nav"><button onclick="go(2)">← Previous</button><button class="primary" onclick="go(4)">Next: Learned features →</button></div>
+</section>
+
+<!-- MISSION 4 -->
+<section class="mission" id="m4">
+<div class="card">
+  <span class="pill">Mission 4 · Learned representations</span>
+  <h2>🧠 From edges to objects</h2>
+  <p class="question">What is the intended intuition behind deeper CNN layers?</p>
+  <div class="choices">
+    <button onclick="answerM4(this,false)">They simply store more pixels.</button>
+    <button onclick="answerM4(this,true)">They can combine simpler patterns into increasingly useful representations.</button>
+    <button onclick="answerM4(this,false)">They stop using spatial information completely.</button>
+  </div>
+  <div class="visual">
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;font-size:17px;">
+      <div><strong>Pixels</strong><br>▦</div><span>→</span>
+      <div><strong>Edges</strong><br>╱ ╲</div><span>→</span>
+      <div><strong>Shapes</strong><br>◼</div><span>→</span>
+      <div><strong>Parts</strong><br>👁️</div><span>→</span>
+      <div><strong>Object</strong><br>🚗</div>
+    </div>
+  </div>
+  <div id="fb4" class="feedback"></div>
+  <div class="takeaway"><strong>Key idea:</strong> CNNs learn representations that become increasingly useful for the task.</div>
+</div>
+<div class="nav"><button onclick="go(3)">← Previous</button><button class="primary" onclick="go(5)">Next: What should we predict? →</button></div>
+</section>
+
+<!-- MISSION 5 -->
+<section class="mission" id="m5">
+<div class="card">
+  <span class="pill">Mission 5 · Classification → Detection → Segmentation</span>
+  <h2>🎯 One image, three questions</h2>
+  <p>Imagine this image contains several cars.</p>
+  <div class="visual" style="font-size:70px">🚗 &nbsp; 🚗 &nbsp; 🚶 &nbsp; 🚲</div>
+  <p class="question">Match each question to the output the model should produce.</p>
+
+  <div class="choices">
+    <button onclick="answerTask(this,'classification')">“Is there a car?” → label</button>
+    <button onclick="answerTask(this,'detection')">“Where are the cars?” → boxes</button>
+    <button onclick="answerTask(this,'segmentation')">“Which pixels belong to each object?” → masks</button>
+  </div>
+  <div id="taskFeedback" class="feedback"></div>
+
+  <div class="visual" style="margin-top:18px">
+    <div class="compare">
+      <div><strong>Classification</strong><br><span style="font-size:28px">🚗</span><br><span class="small">WHAT?</span></div>
+      <div><strong>Detection</strong><br><span style="font-size:28px">🚗▣</span><br><span class="small">WHAT + WHERE?</span></div>
+      <div><strong>Segmentation</strong><br><span style="font-size:28px">🚗▓</span><br><span class="small">WHICH PIXELS?</span></div>
+    </div>
+  </div>
+  <p class="small">You will use real browser-based models in the next mission.</p>
+</div>
+<div class="nav"><button onclick="go(4)">← Previous</button><button class="primary" onclick="go(6)">Next: Use a real vision model →</button></div>
+</section>
+
+<!-- MISSION 6 -->
+<section class="mission" id="m6">
+<div class="card">
+  <span class="pill">Mission 6 · Real browser-based vision</span>
+  <h2>🌐 Give the model an image</h2>
+  <p>
+    Now we move from the lecture concepts to an actual pretrained vision model running
+    <strong>inside your browser</strong>.
+  </p>
+
+  <div class="modelbox">
+    <strong>Library:</strong> Hugging Face Transformers.js<br>
+    <strong>Runtime:</strong> ONNX Runtime in the browser<br>
+    <strong>Tasks available:</strong> image classification, object detection and image segmentation.
+  </div>
+
+  <p class="small">
+    The first run may take a while because the browser needs to download the model.
+    After that, the model can be cached by your browser.
+  </p>
+
+  <div class="upload">
+    <input type="file" id="imageInput" accept="image/*">
+    <button class="primary" id="classifyBtn" onclick="runClassification()">1. Classify image</button>
+    <button onclick="runDetection()">2. Detect objects</button>
+    <button onclick="runSegmentation()">3. Segment image</button>
+  </div>
+
+  <p id="modelStatus" class="status">Choose an image to begin.</p>
+  <img id="preview" alt="Selected image">
+  <canvas id="visionCanvas"></canvas>
+  <div id="results" class="results"></div>
+
+  <div class="takeaway">
+    <strong>Think while the model runs:</strong>
+    Is this model answering <em>what?</em>, <em>what + where?</em>, or <em>which pixels?</em>
+  </div>
+</div>
+
+<div class="card">
+  <h2>🏁 Final challenge</h2>
+  <p class="question">Which statement best summarizes today's lecture?</p>
+  <div class="choices">
+    <button onclick="finish(this,false)">CNNs are mainly a faster way to store images.</button>
+    <button onclick="finish(this,true)">CNNs exploit spatial structure and learn visual representations that support different prediction tasks.</button>
+    <button onclick="finish(this,false)">Object detection and segmentation are the same task.</button>
+  </div>
+  <div id="finalFeedback" class="feedback"></div>
+</div>
+
+<div class="nav">
+  <button onclick="go(5)">← Previous</button>
+  <button class="primary" onclick="restart()">Restart Quest</button>
+</div>
+</section>
+
+<div class="card" style="margin-top:24px">
+  <p class="small" style="margin:0">
+    <strong>Learning path:</strong>
+    Pixels → spatial structure → convolution → learned representations →
+    classification/detection/segmentation → real browser-based vision.
+  </p>
+</div>
+</div>
+
+<script type="module">
+import { pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
+
+let current = 1;
+let score = 0;
+let selectedImage = null;
+let classifier = null;
+let detector = null;
+let segmenter = null;
+
+const topics = ["Pixels","Spatial structure","Convolution","Representations","Vision tasks","Real vision"];
+const progressText = [
+  "Start with the question: what does a computer actually receive?",
+  "Why should a neural network care about local regions?",
+  "Predict what a visual filter will detect before seeing the result.",
+  "Follow the intuition from simple patterns to useful representations.",
+  "Choose the output required by the vision task.",
+  "Use real pretrained models in the browser."
+];
+
+function updateUI(){
+  document.querySelectorAll(".mission").forEach(x=>x.classList.remove("active"));
+  document.getElementById("m"+current).classList.add("active");
+  document.getElementById("missionLabel").textContent = `Mission ${current} of 6`;
+  document.getElementById("topicPill").textContent = topics[current-1];
+  document.getElementById("progressBar").style.width = `${((current-1)/5)*100}%`;
+  document.getElementById("progressText").textContent = progressText[current-1];
+  document.getElementById("score").textContent = score;
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+window.go = function(n){ current=Math.max(1,Math.min(6,n)); updateUI(); };
+window.restart = function(){ current=1; score=0; updateUI(); };
+
+function feedback(id, ok, text){
+  const el=document.getElementById(id);
+  el.className="feedback show "+(ok?"ok":"no");
+  el.innerHTML=text;
+}
+window.answerM1=(b,ok)=>{if(ok){score++;feedback("fb1",true,"Correct. The grid preserves which values are next to which other values.")}else feedback("fb1",false,"Think about the lecture question: what information would disappear if we destroyed the 2D arrangement?"); b.disabled=true;updateUI()};
+window.answerM2=(b,ok)=>{if(ok){score++;feedback("fb2",true,"Exactly. A small region can reveal local structure such as an edge or texture.")}else feedback("fb2",false,"A local patch usually does not contain enough information to identify the whole image."); b.disabled=true;updateUI()};
+window.answerM3=(b,ok)=>{if(ok){score++;document.getElementById("convReveal").classList.remove("hidden");feedback("fb3",true,"Correct. The filter responds where the local image pattern matches the pattern encoded by the filter.")}else feedback("fb3",false,"Look at the filter: it is designed to respond to a vertical change."); b.disabled=true;updateUI()};
+window.answerM4=(b,ok)=>{if(ok){score++;feedback("fb4",true,"Correct. The deeper representation can combine lower-level patterns into more task-useful structures.")}else feedback("fb4",false,"The important idea is learned representation: deeper processing can combine simpler visual patterns."); b.disabled=true;updateUI()};
+
+window.answerTask=(b,type)=>{
+  score++;
+  const text={
+    classification:"Classification answers WHAT is present, usually with a label or class score.",
+    detection:"Detection answers WHAT + WHERE, producing object classes and bounding boxes.",
+    segmentation:"Segmentation answers WHICH PIXELS belong to the relevant regions/objects, producing masks."
+  }[type];
+  feedback("taskFeedback",true,text);
+  b.disabled=true; updateUI();
+};
+
+const input=document.getElementById("imageInput");
+input.addEventListener("change",e=>{
+  const file=e.target.files[0];
+  if(!file)return;
+  selectedImage=URL.createObjectURL(file);
+  const img=document.getElementById("preview");
+  img.src=selectedImage; img.style.display="block";
+  document.getElementById("visionCanvas").style.display="none";
+  document.getElementById("results").innerHTML="";
+  document.getElementById("modelStatus").textContent="Image ready. Choose a task.";
+});
+
+async function loadPipeline(task, model){
+  document.getElementById("modelStatus").innerHTML='<span class="loader"></span> Loading model in your browser…';
+  if(task==="classification" && !classifier) classifier=await pipeline(task,model);
+  if(task==="object-detection" && !detector) detector=await pipeline(task,model);
+  if(task==="image-segmentation" && !segmenter) segmenter=await pipeline(task,model);
+}
+
+window.runClassification=async()=>{
+  if(!selectedImage){alert("Choose an image first.");return;}
+  try{
+    await loadPipeline("classification","Xenova/vit-base-patch16-224");
+    const out=await classifier(selectedImage,{top_k:5});
+    document.getElementById("results").innerHTML=
+      "<h3>Classification output</h3>"+
+      out.map(x=>`<div class="resultrow"><span>${x.label}</span><strong>${(x.score*100).toFixed(1)}%</strong></div>`).join("");
+    document.getElementById("modelStatus").textContent="Done. Ask: what information did the model produce?";
+  }catch(e){showError(e)}
+};
+
+window.runDetection=async()=>{
+  if(!selectedImage){alert("Choose an image first.");return;}
+  try{
+    await loadPipeline("object-detection","Xenova/detr-resnet-50");
+    const out=await detector(selectedImage,{threshold:0.55});
+    const img=document.getElementById("preview");
+    const canvas=document.getElementById("visionCanvas");
+    canvas.width=img.naturalWidth; canvas.height=img.naturalHeight;
+    canvas.style.display="block";
+    const ctx=canvas.getContext("2d"); ctx.drawImage(img,0,0);
+    ctx.lineWidth=Math.max(2,canvas.width/300); ctx.font=`${Math.max(14,canvas.width/55)}px Arial`;
+    out.forEach(x=>{
+      const b=x.box;
+      const w=b.xmax-b.xmin,h=b.ymax-b.ymin;
+      ctx.strokeStyle="#20639b";ctx.fillStyle="#20639b";ctx.strokeRect(b.xmin,b.ymin,w,h);
+      ctx.fillRect(b.xmin,b.ymin,ctx.measureText(`${x.label} ${(x.score*100).toFixed(0)}%`).width+10,24);
+      ctx.fillStyle="#fff";ctx.fillText(`${x.label} ${(x.score*100).toFixed(0)}%`,b.xmin+5,b.ymin+18);
+    });
+    document.getElementById("results").innerHTML=`<h3>Detection output</h3><p>${out.length} object(s) detected above threshold.</p>`;
+    document.getElementById("modelStatus").textContent="Done. Ask: what extra information did the boxes provide?";
+  }catch(e){showError(e)}
+};
+
+window.runSegmentation=async()=>{
+  if(!selectedImage){alert("Choose an image first.");return;}
+  try{
+    await loadPipeline("image-segmentation","Xenova/detr-resnet-50-panoptic");
+    const out=await segmenter(selectedImage);
+    document.getElementById("results").innerHTML="<h3>Segmentation output</h3>"+
+      out.map(x=>`<div class="resultrow"><span>${x.label}</span><strong>${(x.score*100).toFixed(1)}%</strong></div>`).join("");
+    document.getElementById("modelStatus").textContent="Done. The model produced pixel-level segment masks.";
+    // Show the first returned mask when available.
+    if(out[0] && out[0].mask){
+      const maskCanvas=document.createElement("canvas");
+      maskCanvas.width=out[0].mask.width; maskCanvas.height=out[0].mask.height;
+      const c=maskCanvas.getContext("2d");
+      const data=out[0].mask.data;
+      const imageData=c.createImageData(maskCanvas.width,maskCanvas.height);
+      for(let i=0;i<data.length;i++){
+        const v=data[i] > 0 ? 190 : 0;
+        imageData.data[i*4]=32;
+        imageData.data[i*4+1]=99;
+        imageData.data[i*4+2]=155;
+        imageData.data[i*4+3]=v;
+      }
+      c.putImageData(imageData,0,0);
+      document.getElementById("results").appendChild(maskCanvas);
+    }
+  }catch(e){showError(e)}
+};
+
+function showError(e){
+  console.error(e);
+  document.getElementById("modelStatus").innerHTML=
+    "The browser model could not be loaded. This can happen with browser/network restrictions. "+
+    "The conceptual missions still work. See the browser console for details.";
+}
+
+window.finish=(b,ok)=>{
+  if(ok){
+    score+=2;
+    feedback("finalFeedback",true,"Excellent. You connected the whole lecture: spatial structure → convolution → learned representations → task-specific visual predictions.");
+  }else{
+    feedback("finalFeedback",false,"Return to the lecture map: CNNs exploit spatial structure and learn representations that support different visual tasks.");
+  }
+  b.disabled=true; updateUI();
+};
+updateUI();
+</script>
+</body>
+</html>
