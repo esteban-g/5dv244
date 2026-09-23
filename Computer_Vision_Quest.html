@@ -74,7 +74,7 @@
 
 <div class="card">
   <div class="topbar">
-    <div><strong id="missionLabel">Mission 1 of 6</strong> <span class="pill" id="topicPill">Pixels</span></div>
+    <div><strong id="missionLabel">Mission 1 of 5</strong> <span class="pill" id="topicPill">Pixels</span></div>
     <div class="score">Score: <span id="score">0</span></div>
   </div>
   <div class="progress"><span id="progressBar"></span></div>
@@ -237,49 +237,42 @@
       <div><strong>Segmentation</strong><br><span style="font-size:28px">🚗▓</span><br><span class="small">WHICH PIXELS?</span></div>
     </div>
   </div>
-  <p class="small">You will use real browser-based models in the next mission.</p>
+  <p class="small">Now test these ideas in a real browser-based vision lab.</p>
+
+  <div class="visual" style="margin-top:18px">
+    <h3>🌐 Your turn: test a real vision model</h3>
+    <p>
+      Open the <strong>Computer Vision Mini Lab</strong> and try the same image
+      with the three tasks:
+    </p>
+    <div class="compare">
+      <div><strong>Classification</strong><br><span class="small">WHAT?</span></div>
+      <div><strong>Detection</strong><br><span class="small">WHAT + WHERE?</span></div>
+      <div><strong>Segmentation</strong><br><span class="small">WHICH PIXELS?</span></div>
+    </div>
+    <p class="small">
+      Use the same image if possible. Compare the outputs and ask:
+      <strong>What changed when the question changed?</strong>
+    </p>
+    <p>
+      <a href="https://people.cs.umu.se/~esteban/vision/vision_mini_lab.html"
+         target="_blank" rel="noopener">
+        Open the Computer Vision Mini Lab in a new tab →
+      </a>
+    </p>
+  </div>
 </div>
-<div class="nav"><button onclick="go(4)">← Previous</button><button class="primary" onclick="go(6)">Next: Use a real vision model →</button></div>
+<div class="nav">
+  <button onclick="go(4)">← Previous</button>
+  <a href="https://people.cs.umu.se/~esteban/vision/vision_mini_lab.html"
+     target="_blank" rel="noopener"
+     style="text-decoration:none">
+    <button class="primary">🌐 Open the Computer Vision Mini Lab →</button>
+  </a>
+</div>
 </section>
 
-<!-- MISSION 6 -->
-<section class="mission" id="m6">
-<div class="card">
-  <span class="pill">Mission 6 · Real browser-based vision</span>
-  <h2>🌐 Give the model an image</h2>
-  <p>
-    Now we move from the lecture concepts to an actual pretrained vision model running
-    <strong>inside your browser</strong>.
-  </p>
 
-  <div class="modelbox">
-    <strong>Library:</strong> Hugging Face Transformers.js<br>
-    <strong>Runtime:</strong> ONNX Runtime in the browser<br>
-    <strong>Tasks available:</strong> image classification, object detection and image segmentation.
-  </div>
-
-  <p class="small">
-    The first run may take a while because the browser needs to download the model.
-    After that, the model can be cached by your browser.
-  </p>
-
-  <div class="upload">
-    <input type="file" id="imageInput" accept="image/*">
-    <button class="primary" id="classifyBtn" onclick="runClassification()">1. Classify image</button>
-    <button onclick="runDetection()">2. Detect objects</button>
-    <button onclick="runSegmentation()">3. Segment image</button>
-  </div>
-
-  <p id="modelStatus" class="status">Choose an image to begin.</p>
-  <img id="preview" alt="Selected image">
-  <canvas id="visionCanvas"></canvas>
-  <div id="results" class="results"></div>
-
-  <div class="takeaway">
-    <strong>Think while the model runs:</strong>
-    Is this model answering <em>what?</em>, <em>what + where?</em>, or <em>which pixels?</em>
-  </div>
-</div>
 
 <div class="card">
   <h2>🏁 Final challenge</h2>
@@ -293,51 +286,44 @@
 </div>
 
 <div class="nav">
-  <button onclick="go(5)">← Previous</button>
+  <button onclick="go(4)">← Previous</button>
   <button class="primary" onclick="restart()">Restart Quest</button>
 </div>
-</section>
 
 <div class="card" style="margin-top:24px">
   <p class="small" style="margin:0">
     <strong>Learning path:</strong>
     Pixels → spatial structure → convolution → learned representations →
-    classification/detection/segmentation → real browser-based vision.
+    classification/detection/segmentation → experiment in the Computer Vision Mini Lab.
   </p>
 </div>
 </div>
 
-<script type="module">
-import { pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1";
+<script>
 
 let current = 1;
 let score = 0;
-let selectedImage = null;
-let classifier = null;
-let detector = null;
-let segmenter = null;
 
-const topics = ["Pixels","Spatial structure","Convolution","Representations","Vision tasks","Real vision"];
+const topics = ["Pixels","Spatial structure","Convolution","Representations","Vision tasks"];
 const progressText = [
   "Start with the question: what does a computer actually receive?",
   "Why should a neural network care about local regions?",
   "Predict what a visual filter will detect before seeing the result.",
   "Follow the intuition from simple patterns to useful representations.",
-  "Choose the output required by the vision task.",
-  "Use real pretrained models in the browser."
+  "Choose the output required by the vision task."
 ];
 
 function updateUI(){
   document.querySelectorAll(".mission").forEach(x=>x.classList.remove("active"));
   document.getElementById("m"+current).classList.add("active");
-  document.getElementById("missionLabel").textContent = `Mission ${current} of 6`;
+  document.getElementById("missionLabel").textContent = `Mission ${current} of 5`;
   document.getElementById("topicPill").textContent = topics[current-1];
-  document.getElementById("progressBar").style.width = `${((current-1)/5)*100}%`;
+  document.getElementById("progressBar").style.width = `${((current-1)/4)*100}%`;
   document.getElementById("progressText").textContent = progressText[current-1];
   document.getElementById("score").textContent = score;
   window.scrollTo({top:0,behavior:"smooth"});
 }
-window.go = function(n){ current=Math.max(1,Math.min(6,n)); updateUI(); };
+window.go = function(n){ current=Math.max(1,Math.min(5,n)); updateUI(); };
 window.restart = function(){ current=1; score=0; updateUI(); };
 
 function feedback(id, ok, text){
@@ -360,95 +346,6 @@ window.answerTask=(b,type)=>{
   feedback("taskFeedback",true,text);
   b.disabled=true; updateUI();
 };
-
-const input=document.getElementById("imageInput");
-input.addEventListener("change",e=>{
-  const file=e.target.files[0];
-  if(!file)return;
-  selectedImage=URL.createObjectURL(file);
-  const img=document.getElementById("preview");
-  img.src=selectedImage; img.style.display="block";
-  document.getElementById("visionCanvas").style.display="none";
-  document.getElementById("results").innerHTML="";
-  document.getElementById("modelStatus").textContent="Image ready. Choose a task.";
-});
-
-async function loadPipeline(task, model){
-  document.getElementById("modelStatus").innerHTML='<span class="loader"></span> Loading model in your browser…';
-  if(task==="classification" && !classifier) classifier=await pipeline(task,model);
-  if(task==="object-detection" && !detector) detector=await pipeline(task,model);
-  if(task==="image-segmentation" && !segmenter) segmenter=await pipeline(task,model);
-}
-
-window.runClassification=async()=>{
-  if(!selectedImage){alert("Choose an image first.");return;}
-  try{
-    await loadPipeline("image-classification","Xenova/vit-base-patch16-224");
-    const out=await classifier(selectedImage,{top_k:5});
-    document.getElementById("results").innerHTML=
-      "<h3>Classification output</h3>"+
-      out.map(x=>`<div class="resultrow"><span>${x.label}</span><strong>${(x.score*100).toFixed(1)}%</strong></div>`).join("");
-    document.getElementById("modelStatus").textContent="Done. Ask: what information did the model produce?";
-  }catch(e){showError(e)}
-};
-
-window.runDetection=async()=>{
-  if(!selectedImage){alert("Choose an image first.");return;}
-  try{
-    await loadPipeline("object-detection","Xenova/detr-resnet-50");
-    const out=await detector(selectedImage,{threshold:0.55});
-    const img=document.getElementById("preview");
-    const canvas=document.getElementById("visionCanvas");
-    canvas.width=img.naturalWidth; canvas.height=img.naturalHeight;
-    canvas.style.display="block";
-    const ctx=canvas.getContext("2d"); ctx.drawImage(img,0,0);
-    ctx.lineWidth=Math.max(2,canvas.width/300); ctx.font=`${Math.max(14,canvas.width/55)}px Arial`;
-    out.forEach(x=>{
-      const b=x.box;
-      const w=b.xmax-b.xmin,h=b.ymax-b.ymin;
-      ctx.strokeStyle="#20639b";ctx.fillStyle="#20639b";ctx.strokeRect(b.xmin,b.ymin,w,h);
-      ctx.fillRect(b.xmin,b.ymin,ctx.measureText(`${x.label} ${(x.score*100).toFixed(0)}%`).width+10,24);
-      ctx.fillStyle="#fff";ctx.fillText(`${x.label} ${(x.score*100).toFixed(0)}%`,b.xmin+5,b.ymin+18);
-    });
-    document.getElementById("results").innerHTML=`<h3>Detection output</h3><p>${out.length} object(s) detected above threshold.</p>`;
-    document.getElementById("modelStatus").textContent="Done. Ask: what extra information did the boxes provide?";
-  }catch(e){showError(e)}
-};
-
-window.runSegmentation=async()=>{
-  if(!selectedImage){alert("Choose an image first.");return;}
-  try{
-    await loadPipeline("image-segmentation","Xenova/detr-resnet-50-panoptic");
-    const out=await segmenter(selectedImage);
-    document.getElementById("results").innerHTML="<h3>Segmentation output</h3>"+
-      out.map(x=>`<div class="resultrow"><span>${x.label}</span><strong>${(x.score*100).toFixed(1)}%</strong></div>`).join("");
-    document.getElementById("modelStatus").textContent="Done. The model produced pixel-level segment masks.";
-    // Show the first returned mask when available.
-    if(out[0] && out[0].mask){
-      const maskCanvas=document.createElement("canvas");
-      maskCanvas.width=out[0].mask.width; maskCanvas.height=out[0].mask.height;
-      const c=maskCanvas.getContext("2d");
-      const data=out[0].mask.data;
-      const imageData=c.createImageData(maskCanvas.width,maskCanvas.height);
-      for(let i=0;i<data.length;i++){
-        const v=data[i] > 0 ? 190 : 0;
-        imageData.data[i*4]=32;
-        imageData.data[i*4+1]=99;
-        imageData.data[i*4+2]=155;
-        imageData.data[i*4+3]=v;
-      }
-      c.putImageData(imageData,0,0);
-      document.getElementById("results").appendChild(maskCanvas);
-    }
-  }catch(e){showError(e)}
-};
-
-function showError(e){
-  console.error(e);
-  document.getElementById("modelStatus").innerHTML=
-    "The browser model could not be loaded. This can happen with browser/network restrictions. "+
-    "The conceptual missions still work. See the browser console for details.";
-}
 
 window.finish=(b,ok)=>{
   if(ok){
