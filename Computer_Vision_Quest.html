@@ -383,7 +383,7 @@ async function loadPipeline(task, model){
 window.runClassification=async()=>{
   if(!selectedImage){alert("Choose an image first.");return;}
   try{
-    await loadPipeline("classification","Xenova/vit-base-patch16-224");
+    await loadPipeline("image-classification","Xenova/vit-base-patch16-224");
     const out=await classifier(selectedImage,{top_k:5});
     document.getElementById("results").innerHTML=
       "<h3>Classification output</h3>"+
