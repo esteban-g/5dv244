@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GenAI Quest — 5DV248</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121a30; --panel2:#18223d; --text:#eef3ff;
+    --muted:#aab6d3; --accent:#70d6ff; --accent2:#b8f36b;
+    --danger:#ff8f8f; --border:#2b395e; --gold:#ffd166;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:radial-gradient(circle at 15% 0%,#1b2b50 0,#0b1020 42%);
+    color:var(--text); min-height:100vh;
+  }
+  .wrap{max-width:1180px;margin:auto;padding:28px 20px 50px}
+  header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:24px}
+  h1{font-size:clamp(2rem,4vw,3.4rem);margin:0 0 6px;letter-spacing:-.04em}
+  h2{margin:0 0 10px;font-size:1.55rem}
+  h3{margin:18px 0 8px}
+  p{line-height:1.55}
+  .subtitle{color:var(--muted);max-width:760px}
+  .badge{border:1px solid var(--border);background:#10182c;padding:9px 13px;border-radius:999px;color:var(--accent);white-space:nowrap}
+  .progress{height:8px;background:#202c49;border-radius:99px;overflow:hidden;margin:16px 0 26px}
+  .bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0%;transition:.35s}
+  .card{background:rgba(18,26,48,.94);border:1px solid var(--border);border-radius:20px;padding:24px;box-shadow:0 14px 45px rgba(0,0,0,.2);margin-bottom:18px}
+  .hidden{display:none!important}
+  .mission{display:inline-flex;align-items:center;gap:8px;font-size:.82rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  @media(max-width:800px){.grid{grid-template-columns:1fr} header{display:block}.badge{display:inline-block;margin-top:12px}}
+  button{
+    border:0;border-radius:12px;padding:11px 16px;font-weight:750;cursor:pointer;
+    background:var(--accent);color:#07101b;transition:transform .12s,opacity .12s;
+  }
+  button:hover{transform:translateY(-1px)}
+  button.secondary{background:#263555;color:var(--text);border:1px solid var(--border)}
+  button.good{background:var(--accent2)}
+  button.warn{background:var(--gold)}
+  button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+  .choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+  @media(max-width:650px){.choices{grid-template-columns:1fr}}
+  .choice{background:#17233e;border:1px solid var(--border);color:var(--text);text-align:left}
+  .choice.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(112,214,255,.15)}
+  .choice.correct{border-color:var(--accent2);background:#172b2a}
+  .choice.wrong{border-color:var(--danger);background:#2b1d2b}
+  .feedback{margin-top:15px;padding:14px 16px;border-left:4px solid var(--accent);background:#0f172b;border-radius:8px}
+  .modelbox{background:#080d19;border:1px solid #263352;border-radius:14px;padding:16px;min-height:120px;white-space:pre-wrap;line-height:1.6}
+  textarea,input,select{
+    width:100%;background:#0b1222;color:var(--text);border:1px solid var(--border);
+    border-radius:11px;padding:12px;font:inherit;outline:none;
+  }
+  textarea:focus,input:focus,select:focus{border-color:var(--accent)}
+  label{display:block;font-weight:700;margin:12px 0 6px}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .status{color:var(--muted);font-size:.92rem}
+  .status.ready{color:var(--accent2)}
+  .status.busy{color:var(--gold)}
+  .pill{display:inline-block;padding:4px 8px;border-radius:99px;background:#263555;color:#cbd7f4;font-size:.78rem;margin:2px}
+  .meter{height:9px;background:#202b46;border-radius:99px;overflow:hidden;margin-top:8px}
+  .meter span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0}
+  .stat{padding:14px;background:#10182c;border:1px solid var(--border);border-radius:13px}
+  .stat b{font-size:1.35rem}
+  .small{font-size:.86rem;color:var(--muted)}
+  .quote{font-size:1.1rem;border-left:4px solid var(--gold);padding:12px 16px;background:#151d31}
+  .footer-note{margin-top:24px;color:var(--muted);font-size:.82rem}
+  .tokenline{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+  .token{padding:7px 10px;border-radius:8px;background:#202d4d;border:1px solid #334568;font-family:ui-monospace,monospace}
+  .token.space{border-color:#6f80a8}
+  .score{font-weight:800;color:var(--gold)}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+<header>
+  <div>
+    <div class="mission">5DV248 · Generative AI & LLMs</div>
+    <h1>GenAI Quest</h1>
+    <p class="subtitle">
+      A short challenge from <strong>tokens → probability → sampling → generation → transparency</strong>.
+      The generation missions use a real pretrained language model directly in your browser.
+    </p>
+  </div>
+  <div class="badge">Score: <span id="score">0</span> / 100</div>
+</header>
+
+<div class="progress"><div class="bar" id="progressBar"></div></div>
+
+<section id="intro" class="card">
+  <h2>Mission briefing</h2>
+  <p>You are not being asked to make the model “say the right thing”. Your job is to understand what a generative model is doing and to notice where its output should <strong>not</strong> be trusted automatically.</p>
+  <div class="grid">
+    <div class="stat"><b>1</b><br><span class="small">Understand the next-token view</span></div>
+    <div class="stat"><b>2</b><br><span class="small">Experiment with real generation</span></div>
+    <div class="stat"><b>3</b><br><span class="small">Observe sampling effects</span></div>
+    <div class="stat"><b>4</b><br><span class="small">Inspect transparency & uncertainty</span></div>
+  </div>
+  <p class="small">
+    <strong>Technical note:</strong> the model is downloaded once and then cached by the browser.
+    The first load can take a while. No API key is required and the generation runs client-side.
+  </p>
+  <button id="startBtn">Start the Quest</button>
+</section>
+
+<section id="mission1" class="card hidden">
+  <div class="mission">Mission 1 · Next-token thinking</div>
+  <h2>What is the model actually predicting?</h2>
+  <p>Suppose the current context is:</p>
+  <div class="quote">“The scientist opened the book because …”</div>
+  <p>Which statement best describes an autoregressive language model at the next step?</p>
+  <div class="choices" id="q1choices">
+    <button class="choice" data-correct="false">It retrieves the correct next sentence from its database.</button>
+    <button class="choice" data-correct="true">It assigns probabilities to possible next tokens, then generation can select one.</button>
+    <button class="choice" data-correct="false">It first understands the complete story and then writes the answer.</button>
+    <button class="choice" data-correct="false">It randomly chooses a word without using the previous context.</button>
+  </div>
+  <div id="q1feedback" class="feedback hidden"></div>
+  <button id="q1next" class="good hidden">Continue →</button>
+</section>
+
+<section id="mission2" class="card hidden">
+  <div class="mission">Mission 2 · Real generation</div>
+  <h2>Ask a real language model</h2>
+  <p>
+    Load a small instruction-tuned Transformer and give it a prompt. Watch the model produce text
+    rather than selecting from a pre-written answer.
+  </p>
+  <div class="row">
+    <button id="loadModelBtn">Load the real model</button>
+    <span id="modelStatus" class="status">Model not loaded.</span>
+  </div>
+  <label for="prompt">Your prompt</label>
+  <textarea id="prompt" rows="3">Explain why a language model can produce a plausible answer without necessarily knowing whether it is true.</textarea>
+  <div class="row" style="margin-top:10px">
+    <button id="generateBtn" disabled>Generate</button>
+    <span class="small">Model: Qwen2.5-0.5B-Instruct · browser inference</span>
+  </div>
+  <h3>Model output</h3>
+  <div id="output1" class="modelbox">Load the model and generate an answer.</div>
+  <div id="m2reflection" class="feedback hidden">
+    <strong>Think:</strong> Which parts of this output are actually supported by the prompt?
+    Which parts are generated continuation rather than retrieved evidence?
+  </div>
+  <button id="m2next" class="good hidden">I inspected the output →</button>
+</section>
+
+<section id="mission3" class="card hidden">
+  <div class="mission">Mission 3 · Sampling lab</div>
+  <h2>Same model, different generation</h2>
+  <p>
+    Keep the prompt fixed. Change the sampling temperature. A useful intuition is:
+    <strong>lower temperature → more concentrated choices</strong>;
+    <strong>higher temperature → more varied choices</strong>.
+  </p>
+  <textarea id="samplePrompt" rows="2">A robot arrived at the university library and</textarea>
+  <div class="grid">
+    <div>
+      <label for="tempLow">Low temperature: <span id="tempLowValue">0.2</span></label>
+      <input id="tempLow" type="range" min="0.1" max="1.5" value="0.2" step="0.1">
+      <div class="meter"><span id="lowMeter" style="width:10%"></span></div>
+    </div>
+    <div>
+      <label for="tempHigh">High temperature: <span id="tempHighValue">1.2</span></label>
+      <input id="tempHigh" type="range" min="0.1" max="1.5" value="1.2" step="0.1">
+      <div class="meter"><span id="highMeter" style="width:80%"></span></div>
+    </div>
+  </div>
+  <div class="row" style="margin-top:15px">
+    <button id="compareBtn" disabled>Generate both</button>
+  </div>
+  <div class="grid" style="margin-top:16px">
+    <div><h3>Lower temperature</h3><div id="lowOutput" class="modelbox">—</div></div>
+    <div><h3>Higher temperature</h3><div id="highOutput" class="modelbox">—</div></div>
+  </div>
+  <div id="m3reflection" class="feedback hidden">
+    <strong>Interpretation:</strong> sampling changes which continuation is selected from the model's distribution.
+    It does <em>not</em> change the model into a different source of knowledge.
+  </div>
+  <button id="m3next" class="good hidden">Continue →</button>
+</section>
+
+<section id="mission4" class="card hidden">
+  <div class="mission">Mission 4 · Transparency detective</div>
+  <h2>Can you tell what the model actually knows?</h2>
+  <p>Generate a short answer to a factual-looking question. Then classify the statements in it.</p>
+  <label for="factPrompt">Question</label>
+  <input id="factPrompt" value="Who invented the Transformer architecture, and when was the original paper published?">
+  <div class="row" style="margin-top:10px">
+    <button id="factGenerateBtn" disabled>Generate answer</button>
+  </div>
+  <div id="factOutput" class="modelbox" style="margin-top:12px">—</div>
+
+  <div id="factChoices" class="hidden">
+    <p><strong>What should you do before treating this answer as evidence?</strong></p>
+    <div class="choices">
+      <button class="choice fact-choice" data-correct="true">Verify the factual claims against an appropriate source.</button>
+      <button class="choice fact-choice" data-correct="false">Assume that fluent language indicates high factual certainty.</button>
+      <button class="choice fact-choice" data-correct="false">Treat the model's confidence or writing style as provenance.</button>
+      <button class="choice fact-choice" data-correct="false">Assume that the model retrieved the answer from the original paper.</button>
+    </div>
+    <div id="factFeedback" class="feedback hidden"></div>
+  </div>
+  <button id="finishBtn" class="good hidden">Finish the Quest →</button>
+</section>
+
+<section id="final" class="card hidden">
+  <div class="mission">Quest complete</div>
+  <h2>From tokens to trustworthy use</h2>
+  <p>You have seen the basic chain:</p>
+  <div class="tokenline">
+    <span class="token">context</span><span>→</span>
+    <span class="token">representation</span><span>→</span>
+    <span class="token">probability</span><span>→</span>
+    <span class="token">sampling</span><span>→</span>
+    <span class="token">generated text</span>
+  </div>
+  <div class="grid">
+    <div class="stat"><b>Generation ≠ retrieval</b><br><span class="small">A fluent continuation is not automatically a verified fact.</span></div>
+    <div class="stat"><b>Sampling matters</b><br><span class="small">Different decoding settings can produce different outputs.</span></div>
+    <div class="stat"><b>Attention ≠ explanation</b><br><span class="small">Internal attention patterns are not a complete account of why an output is correct.</span></div>
+    <div class="stat"><b>Human evaluation remains essential</b><br><span class="small">For consequential use, inspect evidence, provenance, uncertainty and limitations.</span></div>
+  </div>
+  <p class="score">Final score: <span id="finalScore">0</span> / 100</p>
+  <p class="small">Discussion prompt: <strong>When is a generated answer useful even if it is not guaranteed to be true?</strong></p>
+  <button id="restartBtn" class="secondary">Restart</button>
+</section>
+
+<p class="footer-note">
+  This educational demo uses Hugging Face Transformers.js to run a pretrained Transformer in the browser.
+  The model is not a simulation: it performs actual neural-network inference. The browser downloads the model
+  from the Hugging Face Hub and caches it locally.
+</p>
+</div>
+
+<script type="module">
+import { pipeline } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.1";
+
+const $ = id => document.getElementById(id);
+let generator = null;
+let score = 0;
+let current = 0;
+
+const missions = ["intro","mission1","mission2","mission3","mission4","final"];
+
+function show(id){
+  missions.forEach(x => $(x).classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  current = missions.indexOf(id);
+  $("progressBar").style.width = Math.max(0, current/(missions.length-1)*100) + "%";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function addScore(n){
+  score = Math.min(100, score+n);
+  $("score").textContent = score;
+}
+
+$("startBtn").onclick = () => show("mission1");
+
+document.querySelectorAll("#q1choices .choice").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll("#q1choices .choice").forEach(b => b.disabled = true);
+    const correct = btn.dataset.correct === "true";
+    if(correct){
+      btn.classList.add("correct");
+      addScore(20);
+      $("q1feedback").innerHTML = "<strong>Correct.</strong> In an autoregressive language model, the context is used to produce a distribution over possible next tokens. Generation then selects a continuation from that distribution.";
+    }else{
+      btn.classList.add("wrong");
+      document.querySelector("#q1choices .choice[data-correct='true']").classList.add("correct");
+      addScore(5);
+      $("q1feedback").innerHTML = "<strong>Not quite.</strong> The key idea is probability over possible next tokens. Generation is not simply retrieving a stored sentence.";
+    }
+    $("q1feedback").classList.remove("hidden");
+    $("q1next").classList.remove("hidden");
+  };
+});
+$("q1next").onclick = () => show("mission2");
+
+async function loadModel(){
+  $("loadModelBtn").disabled = true;
+  $("modelStatus").textContent = "Downloading/loading model… first load may take a while.";
+  $("modelStatus").className = "status busy";
+  try{
+    generator = await pipeline(
+      "text-generation",
+      "onnx-community/Qwen2.5-0.5B-Instruct",
+      { dtype: "q4" }
+    );
+    $("modelStatus").textContent = "Real model ready in your browser.";
+    $("modelStatus").className = "status ready";
+    $("generateBtn").disabled = false;
+    $("compareBtn").disabled = false;
+    $("factGenerateBtn").disabled = false;
+    $("loadModelBtn").textContent = "Model loaded";
+    addScore(10);
+  }catch(err){
+    console.error(err);
+    $("modelStatus").textContent = "Could not load the model. Check the browser console/network connection.";
+    $("modelStatus").className = "status";
+    $("loadModelBtn").disabled = false;
+  }
+}
+
+$("loadModelBtn").onclick = loadModel;
+
+async function generate(prompt, temperature=0.7){
+  if(!generator) throw new Error("Model not loaded.");
+  const messages = [
+    { role:"system", content:"You are a concise educational assistant. Answer clearly and do not invent sources." },
+    { role:"user", content:prompt }
+  ];
+  const out = await generator(messages, {
+    max_new_tokens: 100,
+    do_sample: true,
+    temperature,
+    top_p: 0.9,
+    repetition_penalty: 1.05
+  });
+  const item = out?.[0]?.generated_text;
+  if(Array.isArray(item)) return item.at(-1)?.content || "";
+  return String(item || "");
+}
+
+async function runSingle(prompt, target, temp=0.7){
+  target.textContent = "Generating…";
+  try{
+    const text = await generate(prompt,temp);
+    target.textContent = text;
+    return text;
+  }catch(err){
+    console.error(err);
+    target.textContent = "Generation failed: " + err.message;
+  }
+}
+
+$("generateBtn").onclick = async () => {
+  $("generateBtn").disabled = true;
+  await runSingle($("prompt").value, $("output1"), 0.7);
+  $("m2reflection").classList.remove("hidden");
+  $("m2next").classList.remove("hidden");
+  addScore(10);
+  $("generateBtn").disabled = false;
+};
+$("m2next").onclick = () => show("mission3");
+
+function updateTempMeters(){
+  const lo = Number($("tempLow").value), hi = Number($("tempHigh").value);
+  $("tempLowValue").textContent = lo.toFixed(1);
+  $("tempHighValue").textContent = hi.toFixed(1);
+  $("lowMeter").style.width = ((lo-.1)/1.4*100) + "%";
+  $("highMeter").style.width = ((hi-.1)/1.4*100) + "%";
+}
+$("tempLow").oninput = updateTempMeters;
+$("tempHigh").oninput = updateTempMeters;
+updateTempMeters();
+
+$("compareBtn").onclick = async () => {
+  $("compareBtn").disabled = true;
+  const p = $("samplePrompt").value;
+  const [a,b] = await Promise.all([
+    runSingle(p,$("lowOutput"),Number($("tempLow").value)),
+    runSingle(p,$("highOutput"),Number($("tempHigh").value))
+  ]);
+  $("m3reflection").classList.remove("hidden");
+  $("m3next").classList.remove("hidden");
+  addScore(15);
+  $("compareBtn").disabled = false;
+};
+$("m3next").onclick = () => show("mission4");
+
+$("factGenerateBtn").onclick = async () => {
+  $("factGenerateBtn").disabled = true;
+  await runSingle($("factPrompt").value,$("factOutput"),0.4);
+  $("factChoices").classList.remove("hidden");
+};
+
+document.querySelectorAll(".fact-choice").forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll(".fact-choice").forEach(b => b.disabled = true);
+    const correct = btn.dataset.correct === "true";
+    if(correct){
+      btn.classList.add("correct");
+      addScore(20);
+      $("factFeedback").innerHTML = "<strong>Exactly.</strong> A generated answer can be useful, but factual claims should be checked against suitable evidence. Fluency is not provenance.";
+    }else{
+      btn.classList.add("wrong");
+      document.querySelector(".fact-choice[data-correct='true']").classList.add("correct");
+      addScore(5);
+      $("factFeedback").innerHTML = "<strong>Think about provenance.</strong> A model's fluent output does not tell you where a claim came from or whether it is correct.";
+    }
+    $("factFeedback").classList.remove("hidden");
+    $("finishBtn").classList.remove("hidden");
+  };
+});
+
+$("finishBtn").onclick = () => {
+  $("finalScore").textContent = score;
+  show("final");
+};
+$("restartBtn").onclick = () => {
+  score = 0; $("score").textContent = "0";
+  document.querySelectorAll("button.choice").forEach(b => {
+    b.disabled = false;
+    b.classList.remove("correct","wrong","selected");
+  });
+  $("q1feedback").classList.add("hidden");
+  $("q1next").classList.add("hidden");
+  $("m2reflection").classList.add("hidden");
+  $("m2next").classList.add("hidden");
+  $("factChoices").classList.add("hidden");
+  $("factFeedback").classList.add("hidden");
+  $("finishBtn").classList.add("hidden");
+  show("intro");
+};
+</script>
+</body>
+</html>
