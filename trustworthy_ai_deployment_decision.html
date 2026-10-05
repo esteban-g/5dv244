@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trustworthy AI: The Deployment Decision</title>
+<style>
+:root{--blue:#00e5ff;--green:#00ff9d;--pink:#ff3b81;--gold:#f9e300;--bg:#050a10;--panel:rgba(9,17,28,.92);--line:rgba(255,255,255,.12)}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% 0%,#102235 0,#050a10 55%);color:#eef6fa;font-family:Arial,Helvetica,sans-serif;min-height:100vh}
+button{font:inherit}.app{width:min(1100px,96vw);margin:18px auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 0 45px rgba(0,229,255,.14);overflow:hidden}.top{padding:18px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:15px;align-items:center}.brand{font-size:1.35rem;letter-spacing:2px;font-weight:800;color:var(--blue);text-shadow:0 0 12px rgba(0,229,255,.5)}.sub{font-size:.72rem;color:#9aa8b5;letter-spacing:1.5px;text-transform:uppercase}.timer{font-weight:800;color:var(--gold);min-width:100px;text-align:right}.timer.danger{color:var(--pink);animation:pulse .6s infinite alternate}@keyframes pulse{to{transform:scale(1.06)}}
+#progress{height:6px;background:#101923}#progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .4s}
+.main{padding:24px}.mission{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}.badge{border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:.75rem;color:#c8d3dc}.badge.active{border-color:var(--blue);color:var(--blue)}
+.hero{padding:22px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(135deg,rgba(0,229,255,.07),rgba(0,255,157,.03));min-height:230px}.kicker{color:var(--green);font-size:.75rem;letter-spacing:2px;text-transform:uppercase}.title{font-size:clamp(1.5rem,4vw,2.35rem);margin:9px 0 12px}.text{font-size:1rem;line-height:1.65;color:#d8e2e8}.warning{border-left:4px solid var(--gold);padding:10px 13px;background:rgba(249,227,0,.06);margin-top:15px}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}.choice{padding:17px;border:1px solid #2a6170;background:rgba(0,229,255,.035);color:#eef6fa;border-radius:10px;text-align:left;cursor:pointer;transition:.2s}.choice:hover{border-color:var(--blue);background:rgba(0,229,255,.10);transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,229,255,.12)}.choice strong{display:block;color:var(--blue);margin-bottom:7px}.choice small{color:#9caeb9;line-height:1.45}.choice:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.dashboard{display:grid;grid-template-columns:1.25fr .75fr;gap:15px;margin-top:18px}.panel{border:1px solid var(--line);border-radius:12px;padding:15px;background:rgba(255,255,255,.025)}.panel h3{margin:0 0 12px;font-size:.9rem;color:#cbd7df;text-transform:uppercase;letter-spacing:1px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.stat{padding:9px;border-left:3px solid #56636e;background:rgba(255,255,255,.035);font-size:.76rem}.stat span{float:right;font-weight:800}.high{border-color:var(--green);color:var(--green)}.med{border-color:var(--gold);color:var(--gold)}.low{border-color:var(--pink);color:var(--pink)}.role{color:var(--green);font-weight:800}.cards{display:flex;gap:8px;flex-wrap:wrap}.power{padding:8px 10px;border:1px solid var(--green);color:var(--green);border-radius:7px;font-size:.72rem}.power.used{opacity:.25;text-decoration:line-through}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}.modal{width:min(720px,94vw);background:#09121d;border:1px solid var(--blue);border-radius:16px;padding:28px;box-shadow:0 0 60px rgba(0,229,255,.2);animation:pop .25s ease}@keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}.modal h2{color:var(--blue);margin-top:0}.modal .event{border-left:4px solid var(--pink);padding:14px;background:rgba(255,59,129,.06);line-height:1.6}.modal button,.primary{margin-top:18px;padding:13px 18px;border:1px solid var(--green);background:transparent;color:var(--green);cursor:pointer;border-radius:8px;font-weight:800}.modal button:hover,.primary:hover{background:var(--green);color:#00120b}
+.final{display:grid;grid-template-columns:1fr 1fr;gap:18px}.decision{padding:20px;border-radius:12px;border:1px solid var(--gold);background:rgba(249,227,0,.05)}.review-item{margin:10px 0;padding:11px;border-left:3px solid var(--blue);background:rgba(0,229,255,.04)}.review-item b{color:var(--blue)}.reflect{margin-top:18px;padding:18px;border:1px solid var(--green);background:rgba(0,255,157,.04);border-radius:12px}.reflect textarea{width:100%;min-height:90px;margin-top:10px;background:#071019;border:1px solid #31505d;color:#fff;padding:10px;border-radius:8px}.hidden{display:none}.small{font-size:.78rem;color:#91a2ad}.footer{padding:13px 22px;border-top:1px solid var(--line);font-size:.7rem;color:#72828d;text-align:center}
+@media(max-width:760px){.choices,.dashboard,.final{grid-template-columns:1fr}.top{align-items:flex-start}.timer{min-width:auto}.main{padding:15px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div><div class="brand">TRUSTWORTHY AI</div><div class="sub">The Deployment Decision // Umeå University</div></div><div class="timer" id="timer">READY</div></div>
+  <div id="progress"><div id="progressBar"></div></div>
+  <main class="main">
+    <div class="mission" id="mission"></div>
+    <section class="hero" id="scene"></section>
+    <div class="choices" id="choices"></div>
+    <section class="dashboard">
+      <div class="panel"><h3>System profile</h3><div class="stats" id="stats"></div></div>
+      <div class="panel"><h3>Your team</h3><div id="team"></div><hr style="border-color:#17232d"><h3>Power cards</h3><div class="cards" id="cards"></div></div>
+    </section>
+  </main>
+  <div class="footer">Classroom simulation: there is no single numerical definition of “trustworthy”. Your task is to make and defend a deployment decision.</div>
+</div>
+<div id="overlay" class="overlay hidden"></div>
+<script>
+const dimensions={Transparency:50,Fairness:50,"Human agency":50,Accountability:50,Robustness:50,Privacy:50,"Societal impact":50};
+let state={role:null,round:0,history:[],power:{audit:true,override:true,stop:true},usedEvents:0};
+const roles={
+ engineer:{name:'AI Engineer',focus:'performance, robustness, maintainability'},
+ compliance:{name:'Compliance Officer',focus:'law, governance, documentation'},
+ operator:{name:'Domain Operator',focus:'human control, safety, real-world use'},
+ user:{name:'User Representative',focus:'rights, consequences, accessibility'}
+};
+const events=[
+ {title:'UNEXPECTED FAILURE',text:'The model performs well overall, but an operator reports repeated failures for a particular group. You may inspect the subgroup results before continuing.',power:'audit',label:'AUDIT: reveal subgroup performance',reveal:'Group A accuracy: 97%. Group B accuracy: 79%. Overall accuracy had hidden the disparity.'},
+ {title:'BUSINESS PRESSURE',text:'The customer wants the system launched tomorrow. Delaying deployment will cost the project time and money.',power:'stop',label:'STOP DEPLOYMENT: require another review',reveal:'You gain one additional review round before deployment. The project loses time, but the risk remains visible.'},
+ {title:'OPERATOR DISAGREEMENT',text:'An experienced operator strongly disagrees with an AI recommendation. The system currently has no explicit override mechanism.',power:'override',label:'HUMAN OVERRIDE: give the operator authority',reveal:'The operator can reject the recommendation and document why. This adds control, but also requires training and accountability.'},
+ {title:'SECURITY INCIDENT',text:'A vulnerability is found in a dependency used by the AI service. You must decide whether deployment should continue.',power:'audit',label:'AUDIT: inspect the security exposure',reveal:'The vulnerable dependency handles sensitive input. A mitigation exists, but deployment without it increases risk.'}
+];
+const rounds=[
+ {k:'DATA & PURPOSE',title:'The system is ready for development.',text:'You have a promising AI product. Before building the model, decide what data you collect and what purpose you declare. Your first decision will shape later risks.',choices:[
+  ['Collect only data necessary for the stated purpose','Minimise data collection and define purpose clearly.',{Privacy:12,Accountability:7}],
+  ['Collect everything that might improve the model','More data may improve performance, but increases governance and privacy risk.',{Privacy:-12,Accountability:-5,Robustness:5}]
+ ]},
+ {k:'MODEL DESIGN',title:'The first prototype is impressive — but imperfect.',text:'The model is 96% accurate on the evaluation set. The team can either optimise for the headline metric or spend time understanding failure modes.',choices:[
+  ['Optimise the headline accuracy','You gain a little performance, but learn less about failure cases.',{Robustness:5,Transparency:-4,Fairness:-5}],
+  ['Investigate failure modes before optimisation','You sacrifice some speed and improve knowledge of where the model fails.',{Robustness:9,Transparency:5,Fairness:7}]
+ ]},
+ {k:'HUMAN CONTROL',title:'The AI is now making recommendations.',text:'An operator will use the system in a consequential workflow. Decide how much authority the AI should have.',choices:[
+  ['AI recommends; human makes the final decision','The human remains responsible for the decision, with a clear intervention point.',{'Human agency':12,Accountability:8,Robustness:4}],
+  ['AI automatically decides; humans monitor dashboards','Automation is efficient, but intervention becomes harder when things go wrong.',{'Human agency':-12,Accountability:-8,Robustness:3}]
+ ]},
+ {k:'EXPLANATION',title:'A person affected by the system asks: “Why?”',text:'The team must decide what information to provide. Think about the purpose of the explanation, not just whether the model can technically expose its internals.',choices:[
+  ['Provide meaningful reasons, limitations and contact for review','People can understand the decision and know what to do if they disagree.',{Transparency:12,Accountability:7,'Human agency':5}],
+  ['Say only: “The algorithm decided.”','The system may be technically complex, but affected people receive little useful information.',{Transparency:-14,Accountability:-8,'Human agency':-6}]
+ ]},
+ {k:'FAIRNESS',title:'Hidden information becomes visible.',text:'A subgroup performs substantially worse than the overall population. The launch date is approaching.',choices:[
+  ['Pause and investigate the disparity','Deployment is delayed, but the team can investigate data, metrics, context and possible mitigation.',{Fairness:14,Robustness:7,Accountability:7}],
+  ['Deploy because overall performance is acceptable','The headline metric remains strong, but the subgroup risk is knowingly left unresolved.',{Fairness:-16,Accountability:-8}]
+ ]},
+ {k:'INCIDENT RESPONSE',title:'Something goes wrong after deployment.',text:'A harmful recommendation reaches a real user. The question is no longer whether the model is accurate on average. It is how the organisation responds.',choices:[
+  ['Log the incident, investigate, notify and improve controls','The organisation treats failure as part of system governance and learning.',{Accountability:13,Robustness:8,Transparency:7}],
+  ['Silently patch the model and move on','The incident may disappear quickly, but the organisation loses traceability and learning.',{Accountability:-14,Transparency:-9,Robustness:-4}]
+ ]}
+];
+function clamp(v){return Math.max(0,Math.min(100,v))}
+function apply(e){Object.entries(e).forEach(([k,v])=>{if(k in dimensions)dimensions[k]=clamp(dimensions[k]+v)});}
+function renderStats(){stats.innerHTML=Object.entries(dimensions).map(([k,v])=>`<div class="stat ${v>=70?'high':v<40?'low':'med'}">${k}<span>${Math.round(v)}</span></div>`).join('')}
+function renderCards(){cards.innerHTML=Object.entries(state.power).map(([k,v])=>`<div class="power ${v?'':'used'}">${k.toUpperCase()}</div>`).join('')}
+function renderTeam(){team.innerHTML=state.role?`<div class="role">${roles[state.role].name}</div><div class="small">Your priority: ${roles[state.role].focus}.</div>`:`<div class="small">Choose a role to begin.</div>`}
+function setProgress(){progressBar.style.width=(state.round/rounds.length*100)+'%'}
+function countdown(sec,callback){clearInterval(window.clock);let t=sec;timer.textContent=t+'s';timer.classList.remove('danger');window.clock=setInterval(()=>{t--;timer.textContent=t+'s';if(t<=10)timer.classList.add('danger');if(t<=0){clearInterval(window.clock);callback();}},1000)}
+function chooseRole(){scene.innerHTML=`<div class="kicker">MISSION 0 / ROLE SELECTION</div><div class="title">You are responsible for an AI deployment.</div><div class="text">A real organisation wants to deploy an AI system. Your team has limited time and incomplete information. <b>Choose the perspective you will defend.</b><div class="warning">There is no “best” role. Your priorities will influence the decisions you notice first.</div></div>`;choices.innerHTML=Object.entries(roles).map(([k,r])=>`<button class="choice" onclick="start('${k}')"><strong>${r.name}</strong><small>Focus: ${r.focus}</small></button>`).join('');renderTeam();renderCards();renderStats();setProgress();timer.textContent='READY'}
+function start(role){state.role=role;state.round=0;state.history=[];showRound()}
+function showRound(){if(state.round>=rounds.length){finalReview();return}let r=rounds[state.round];mission.innerHTML=rounds.map((x,i)=>`<div class="badge ${i===state.round?'active':''}">${i+1}. ${x.k}</div>`).join('');scene.innerHTML=`<div class="kicker">DECISION ${state.round+1} / ${rounds.length}</div><div class="title">${r.title}</div><div class="text">${r.text}</div><div class="warning"><b>Team challenge:</b> You have 45 seconds. Discuss, then lock one decision.</div>`;choices.innerHTML=r.choices.map((c,i)=>`<button class="choice" onclick="decide(${i})"><strong>${i===0?'OPTION A':'OPTION B'}</strong>${c[0]}<small>${c[1]}</small></button>`).join('');renderStats();renderTeam();renderCards();setProgress();countdown(45,()=>decide(0,true))}
+function decide(i,timeout=false){clearInterval(window.clock);let r=rounds[state.round],c=r.choices[i];apply(c[2]);state.history.push({round:state.round,choice:c[0],timeout});state.round++;showEventOrRound()}
+function showEventOrRound(){if(state.usedEvents<events.length && state.round>0 && state.round%2===0){const ev=events[state.usedEvents++];showEvent(ev)}else showRound()}
+function showEvent(ev){timer.textContent='EVENT';const use=state.power[ev.power];overlay.classList.remove('hidden');overlay.innerHTML=`<div class="modal"><div class="kicker">RANDOM EVENT</div><h2>${ev.title}</h2><div class="event">${ev.text}</div><p class="small">Your team can respond with one available power card. You may also continue without using it.</p><button onclick="eventAction('${ev.power}')" ${use?'':'disabled'}>${use?ev.label:'POWER CARD ALREADY USED'}</button><button onclick="closeEvent()">Continue without card</button></div>`}
+function eventAction(power){let ev=events[state.usedEvents-1];state.power[power]=false;apply(power==='audit'?{Transparency:5,Robustness:7,Fairness:5}:power==='stop'?{Accountability:8,Robustness:5}:power==='override'?{'Human agency':12,Accountability:6}:{});overlay.classList.add('hidden');scene.innerHTML=`<div class="kicker">EVENT RESOLVED</div><div class="title">${ev.title}</div><div class="text">${ev.reveal}</div><div class="warning">The consequence is part of the system history. You still have to make the next deployment decision.</div>`;choices.innerHTML=`<button class="choice" onclick="showRound()"><strong>CONTINUE</strong>Return to the deployment mission.</button>`;renderStats();renderCards()}
+function closeEvent(){overlay.classList.add('hidden');showRound()}
+function finalReview(){clearInterval(window.clock);timer.textContent='REVIEW';mission.innerHTML='<div class="badge active">FINAL DEPLOYMENT REVIEW</div>';let avg=Object.values(dimensions).reduce((a,b)=>a+b,0)/7;let weakest=Object.entries(dimensions).sort((a,b)=>a[1]-b[1]).slice(0,2);let conditional=weakest.some(x=>x[1]<55);let status=conditional?'CONDITIONAL APPROVAL':'APPROVE WITH MONITORING';scene.innerHTML=`<div class="kicker">🚨 REVIEW BOARD</div><div class="title">Can this AI system be deployed?</div><div class="final"><div><div class="decision"><h2>${status}</h2><p>Your average profile is ${Math.round(avg)}/100. This is a diagnostic profile, <b>not a definition of trustworthiness</b>.</p></div><div class="reflect"><b>Final reflection</b><div class="small">Write one thing you would change before deployment.</div><textarea id="reflection" placeholder="Before deployment, I would..."></textarea><button class="primary" onclick="saveReflection()">SUBMIT REFLECTION</button><div id="saved" class="small"></div></div></div><div><h3>Review board questions</h3><div class="review-item"><b>Technical:</b> What happens when the model is wrong?</div><div class="review-item"><b>Human:</b> Can a person intervene?</div><div class="review-item"><b>Data:</b> What information is collected and why?</div><div class="review-item"><b>Societal:</b> Who may be affected?</div><div class="review-item"><b>Governance:</b> Who is accountable?</div><div class="warning"><b>Weakest dimensions:</b><br>${weakest.map(x=>x[0]+' — '+Math.round(x[1])).join('<br>')}</div></div></div>`;choices.innerHTML=`<button class="choice" onclick="chooseRole()"><strong>RESTART</strong>Play again with a different role.</button>`;renderStats();renderTeam();renderCards();progressBar.style.width='100%'}
+function saveReflection(){const v=document.getElementById('reflection').value.trim();document.getElementById('saved').textContent=v?'Reflection recorded. Now compare your reasoning with another team.':'Write one change before submitting.'}
+chooseRole();
+</script>
+</body>
+</html>
